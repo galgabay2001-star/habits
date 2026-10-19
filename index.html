@@ -1374,6 +1374,14 @@ function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e
 /** Light / dark / automatic (follows the phone). */
 function applyTheme() { const t = S.settings.theme, r = document.documentElement; if (t === 'light' || t === 'dark') r.dataset.theme = t; else delete r.dataset.theme; }
 applyTheme();
+function isDark() { const t = S.settings.theme; return t === 'dark' || (t !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches); }
+/** Light/dark switch at the top of "ההרגלים שלי": moon in light mode, sun in dark mode. */
+function themeBtn() {
+  const d = isDark();
+  return `<button class="iconbtn" data-a="quickTheme" aria-label="${d ? 'מעבר למצב בהיר' : 'מעבר למצב כהה'}" title="${d ? 'מצב בהיר' : 'מצב כהה'}">${d
+    ? '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg>'
+    : '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg>'}</button>`;
+}
 
 const spec = h => ({ ...h, weekStart: S.settings.weekStart });
 const eventsOf = id => S.events.filter(e => e.habitID === id);
@@ -1664,7 +1672,7 @@ function screenToday() {
   const y = S_(D(t) - 1);
   const forgot = isToday ? S.habits.filter(h => !h.archived && ['missed', 'partial', 'nodata'].includes(statusOf(h, y).status)) : [];
   const oldest = Math.min(...S.habits.map(h => D(h.startDay)), D(t));
-  return `<div class="navbar"><button class="iconbtn" data-a="new" aria-label="הרגל חדש">${ICON.plus}</button><h2>ההרגלים שלי</h2><span style="width:38px"></span></div>
+  return `<div class="navbar"><button class="iconbtn" data-a="new" aria-label="הרגל חדש">${ICON.plus}</button><h2>ההרגלים שלי</h2>${themeBtn()}</div>
   <div class="stack">
     <section class="card daynav ${isToday ? '' : 'past'}">
       <div class="row daynav-row">
@@ -2749,11 +2757,7 @@ function sheetGoal() {
 }
 function sheetSettings() {
   const json = ui.exportText;
-  const th = S.settings.theme || 'auto';
   return sheet('הגדרות', `<div class="stack" style="direction:rtl">
-    <div class="form-title">מראה 🌗</div>
-    <div class="form"><div class="field" style="display:block"><div class="seg" role="group" aria-label="מצב תצוגה">${[['auto', 'אוטומטי'], ['light', '☀️ בהיר'], ['dark', '🌙 כהה']].map(([v, t]) => `<button data-a="setTheme" data-v="${v}" aria-pressed="${th === v}">${t}</button>`).join('')}</div>
-      <div class="small muted" style="margin-top:6px">${th === 'auto' ? 'לפי הגדרת הטלפון' : th === 'dark' ? 'תמיד כהה' : 'תמיד בהיר'}</div></div></div>
     <div class="form-title">גיבוי ל-<bdi>iCloud</bdi> ☁️</div>
     <div class="form">${(() => { const b = backupInfo(); if (!b) return '<div class="field"><span>גיבוי אחרון</span><span class="muted">עדיין אין גיבוי</span></div>';
         const d = new Date(b.at), when = `${d.getDate()}/${d.getMonth() + 1} · ${pad(d.getHours())}:${pad(d.getMinutes())}`;
@@ -3130,6 +3134,7 @@ document.addEventListener('click', e => {
     case 'askDeleteAll': ui.confirm = 'deleteAll'; rerender(); break;
     case 'deleteAll': S = { habits: [], events: [], goals: [], settings: S.settings, v: 1 }; save(); ui.sheet = null; ui.confirm = null; ui.detail = null; toast('כל הנתונים נמחקו'); render(); break;
     case 'askReset': S = seed(); save(); ui.sheet = null; ui.detail = null; toast('נטענו נתוני דוגמה חדשים'); render(); break;
+    case 'quickTheme': S.settings.theme = isDark() ? 'light' : 'dark'; save(); applyTheme(); rerender(); break;
     case 'setTheme': S.settings.theme = v; save(); applyTheme(); rerender(); break;
     case 'theme': { const r = document.documentElement; const dark = r.dataset.theme ? r.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches; r.dataset.theme = dark ? 'light' : 'dark'; break; }
     case 'toggleArchived': break;
