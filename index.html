@@ -1371,6 +1371,9 @@ if (!S || !S.habits) S = { habits: [], events: [], goals: [], settings: { weekSt
 // older saved data: quantity habits get "tap to add 1" by default
 S.habits.forEach(h => { if (h.kind === 'quantity' && h.tapStep === undefined) h.tapStep = 1; });
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+/** Light / dark / automatic (follows the phone). */
+function applyTheme() { const t = S.settings.theme, r = document.documentElement; if (t === 'light' || t === 'dark') r.dataset.theme = t; else delete r.dataset.theme; }
+applyTheme();
 
 const spec = h => ({ ...h, weekStart: S.settings.weekStart });
 const eventsOf = id => S.events.filter(e => e.habitID === id);
@@ -2746,7 +2749,11 @@ function sheetGoal() {
 }
 function sheetSettings() {
   const json = ui.exportText;
+  const th = S.settings.theme || 'auto';
   return sheet('הגדרות', `<div class="stack" style="direction:rtl">
+    <div class="form-title">מראה 🌗</div>
+    <div class="form"><div class="field" style="display:block"><div class="seg" role="group" aria-label="מצב תצוגה">${[['auto', 'אוטומטי'], ['light', '☀️ בהיר'], ['dark', '🌙 כהה']].map(([v, t]) => `<button data-a="setTheme" data-v="${v}" aria-pressed="${th === v}">${t}</button>`).join('')}</div>
+      <div class="small muted" style="margin-top:6px">${th === 'auto' ? 'לפי הגדרת הטלפון' : th === 'dark' ? 'תמיד כהה' : 'תמיד בהיר'}</div></div></div>
     <div class="form-title">גיבוי ל-<bdi>iCloud</bdi> ☁️</div>
     <div class="form">${(() => { const b = backupInfo(); if (!b) return '<div class="field"><span>גיבוי אחרון</span><span class="muted">עדיין אין גיבוי</span></div>';
         const d = new Date(b.at), when = `${d.getDate()}/${d.getMonth() + 1} · ${pad(d.getHours())}:${pad(d.getMinutes())}`;
@@ -3123,6 +3130,7 @@ document.addEventListener('click', e => {
     case 'askDeleteAll': ui.confirm = 'deleteAll'; rerender(); break;
     case 'deleteAll': S = { habits: [], events: [], goals: [], settings: S.settings, v: 1 }; save(); ui.sheet = null; ui.confirm = null; ui.detail = null; toast('כל הנתונים נמחקו'); render(); break;
     case 'askReset': S = seed(); save(); ui.sheet = null; ui.detail = null; toast('נטענו נתוני דוגמה חדשים'); render(); break;
+    case 'setTheme': S.settings.theme = v; save(); applyTheme(); rerender(); break;
     case 'theme': { const r = document.documentElement; const dark = r.dataset.theme ? r.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches; r.dataset.theme = dark ? 'light' : 'dark'; break; }
     case 'toggleArchived': break;
     case 'toggleMarked': ui.showAllMarked = !ui.showAllMarked; rerender(); break;
