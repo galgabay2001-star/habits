@@ -218,12 +218,23 @@ div.hmain .hsub { white-space: nowrap; overflow: hidden; text-overflow: ellipsis
 .delbanner { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 16px; background: color-mix(in srgb, #e5484d 12%, var(--surface)); border: 1.5px solid #e5484d; direction: rtl; }
 .delbanner .grow { display: flex; flex-direction: column; gap: 2px; }
 .delbanner b { color: #e5484d; font-size: 15px; }
-.del-done { border: none; background: #e5484d; color: #fff; border-radius: 12px; padding: 10px 18px; font-weight: 800; font-size: 15px; }
+.del-done { border: none; background: linear-gradient(140deg, #ff6b6f, #e5484d); color: #fff; border-radius: 999px; padding: 10px 22px; font-weight: 800; font-size: 15px; cursor: pointer; box-shadow: 0 6px 16px -6px rgba(229,72,77,.7), inset 0 1px 0 rgba(255,255,255,.3); transition: transform .2s cubic-bezier(.2,1.6,.4,1), box-shadow .2s; animation: bubbleIn .4s cubic-bezier(.2,1.4,.4,1); }
+.del-done:hover { transform: scale(1.08); box-shadow: 0 10px 22px -6px rgba(229,72,77,.8), inset 0 1px 0 rgba(255,255,255,.3); }
+.del-done:active { transform: scale(1.16); }
 .habit.delrow { border: 1.5px dashed color-mix(in srgb, #e5484d 40%, transparent); transition: transform .18s cubic-bezier(.2,.8,.2,1), box-shadow .2s, background-color .2s, border-color .2s; }
 .habit.delrow:not(.asking):hover { transform: translateY(-3px) scale(1.015); border-style: solid; border-color: #e5484d; background: color-mix(in srgb, #e5484d 8%, var(--surface)); box-shadow: 0 12px 26px -12px rgba(229,72,77,.65); }
 .habit.delrow .del-ask { transition: transform .18s, background-color .18s, color .18s; }
 .habit.delrow:not(.asking):hover .del-ask { transform: scale(1.12); background: #e5484d; color: #fff; }
 .rbar.rb-empty { padding: 0; }
+.unit-field { flex-direction: column; align-items: stretch !important; gap: 10px; }
+.uf-l { font-size: 15px; }
+.unit-chips { display: flex; flex-wrap: wrap; gap: 8px; direction: rtl; }
+.uchip { border: 1.5px solid color-mix(in srgb, var(--accent) 22%, transparent); background: var(--surface-2); color: var(--fg); font: inherit; font-weight: 700; font-size: 14px; padding: 7px 14px; border-radius: 999px; cursor: pointer; transition: transform .15s cubic-bezier(.2,1.5,.4,1), background-color .15s, color .15s, box-shadow .15s; }
+.uchip:hover { transform: translateY(-1px); background: color-mix(in srgb, var(--accent) 10%, var(--surface-2)); }
+.uchip:active { transform: scale(.94); }
+.uchip.on { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 6px 14px -8px var(--accent); }
+.uchip.ghost { border-style: dashed; }
+.field .unit-input { max-width: none !important; width: 100%; padding: 10px 12px !important; border-radius: 12px !important; font-size: 15px; box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--accent) 35%, transparent); animation: dayIn .3s ease both; }
 .nstep { display: inline-flex; align-items: center; gap: 4px; padding: 3px; border-radius: 999px; background: var(--surface-2); max-width: 60%; }
 .field .nstep input[type=number] { width: 64px; max-width: none; text-align: center; background: transparent; font-weight: 800; font-size: 16px; padding: 4px 2px; -moz-appearance: textfield; appearance: textfield; }
 .nstep input::-webkit-outer-spin-button, .nstep input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
@@ -420,6 +431,11 @@ details.others summary { cursor: pointer; color: var(--muted); font-size: 14px; 
 .name-field.name-ok .name-ic { transform: scale(1); opacity: 1; }
 .name-field.name-err { box-shadow: inset 0 0 0 2px #ff3b30; border-radius: 12px; animation: nameShake .4s; }
 @keyframes nameShake { 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }
+.t-ic.ok { width: 34px; height: 34px; background: linear-gradient(140deg, #34d399, #16a34a) !important; box-shadow: 0 0 0 4px rgba(34,197,94,.25), 0 6px 14px -4px rgba(22,163,74,.6) !important; animation: okPop .5s cubic-bezier(.2,1.6,.4,1) both; }
+.t-ic.ok svg { width: 18px; height: 18px; }
+.t-ic.ok svg path { stroke-dasharray: 24; stroke-dashoffset: 24; animation: tickDraw .35s .2s ease-out forwards; }
+@keyframes okPop { from { transform: scale(.3) rotate(-20deg); } }
+@keyframes tickDraw { to { stroke-dashoffset: 0; } }
 .t-ic { width: 30px; height: 30px; flex: none; border-radius: 50%; display: grid; place-items: center; background: var(--tc); color: #fff; box-shadow: 0 0 0 3px color-mix(in srgb, var(--tc) 30%, transparent); }
 .t-ic.emoji { background: color-mix(in srgb, var(--tc) 30%, rgba(255,255,255,.08)); font-size: 16px; }
 .t-txt { display: flex; flex-direction: column; min-width: 0; line-height: 1.25; }
@@ -1902,9 +1918,9 @@ function sheetEvents(h, day) {
 /** Sheet: the day's measured value for a target-range habit, with the range drawn and the verdict. */
 function sheetRange(h, day) {
   const v = versionNow(h), r = v.range || {}, u = v.unit || '', st = v.step || 1;
-  const mid = r.min != null && r.max != null ? Math.round((r.min + r.max) / 2 / st) * st : (r.min ?? r.max ?? 0);
+  const mid = 0;   // start at 0 — below the range — and step up into it
   const a = aggOf(h, day), cur = ui.rangeDraft != null ? ui.rangeDraft : (a && a.hasValue ? a.value : mid);
-  const has = ui.rangeDraft != null || (a && a.hasValue);
+  const has = true;
   const low = r.min != null && cur < r.min, high = r.max != null && cur > r.max;
   const verdict = !has ? ['', 'עוד לא נמדד ביום הזה', 'קבע ערך ולחץ שמור'] : low ? ['out', 'מתחת לטווח', `חסרים ${clean(Math.round((r.min - cur) * 100) / 100)} ${u} עד המינימום`] : high ? ['out', 'מעל הטווח', `חריגה של ${clean(Math.round((cur - r.max) * 100) / 100)} ${u} מעל המקסימום`] : ['in', 'בתוך הטווח', 'התוצאה עומדת בטווח שהגדרת'];
   return sheet(`${h.name} · ${dayName(day)}`, `<div class="stack rng" style="--hc:${h.color}">
@@ -3187,8 +3203,9 @@ function sheetLog(h, day) {
     <div class="list">${list.length ? list.map(x => `<div class="li"><div class="grow"><div class="small" style="${x.removed ? 'text-decoration:line-through;color:var(--faint)' : ''}">${esc(title(x))}</div><div class="data">${x.ts.slice(11, 16)}${x.corrections ? ` · תוקן ${x.corrections}×` : ''}${x.removed ? ' · בוטל' : ''}</div></div>${x.removed ? '' : `${x.kind === 'log' ? `<button class="link small" data-a="editEntry" data-v="${x.id}">תיקון</button>` : ''}<button class="link small" style="color:var(--missed)" data-a="undoEntry" data-id="${h.id}" data-v="${x.id}">ביטול</button>`}</div>`).join('') : '<div class="li muted small">אין רישומים ביום זה</div>'}</div>
   </div>`);
 }
+const UNITS = ['שעות', 'דקות', 'ק״ג', 'צעדים', 'ס״מ', 'ליטר'];
 function sheetEditor(h) {
-  const d = ui.draft;
+  const d = ui.draft, customUnit = d.unitCustom || (!!d.unit && !UNITS.includes(d.unit));
   const V = d.kind;
   const goalField = { quantity: `<div class="field"><label for="e-goal">יעד יחידות יומי</label><input type="number" id="e-goal" min="0" step="any" value="${d.goal}"></div>
       <div class="field"><label for="e-tapon">סימון בלחיצות</label><input type="checkbox" id="e-tapon" ${d.tapOn ? 'checked' : ''}></div>
@@ -3207,7 +3224,8 @@ function sheetEditor(h) {
       <div class="field-help">כמה נרשם אוטומטית בכל לחיצה. למשל 250 = כוס מים. אם משאירים ריק, נרשם רק שהפעולה קרתה.</div>
       <div class="field"><label for="e-merge">איחוד אירועים קרובים (דקות)</label><input type="number" id="e-merge" min="0" max="240" value="${d.mergeMin || 0}"></div>
       <div class="field-help">מונע ספירה כפולה. למשל 30: אם לחצת שוב תוך 30 דקות, זה מצטרף לאירוע הקודם ולא נספר כאירוע חדש. 0 = כל לחיצה היא אירוע חדש.</div>`,
-    range: `<div class="field"><label for="e-unit">יחידה</label><select id="e-unit">${[...new Set(['שעות', 'ק״ג', 'צעדים', 'דקות', 'ס״מ', 'ליטר', ...(d.unit ? [d.unit] : [])])].map(u => `<option value="${esc(u)}" ${u === d.unit ? 'selected' : ''}>${esc(u)}</option>`).join('')}<option value="" ${!d.unit ? 'selected' : ''}>בלי יחידה</option></select></div>
+    range: `<div class="field unit-field"><span class="uf-l">יחידה</span><div class="unit-chips">${UNITS.map(u => `<button type="button" class="uchip ${!customUnit && d.unit === u ? 'on' : ''}" data-a="unitPick" data-v="${esc(u)}">${esc(u)}</button>`).join('')}<button type="button" class="uchip ${customUnit ? 'on' : ''}" data-a="unitPick" data-v="__custom">✏️ אחר</button><button type="button" class="uchip ghost ${!customUnit && !d.unit ? 'on' : ''}" data-a="unitPick" data-v="">בלי</button></div>
+        ${customUnit ? `<input type="text" id="e-unit" class="unit-input" placeholder="הקלד יחידה, למשל כוסות" maxlength="14" value="${esc(d.unit)}">` : `<input type="hidden" id="e-unit" value="${esc(d.unit)}">`}</div>
       <div class="field"><label for="e-rmin">מינימום רצוי</label>${numStepper('e-rmin', d.rmin ?? 0, d.rstep || 1)}</div>
       <div class="field"><label for="e-rmax">מקסימום רצוי</label>${numStepper('e-rmax', d.rmax ?? 0, d.rstep || 1)}</div>
       <div class="field"><label for="e-rstep">קפיצה בכפתורי + / −</label>${numStepper('e-rstep', d.rstep || 1, 0.5)}</div>
@@ -3320,13 +3338,15 @@ function saveHabit() {
   if (d.kind === 'event' && !(d.goal > 0)) { toast('צריך יעד גדול מ־0', null, { error: true }); return; }
   if (d.kind === 'frequency' && !['perWeek', 'perMonth'].includes(d.schedType)) d.schedType = 'perWeek';
   let h = ui.editing && habitById(ui.editing);
+  const before = h ? JSON.stringify(h) : null;
   if (!h) {
     h = { id: uid(), sortOrder: Math.max(-1, ...S.habits.map(x => x.sortOrder)) + 1, pauses: [], archived: false, versions: [buildVersion(d, d.startDay)] };
     S.habits.push(h);
   } else {
     const t = TODAY(), from = D(h.startDay) > D(t) ? h.startDay : t;
     const nv = buildVersion(d, from), cur = versionNow(h);
-    if (JSON.stringify({ ...nv, effectiveFrom: 0 }) !== JSON.stringify({ ...cur, effectiveFrom: 0 }) || h.kind !== d.kind) {
+    const canon = o => JSON.stringify(o, (k, x) => x && typeof x === 'object' && !Array.isArray(x) ? Object.fromEntries(Object.entries(x).filter(([, y]) => y !== undefined).sort(([a], [b]) => a < b ? -1 : 1)) : x);
+    if (canon({ ...nv, effectiveFrom: 0 }) !== canon({ ...cur, effectiveFrom: 0 }) || h.kind !== d.kind) {
       const i = h.versions.findIndex(v => v.effectiveFrom === from);
       if (i >= 0) h.versions[i] = nv; else h.versions.push(nv);
       h.versions.sort((a, b) => D(a.effectiveFrom) - D(b.effectiveFrom));
@@ -3334,7 +3354,11 @@ function saveHabit() {
     if (d.startDay !== h.startDay && h.versions.length && D(h.versions[0].effectiveFrom) > D(d.startDay)) h.versions[0].effectiveFrom = d.startDay;
   }
   Object.assign(h, { name: d.name.trim(), icon: d.icon, color: d.color, kind: d.kind, category: d.category, details: d.details, startDay: d.startDay, weight: d.weight, showOnHome: d.showOnHome, showInWidget: d.showInWidget, tapStep: d.kind === 'quantity' && d.tapOn ? (d.tapStep > 0 ? d.tapStep : 1) : null, reminder: d.reminder ? d.reminderTime : null });
-  save(); ui.sheet = null; toast(ui.editing ? 'ההרגל עודכן' : 'ההרגל נוסף', null, { icon: h.icon, sub: h.name, color: h.color }); render();
+  if (before && before === JSON.stringify(h)) { ui.sheet = null; render(); return; }   // nothing changed → just close, no message
+  save(); ui.sheet = null;
+  if (ui.editing) toast('ההרגל עודכן', null, { icon: h.icon, sub: h.name, color: h.color });
+  else toast('ההרגל נוסף', null, { sub: `${h.icon} ${h.name}`, color: '#22c55e', ok: true });
+  render();
 }
 function sheetGoal() {
   const hs = S.habits.filter(h => !h.archived), g = ui.goalDraft;
@@ -3429,7 +3453,7 @@ function toast(msg, action, opt = {}) {
   if (!el) { el = document.createElement('div'); el.id = 'toast'; el.setAttribute('role', 'status'); o.appendChild(el); }
   el.className = 'toast'; void el.offsetWidth; el.classList.add('in');
   const icon = opt.icon ? esc(opt.icon) : `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="${opt.error ? 'M6 6l12 12M18 6 6 18' : 'm5 12.5 4.5 4.5L19 7.5'}"/></svg>`;
-  el.innerHTML = `<span class="t-ic ${opt.icon ? 'emoji' : ''}" style="--tc:${opt.color || (opt.error ? '#ff3b30' : '#34c759')}">${icon}</span><span class="t-txt"><b>${esc(msg)}</b>${opt.sub ? `<small>${esc(opt.sub)}</small>` : ''}</span>${action ? `<button class="toast-act" data-a="${action.a}">${esc(action.label)}</button>` : ''}`;
+  el.innerHTML = `<span class="t-ic ${opt.icon ? 'emoji' : ''} ${opt.ok ? 'ok' : ''}" style="--tc:${opt.color || (opt.error ? '#ff3b30' : '#34c759')}">${icon}</span><span class="t-txt"><b>${esc(msg)}</b>${opt.sub ? `<small>${esc(opt.sub)}</small>` : ''}</span>${action ? `<button class="toast-act" data-a="${action.a}">${esc(action.label)}</button>` : ''}`;
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => { el.classList.add('out'); toastTimer = setTimeout(() => el.remove(), 260); }, action ? 6000 : 2200);
 }
@@ -3741,6 +3765,7 @@ document.addEventListener('click', e => {
     case 'copyExport': { const ta = document.getElementById('export-text'); navigator.clipboard?.writeText(ta.value).then(() => toast('הועתק'), () => { ta.select(); toast('סמן והעתק ידנית'); }); if (!navigator.clipboard) { ta.select(); } break; }
     case 'askDeleteAll': ui.confirm = 'deleteAll'; rerender(); break;
     case 'numStep': { const inp = document.getElementById(el.dataset.t); if (inp) { const n = Math.max(0, Math.round(((Number(inp.value) || 0) + Number(v) * Number(el.dataset.s || 1)) * 100) / 100); inp.value = n; inp.dispatchEvent(new Event('input', { bubbles: true })); el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); } break; }
+    case 'unitPick': { readDraft(); const d = ui.draft; if (v === '__custom') { d.unitCustom = true; if (UNITS.includes(d.unit)) d.unit = ''; } else { d.unitCustom = false; d.unit = v || ''; } rerender(); if (v === '__custom') setTimeout(() => { const i = document.getElementById('e-unit'); if (i) i.focus(); }, 30); break; }
     case 'askResetApp': ui.confirm = 'resetApp'; rerender(); break;
     case 'resetApp': try { localStorage.clear(); sessionStorage.clear(); } catch (e) {} location.reload(); break;
     case 'calFilterOpen': ui.calPop = !ui.calPop; rerender(); break;
