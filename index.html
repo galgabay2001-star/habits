@@ -119,6 +119,38 @@ button { cursor: pointer; }
 .ring .lbl b { font-family: var(--font-display); font-weight: 400; font-size: 28px; line-height: 1; }
 .ring circle { transition: stroke-dashoffset .5s cubic-bezier(.3,.9,.3,1); }
 .greet { font-family: var(--font-display); font-size: 21px; line-height: 1.1; }
+/* Live hero header on the home screen: time-of-day gradient, greeting, daily line, today's progress ring. */
+.hero { position: relative; overflow: hidden; border-radius: 26px; padding: 18px 18px 16px; color: #fff; background: linear-gradient(135deg, var(--h1), var(--h2)); box-shadow: 0 18px 36px -20px var(--h2); cursor: pointer; isolation: isolate; text-align: right; direction: rtl; border: 0; font: inherit; width: 100%; display: block; }
+.hero.intro { animation: heroIn .5s cubic-bezier(.2,.8,.2,1); }
+.hero.intro circle.fg { animation: ringIn 1s cubic-bezier(.2,.8,.2,1); }
+@keyframes ringIn { from { stroke-dashoffset: 169.6; } }
+.hero.morning { --h1: #ffa24c; --h2: #ff4f8b; }
+.hero.noon { --h1: #2f7bff; --h2: #14c2d4; }
+.hero.evening { --h1: #8b5cff; --h2: #ff679f; }
+.hero.night { --h1: #24307f; --h2: #7a45e0; }
+.hero .blob { position: absolute; border-radius: 50%; background: rgba(255,255,255,.18); z-index: -1; filter: blur(2px); animation: floaty 9s ease-in-out infinite; }
+.hero .b1 { width: 160px; height: 160px; top: -60px; left: -40px; }
+.hero .b2 { width: 90px; height: 90px; bottom: -30px; left: 110px; animation-delay: -3s; background: rgba(255,255,255,.12); }
+.hero .b3 { width: 46px; height: 46px; top: 14px; left: 46%; animation-delay: -6s; background: rgba(255,255,255,.1); }
+.hero-top { display: flex; align-items: center; gap: 14px; }
+.hero-hi { flex: 1; min-width: 0; }
+.hero-hi .hh { font-family: var(--font-display); font-size: 27px; line-height: 1.1; display: flex; align-items: center; gap: 8px; }
+.hero-hi .hh .em { font-size: 26px; animation: bob 3s ease-in-out infinite; display: inline-block; }
+.hero-hi .hd { font-size: 13px; opacity: .85; margin-top: 3px; }
+.hero-ring { position: relative; width: 66px; height: 66px; flex: none; }
+.hero-ring svg { transform: rotate(-90deg); }
+.hero-ring .rv { position: absolute; inset: 0; display: grid; place-items: center; font-weight: 800; font-size: 16px; line-height: 1; }
+.hero-ring .rv small { display: block; font-size: 10px; font-weight: 600; opacity: .85; margin-top: 2px; }
+.hero-ring circle.fg { transition: stroke-dashoffset .8s cubic-bezier(.2,.8,.2,1); }
+.hero-quote { margin: 14px 0 12px; font-size: 17px; font-weight: 700; line-height: 1.35; text-wrap: balance; }
+.hero-quote.swap { animation: fadeUp .45s ease; }
+.hero-status { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,.2); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-radius: 999px; padding: 6px 12px; font-size: 13px; font-weight: 700; }
+.hero-tip { position: absolute; bottom: 12px; left: 16px; font-size: 11px; opacity: .7; }
+.hero.alldone .hero-status { background: rgba(255,255,255,.32); }
+@keyframes floaty { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(14px,10px) scale(1.08); } }
+@keyframes bob { 0%,100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-3px) rotate(-8deg); } }
+@keyframes heroIn { from { opacity: 0; transform: translateY(8px) scale(.98); } to { opacity: 1; transform: none; } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 .grip { flex: none; display: grid; place-items: center; width: 22px; height: 40px; margin-inline-end: -6px; color: var(--faint); cursor: grab; touch-action: none; border-radius: 8px; }
 .grip:active { cursor: grabbing; color: var(--fg); }
 .habit.dragging { position: relative; z-index: 5; box-shadow: 0 12px 30px rgba(0,0,0,.25); transform-origin: center; transition: none; opacity: .97; }
@@ -1666,6 +1698,28 @@ function habitRow(h, it, day = TODAY()) {
       ${prog ? `<svg class="p" viewBox="0 0 44 44"><circle cx="22" cy="22" r="${r}" fill="none" stroke="${h.color}" stroke-width="3" stroke-dasharray="${c}" stroke-dashoffset="${c * (1 - prog)}" stroke-linecap="round"/></svg>` : ''}
       ${cl ? `<span class="cnt num">${cl}</span>` : ICON.tick}</button></div>`;
 }
+const QUOTES = ['כל יום קטן בונה משהו גדול.', 'לא צריך להיות מושלם, צריך להופיע.', 'צעד אחד היום שווה יותר מתוכנית למחר.', 'ההרגלים של היום הם מי שתהיה מחר.', 'עקביות מנצחת מוטיבציה.', 'אל תשבור את השרשרת.', 'קטן, פשוט, כל יום.', 'ההתחלה היא החלק הכי קשה, ואתה כבר כאן.', 'התקדמות, לא שלמות.', 'מה שעושים כל יום חשוב יותר ממה שעושים לפעמים.', 'עוד סימון אחד ואתה קרוב יותר.', 'תהיה גאה בכל צעד קטן.', 'היום הוא הזדמנות חדשה להתחיל.', 'גם יום חלש נחשב, אם לא ויתרת.', 'שגרה טובה היא מתנה שאתה נותן לעצמך.', 'הכוח נמצא בחזרה.', 'תעשה היום משהו שתודה לעצמך עליו מחר.', 'כל יום הוא נקודה. יחד הן קו.', 'החמצת יום? פשוט חוזרים מחר.', 'מספיק שתתחיל, ההמשך יבוא.', 'הדרך הכי טובה לשנות חיים היא יום אחד בכל פעם.'];
+function heroCard(todays, by) {
+  const hr = new Date().getHours();
+  const [cls, em, hi] = hr >= 5 && hr < 12 ? ['morning', '☀️', 'בוקר טוב'] : hr >= 12 && hr < 17 ? ['noon', '🌤️', 'צהריים טובים'] : hr >= 17 && hr < 21 ? ['evening', '🌅', 'ערב טוב'] : ['night', '🌙', 'לילה טוב'];
+  const total = todays.length, done = todays.filter(h => by[h.id] && isOn(by[h.id])).length, left = total - done;
+  const qi = ((D(TODAY()) + (ui.quoteShift || 0)) % QUOTES.length + QUOTES.length) % QUOTES.length;
+  const date = new Intl.DateTimeFormat('he-IL', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date());
+  const status = !S.habits.length ? '✨ בוא נתחיל: צור את ההרגל הראשון שלך'
+    : !total ? '😌 אין הרגלים מתוכננים להיום. יום מנוחה'
+    : done === 0 ? `🚀 יום חדש מחכה לך · ${total === 1 ? 'הרגל אחד' : total + ' הרגלים'} להיום`
+    : left === 0 ? '🎉 סגרת את היום! כל הכבוד'
+    : done / total >= .5 ? `🔥 יותר מחצי בדרך! ${left === 1 ? 'נשאר רק עוד אחד' : 'עוד ' + left}`
+    : `💪 התחלה טובה! ${done} מתוך ${total}`;
+  const r = 27, c = 2 * Math.PI * r, frac = total ? done / total : 0, first = !ui.heroSeen, swap = ui.quoteAnim; ui.heroSeen = true; ui.quoteAnim = false;
+  return `<button class="hero ${cls} ${first ? 'intro' : ''} ${total && !left ? 'alldone' : ''}" data-a="nextQuote" aria-label="משפט נוסף">
+    <i class="blob b1"></i><i class="blob b2"></i><i class="blob b3"></i>
+    <div class="hero-top"><div class="hero-hi"><div class="hh"><span class="em">${em}</span>${hi}</div><div class="hd">${date}</div></div>
+      ${total ? `<div class="hero-ring"><svg viewBox="0 0 66 66" width="66" height="66"><circle cx="33" cy="33" r="${r}" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="7"/><circle class="fg" cx="33" cy="33" r="${r}" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-dasharray="${c.toFixed(1)}" stroke-dashoffset="${(c * (1 - frac)).toFixed(1)}"/></svg><div class="rv"><div><bdi dir="ltr">${done}/${total}</bdi><small>היום</small></div></div></div>` : ''}</div>
+    <div class="hero-quote ${swap ? 'swap' : ''}">${QUOTES[qi]}</div>
+    <span class="hero-status">${status}</span>
+  </button>`;
+}
 function greet() { const h = new Date().getHours(); return h >= 5 && h < 12 ? 'בוקר טוב' : h < 17 && h >= 12 ? 'צהריים טובים' : h >= 17 && h < 21 ? 'ערב טוב' : 'לילה טוב'; }
 function screenToday() {
   const t = TODAY(), day = ui.viewDay, isToday = day === t;
@@ -1677,10 +1731,11 @@ function screenToday() {
   const oldest = Math.min(...S.habits.map(h => D(h.startDay)), D(t));
   return `<div class="navbar"><button class="iconbtn" data-a="new" aria-label="הרגל חדש">${ICON.plus}</button><h2>ההרגלים שלי</h2>${themeBtn()}</div>
   <div class="stack">
+    ${isToday ? heroCard(todays, by) : ''}
     <section class="card daynav ${isToday ? '' : 'past'}">
       <div class="row daynav-row">
         <button class="navpill" data-a="viewDay" data-v="-1" aria-label="יום קודם" ${D(day) <= oldest ? 'disabled' : ''}><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg></button>
-        <div class="grow" style="text-align:center;direction:rtl"><span class="greet">${isToday ? greet() : dayName(day)}</span><div class="muted small">${date}</div></div>
+        <div class="grow" style="text-align:center;direction:rtl"><span class="greet">${isToday ? 'היום' : dayName(day)}</span><div class="muted small">${date}</div></div>
         <button class="navpill" data-a="viewDay" data-v="1" aria-label="יום הבא" ${isToday ? 'disabled' : ''}><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
       </div>
       <div class="weekjump"><button data-a="viewDay" data-v="-7" ${D(day) - 7 < oldest - 6 ? 'disabled' : ''}><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg><span>שבוע קודם</span></button><span class="tiny muted wj-range">${(() => { const w = E.weekStartOf(D(day), S.settings.weekStart); return `<bdi dir="ltr">${+S_(w).slice(8)}.${+S_(w).slice(5, 7)} – ${+S_(w + 6).slice(8)}.${+S_(w + 6).slice(5, 7)}</bdi>`; })()}</span><button data-a="viewDay" data-v="7" ${isToday ? 'disabled' : ''}><span>שבוע הבא</span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button></div>
@@ -3137,6 +3192,7 @@ document.addEventListener('click', e => {
     case 'askDeleteAll': ui.confirm = 'deleteAll'; rerender(); break;
     case 'deleteAll': S = { habits: [], events: [], goals: [], settings: S.settings, v: 1 }; save(); ui.sheet = null; ui.confirm = null; ui.detail = null; toast('כל הנתונים נמחקו'); render(); break;
     case 'askReset': S = seed(); save(); ui.sheet = null; ui.detail = null; toast('נטענו נתוני דוגמה חדשים'); render(); break;
+    case 'nextQuote': ui.quoteShift = (ui.quoteShift || 0) + 1; ui.quoteAnim = true; rerender(); break;
     case 'quickTheme': S.settings.theme = isDark() ? 'light' : 'dark'; save(); applyTheme(); rerender(); break;
     case 'setTheme': S.settings.theme = v; save(); applyTheme(); rerender(); break;
     case 'theme': { const r = document.documentElement; const dark = r.dataset.theme ? r.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches; r.dataset.theme = dark ? 'light' : 'dark'; break; }
