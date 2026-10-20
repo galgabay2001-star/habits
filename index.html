@@ -3185,12 +3185,13 @@ function sheetEditor(h) {
     quality: `<div class="field"><label for="e-qs">סולם דירוג (1–X)</label><input type="number" id="e-qs" min="3" max="10" value="${d.qualityScale}"></div>`,
     avoidance: `<div class="field"><label for="e-al">חריגות מותרות ביום</label><input type="number" id="e-al" min="0" value="${d.allowedLapses}"></div><div class="field small muted">יום נספר רק אם דיווחת עליו. ימים בלי דיווח מוצגים כ״אין דיווח״.</div>`,
     frequency: `<div class="field small muted">בחר למטה כמה פעמים בשבוע או בחודש.</div>`,
-    event: `<div class="field"><label for="e-unit">יחידה (לא חובה)</label><input type="text" id="e-unit" placeholder="מ״ל, עמודים, דקות" value="${esc(d.unit)}"></div>
-      <div class="field"><label for="e-egoal">היעד היומי לפי</label><select id="e-egoal"><option value="count" ${d.eventGoal !== 'amount' ? 'selected' : ''}>מספר אירועים</option><option value="amount" ${d.eventGoal === 'amount' ? 'selected' : ''}>כמות מצטברת</option></select></div>
-      <div class="field"><label for="e-goal">${d.eventGoal === 'amount' ? `יעד כמות ביום${d.unit ? ` (${esc(d.unit)})` : ''}` : 'יעד אירועים ביום'}</label><input type="number" id="e-goal" min="0" step="any" value="${d.goal}"></div>
+    event: `<div class="field"><label for="e-egoal">היעד היומי לפי</label><select id="e-egoal"><option value="count" ${d.eventGoal !== 'amount' ? 'selected' : ''}>מספר אירועים</option><option value="amount" ${d.eventGoal === 'amount' ? 'selected' : ''}>כמות מצטברת</option></select></div>
+      <div class="field"><label for="e-goal">${d.eventGoal === 'amount' ? 'יעד כמות ביום' : 'יעד אירועים ביום'}</label><input type="number" id="e-goal" min="0" step="any" value="${d.goal}"></div>
+      <div class="field-help">${d.eventGoal === 'amount' ? 'כמה בסך הכל צריך להגיע ביום. למשל 2000 = 2 ליטר מים, לא משנה בכמה פעמים.' : 'כמה פעמים ביום צריך לעשות את הפעולה. למשל 8 = שמונה פעמים שתייה.'}</div>
       <div class="field"><label for="e-eamt">כמות קבועה לכל אירוע</label><input type="number" id="e-eamt" min="0" step="any" placeholder="לא חובה" value="${d.eventAmount ?? ''}"></div>
+      <div class="field-help">כמה נרשם אוטומטית בכל לחיצה. למשל 250 = כוס מים. אם משאירים ריק, נרשם רק שהפעולה קרתה.</div>
       <div class="field"><label for="e-merge">איחוד אירועים קרובים (דקות)</label><input type="number" id="e-merge" min="0" max="240" value="${d.mergeMin || 0}"></div>
-      <div class="field small muted">0 = כל לחיצה היא אירוע חדש. אם תגדיר למשל 30, אירוע שנרשם עד 30 דקות אחרי הקודם יתאחד איתו ולא ייספר פעמיים.</div>`,
+      <div class="field-help">מונע ספירה כפולה. למשל 30: אם לחצת שוב תוך 30 דקות, זה מצטרף לאירוע הקודם ולא נספר כאירוע חדש. 0 = כל לחיצה היא אירוע חדש.</div>`,
     range: `<div class="field"><label for="e-unit">יחידה</label><input type="text" id="e-unit" placeholder="שעות, ק״ג, צעדים" value="${esc(d.unit)}"></div>
       <div class="field"><label for="e-rmin">מינימום רצוי</label><input type="number" id="e-rmin" step="any" placeholder="אין" value="${d.rmin ?? ''}"></div>
       <div class="field"><label for="e-rmax">מקסימום רצוי</label><input type="number" id="e-rmax" step="any" placeholder="אין" value="${d.rmax ?? ''}"></div>
