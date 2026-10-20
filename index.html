@@ -234,6 +234,9 @@ div.hmain .hsub { white-space: nowrap; overflow: hidden; text-overflow: ellipsis
 .check svg.p { position: absolute; inset: 3px; width: calc(100% - 6px); height: calc(100% - 6px); transform: rotate(-90deg); }
 .check .tick { width: 22px; height: 22px; color: #fff; opacity: 0; transform: scale(.4); transition: transform .3s cubic-bezier(.3,1.6,.5,1), opacity .2s; }
 .check.on { background: var(--hc); border-color: var(--hc); }
+.check.out { border-color: #ff3b30; background: color-mix(in srgb, #ff3b30 10%, transparent); color: #ff3b30; }
+.check.out .cnt { color: #ff3b30; }
+.check.on .cnt { color: #fff; }
 .check.on .tick { opacity: 1; transform: scale(1); }
 .check.pop { animation: pop .38s cubic-bezier(.3,1.6,.5,1); }
 @keyframes pop { 40% { transform: scale(1.14); } }
@@ -572,6 +575,53 @@ textarea.export { width: 100%; height: 160px; font-family: var(--font-data); fon
 .st-strip i { aspect-ratio: 1; border-radius: 2px; background: var(--surface-2); display: block; }
 .st-strip i.y { background: var(--hc); } .st-strip i.n { background: color-mix(in srgb, var(--missed) 35%, var(--surface-2)); } .st-strip i.x { opacity: .3; }
 .hstat { border: none; text-align: start; color: inherit; }
+/* Event-based + target-range measurement */
+.rbar { direction: rtl; padding: 18px 4px 4px; }
+.rb-track { position: relative; height: 12px; border-radius: 99px; background: color-mix(in srgb, #ff5c7a 18%, var(--surface-2)); }
+.rb-band { position: absolute; top: 0; bottom: 0; border-radius: 99px; background: linear-gradient(90deg, #22c55e, #4ade80); box-shadow: 0 0 0 2px color-mix(in srgb, #22c55e 25%, transparent); }
+.rb-mark { position: absolute; top: 50%; width: 20px; height: 20px; margin-right: -10px; transform: translateY(-50%); border-radius: 50%; background: #fff; border: 4px solid #22c55e; box-shadow: 0 3px 8px rgba(0,0,0,.25); transition: right .3s cubic-bezier(.2,.8,.2,1); }
+.rb-mark.out { border-color: #ff3b30; }
+.rb-mark span { position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%); font-size: 12px; font-weight: 900; background: var(--fg); color: var(--bg); padding: 1px 6px; border-radius: 6px; white-space: nowrap; }
+.rb-labels { position: relative; height: 18px; margin-top: 4px; }
+.rb-labels span { position: absolute; transform: translateX(50%); font-size: 11px; font-weight: 700; color: var(--muted); white-space: nowrap; }
+.rng-big { display: flex; align-items: center; justify-content: center; gap: 14px; direction: ltr; }
+.rng-big button { width: 52px; height: 52px; border-radius: 50%; border: 0; font-size: 28px; font-weight: 800; background: color-mix(in srgb, var(--hc) 16%, var(--surface-2)); color: var(--hc); cursor: pointer; }
+.rng-big div { text-align: center; }
+.rng-big input { width: 130px; text-align: center; font-size: 40px; font-weight: 900; border: 0; background: transparent; color: var(--fg); font-family: inherit; }
+.rng-big small { display: block; font-size: 13px; color: var(--muted); font-weight: 700; }
+.rng-verdict { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 16px; direction: rtl; background: var(--surface-2); }
+.rng-verdict > span { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-weight: 900; color: #fff; background: var(--faint); flex: none; }
+.rng-verdict.in { background: color-mix(in srgb, #22c55e 13%, var(--surface)); } .rng-verdict.in > span { background: #22c55e; }
+.rng-verdict.out { background: color-mix(in srgb, #ff3b30 11%, var(--surface)); } .rng-verdict.out > span { background: #ff3b30; }
+.rng-verdict b { display: block; font-size: 15px; } .rng-verdict small { font-size: 12.5px; color: var(--muted); }
+.evs { direction: rtl; }
+.ev-goal { position: relative; overflow: hidden; border-radius: 18px; padding: 14px 16px; background: color-mix(in srgb, var(--hc) 12%, var(--surface-2)); display: flex; align-items: baseline; gap: 8px; isolation: isolate; }
+.ev-goal b { font-size: 34px; font-weight: 900; color: var(--hc); } .ev-goal span { font-size: 13.5px; font-weight: 700; color: var(--muted); }
+.ev-goal i { position: absolute; inset-block: 0; right: 0; background: color-mix(in srgb, var(--hc) 16%, transparent); z-index: -1; transition: width .4s; }
+.ev-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)); gap: 6px; }
+.ev-stats div { background: var(--surface-2); border-radius: 14px; padding: 8px 6px; text-align: center; display: flex; flex-direction: column; }
+.ev-stats b { font-size: 17px; font-weight: 900; } .ev-stats span { font-size: 10.5px; color: var(--muted); font-weight: 700; }
+.ev-list { position: relative; display: flex; flex-direction: column; gap: 2px; padding-right: 6px; }
+.ev-list::before { content: ""; position: absolute; top: 14px; bottom: 14px; right: 11px; width: 2px; background: color-mix(in srgb, var(--hc) 30%, transparent); }
+.ev-row { position: relative; display: flex; align-items: center; gap: 10px; padding: 8px 4px; font-size: 14px; }
+.ev-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--hc); box-shadow: 0 0 0 3px var(--surface); flex: none; z-index: 1; }
+.ev-t { font-size: 15px; min-width: 44px; } .ev-row small { color: var(--muted); font-size: 11.5px; }
+.ev-del { border: 0; background: color-mix(in srgb, #ff3b30 10%, transparent); color: #ff3b30; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-weight: 800; }
+.ev-empty { color: var(--muted); font-size: 13px; padding: 10px 4px; }
+.mx h3 { margin: 0 0 10px; direction: rtl; text-align: right; }
+.mx-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; direction: rtl; }
+.mx-t { position: relative; background: linear-gradient(135deg, color-mix(in srgb, var(--hc) 13%, var(--surface)), var(--surface-2)); border-radius: 14px; padding: 8px; display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.mx-t span { font-size: 14px; } .mx-t b { font-size: 18px; font-weight: 900; color: var(--hc); line-height: 1.15; } .mx-t b small { font-size: 12px; color: var(--muted); }
+.mx-t > small { font-size: 10.5px; color: var(--muted); font-weight: 700; line-height: 1.25; }
+.mx-h { font-size: 12.5px; color: var(--muted); margin: 12px 0 6px; direction: rtl; text-align: right; }
+.mx-hours { display: flex; align-items: flex-end; gap: 2px; height: 56px; direction: ltr; }
+.mx-hours i { flex: 1; border-radius: 3px 3px 0 0; background: var(--surface-2); }
+.mx-hours i.y { background: linear-gradient(to top, var(--hc), color-mix(in srgb, var(--hc) 60%, #fff)); }
+.mx-hl { display: flex; justify-content: space-between; direction: ltr; font-size: 10px; color: var(--faint); margin-top: 3px; }
+.rg-chart { position: relative; height: 90px; margin: 4px 8px 4px; border-radius: 10px; background: color-mix(in srgb, #ff5c7a 6%, var(--surface-2)); }
+.rg-band { position: absolute; left: 0; right: 0; background: color-mix(in srgb, #22c55e 20%, transparent); border-block: 1.5px dashed color-mix(in srgb, #22c55e 60%, transparent); }
+.rg-pt { position: absolute; width: 10px; height: 10px; margin: -5px -5px 0 0; border-radius: 50%; background: #22c55e; box-shadow: 0 0 0 2px var(--surface); }
+.rg-pt.out { background: #ff3b30; }
 /* Lively statistics: hero summary, podium, sparkline per habit */
 .sx-hero { position: relative; overflow: hidden; isolation: isolate; border-radius: 26px; padding: 18px; color: #fff; direction: rtl; background: linear-gradient(135deg, #6a5cff, #4f7cff 50%, #14c2d4); box-shadow: 0 18px 36px -20px #4f7cff; animation: heroIn .5s cubic-bezier(.2,.8,.2,1); }
 .sx-hero .blob { position: absolute; border-radius: 50%; background: rgba(255,255,255,.16); z-index: -1; animation: floaty 9s ease-in-out infinite; }
@@ -1080,8 +1130,21 @@ button.wcell:active { transform: scale(.9); }
       else result = day === today ? 'pending' : 'nodata';
       return { status: result, lapses: agg ? agg.lapses : 0 };
     }
+    if (kind === 'range') {
+      // Target range: the day's measured value must be between min and max (both optional)
+      if (!agg || !agg.hasValue) return { status: day === today ? 'pending' : 'nodata' };
+      const r = v.range || {}, val = agg.value;
+      const low = r.min != null && val < r.min, high = r.max != null && val > r.max;
+      const deviation = low ? round(r.min - val, 2) : high ? round(val - r.max, 2) : 0;
+      return { status: low || high ? 'missed' : 'done', progress: low || high ? 0 : 1, value: val, side: low ? 'low' : high ? 'high' : null, deviation };
+    }
     let progress;
-    if (kind === 'quantity' || kind === 'duration') {
+    if (kind === 'event') {
+      // Event-based: every occurrence is its own entry; goal is either a number of events or a total amount
+      const goal = goalValue(v) ?? 1;
+      const amt = v.eventGoal === 'amount' ? (agg ? agg.value : 0) : (agg ? agg.completions : 0);
+      progress = goal > 0 ? amt / goal : (amt > 0 ? 1 : 0);
+    } else if (kind === 'quantity' || kind === 'duration') {
       const goal = goalValue(v) ?? 1;
       const amt = dayAmount(kind, agg);
       progress = goal > 0 ? amt / goal : (amt > 0 ? 1 : 0);
@@ -1212,7 +1275,7 @@ button.wcell:active { transform: scale(.9); }
 
     // Amount metrics (quantity / duration / composite with values)
     const amountField = spec.kind === 'duration' ? 'duration' : 'value';
-    const wantAmounts = spec.kind === 'quantity' || spec.kind === 'duration' || spec.kind === 'composite';
+    const wantAmounts = spec.kind === 'quantity' || spec.kind === 'duration' || spec.kind === 'composite' || spec.kind === 'event' || spec.kind === 'range';
     if (wantAmounts) report.amount = amountStats(ns, byDay, from, to, today, amountField, spec.kind === 'composite' ? null : spec.kind);
     if (spec.kind === 'composite') report.durationStats = amountStats(ns, byDay, from, to, today, 'duration', null);
 
@@ -1250,6 +1313,32 @@ button.wcell:active { transform: scale(.9); }
       };
     }
 
+    // Event-based tracking: each occurrence on its own
+    if (spec.kind === 'event') report.events = eventStats(ns, events.filter(e => e.habitID == null || e.habitID === spec.id), from, to);
+    // Target range: in range / below / above
+    if (spec.kind === 'range') {
+      let measured = 0, inRange = 0, below = 0, above = 0; const devs = [], series = [];
+      for (let d = from; d <= to; d++) {
+        const e = evaluateDay(ns, byDay, d, today);
+        if (e.value == null) continue;
+        measured++; series.push({ day: dayToString(d), value: e.value, side: e.side });
+        if (e.side === 'low') { below++; devs.push(e.deviation); } else if (e.side === 'high') { above++; devs.push(e.deviation); } else inRange++;
+      }
+      const dist = series.map(x => { const r = versionAt(ns, dayFromString(x.day)).range || {}; return x.side === 'low' ? r.min - x.value : x.side === 'high' ? x.value - r.max : 0; });
+      const half = Math.floor(dist.length / 2);
+      const trendDelta = dist.length >= 4 ? round(mean(dist.slice(half)) - mean(dist.slice(0, half)), 2) : null;
+      const r = versionAt(ns, to).range || {};
+      report.range = {
+        min: r.min ?? null, max: r.max ?? null, measured, inRange, below, above,
+        inRangeRate: measured ? round(inRange / measured * 100) : null,
+        meanDeviation: devs.length ? round(mean(devs), 2) : 0,
+        maxDeviation: devs.length ? Math.max(...devs) : 0,
+        mean: series.length ? round(mean(series.map(x => x.value)), 2) : null,
+        trend: trendDelta == null ? 'insufficient' : trendDelta < -0.05 ? 'closer' : trendDelta > 0.05 ? 'farther' : 'stable',
+        series,
+      };
+    }
+
     // Frequency progress (current period)
     const curV = versionAt(ns, today); const cs = curV.schedule || {};
     if (PERIOD_TYPES.includes(cs.type)) {
@@ -1259,6 +1348,31 @@ button.wcell:active { transform: scale(.9); }
 
     report.score = scores(spec, report);
     return report;
+  }
+
+  /** Event stats over [from, to]: count, total, average per event, gaps between events, hours, vs previous window. */
+  function eventStats(ns, events, from, to) {
+    const { entries } = foldEvents(events);
+    const list = [...entries.values()].filter(x => !x.removed && x.kind === 'log').sort((a, b) => (a.ts < b.ts ? -1 : 1));
+    const inWin = list.filter(x => x.day >= from && x.day <= to);
+    const len = to - from + 1, prev = list.filter(x => x.day >= from - len && x.day < from && x.day >= ns.start);
+    const vals = inWin.filter(x => x.value != null).map(x => x.value);
+    const durs = inWin.filter(x => x.duration != null).map(x => x.duration);
+    const gaps = []; const byDay = {};
+    for (const x of inWin) (byDay[x.day] = byDay[x.day] || []).push(x);
+    for (const k of Object.keys(byDay)) { const a = byDay[k]; for (let i = 1; i < a.length; i++) { const g = (new Date(a[i].ts) - new Date(a[i - 1].ts)) / 60000; if (g >= 0) gaps.push(g); } }
+    const hours = Array(24).fill(0); for (const x of inWin) { const h = new Date(x.ts).getHours(); if (!isNaN(h)) hours[h]++; }
+    const activeDays = Object.keys(byDay).length;
+    let peak = null; hours.forEach((n, h) => { if (n && (peak == null || n > hours[peak])) peak = h; });
+    return {
+      count: inWin.length, total: round(vals.reduce((a, b) => a + b, 0), 2), totalDuration: round(durs.reduce((a, b) => a + b, 0), 2),
+      meanPerEvent: vals.length ? round(mean(vals), 2) : null,
+      meanPerActiveDay: activeDays ? round(inWin.length / activeDays, 2) : null,
+      meanGapMinutes: gaps.length ? round(mean(gaps)) : null,
+      activeDays, hours, peakHour: peak,
+      previousCount: prev.length,
+      changeVsPrevious: prev.length ? round((inWin.length - prev.length) / prev.length * 100) : null,
+    };
   }
 
   function amountStats(ns, byDay, from, to, today, field, kindForGoal) {
@@ -1380,7 +1494,7 @@ button.wcell:active { transform: scale(.9); }
       let periodMet = false, periodCount = 0, periodNeed = 0;
       if (ev.flexible) { const o = occurrences(ns, byDay, today, today, today)[0]; if (o) { periodMet = o.status === 'done'; periodCount = o.count; periodNeed = o.need; } }
       const need = (spec.kind === 'binary' || spec.kind === 'composite') ? Math.max(1, v.timesPerDay || 1) : 1;
-      return { id: spec.id, status: ev.status, progress: ev.progress ?? (ev.status === 'done' ? 1 : 0), flexible: !!ev.flexible, completionsToday: agg ? agg.completions : 0, amountToday: agg ? (spec.kind === 'duration' ? agg.duration : agg.value) : 0, need, periodMet, periodCount, periodNeed, goal: (spec.kind === 'quantity' || spec.kind === 'duration') ? goalValue(v) : null };
+      return { id: spec.id, status: ev.status, progress: ev.progress ?? (ev.status === 'done' ? 1 : 0), flexible: !!ev.flexible, completionsToday: agg ? agg.completions : 0, amountToday: agg ? (spec.kind === 'duration' ? agg.duration : agg.value) : 0, need, periodMet, periodCount, periodNeed, goal: (spec.kind === 'quantity' || spec.kind === 'duration' || spec.kind === 'event') ? goalValue(v) : null, value: ev.value ?? null, side: ev.side ?? null, deviation: ev.deviation ?? null };
     });
     const counted = items.filter(i => !i.flexible && ['done', 'pending', 'missed', 'partial', 'nodata'].includes(i.status));
     const done = counted.filter(i => i.status === 'done').length;
@@ -1506,8 +1620,8 @@ const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': 
 const clean = n => n == null ? '—' : (Number.isInteger(n) ? String(n) : String(Math.round(n * 10) / 10));
 const pct = v => v == null ? null : clean(v) + '%';
 const uid = () => (crypto.randomUUID ? crypto.randomUUID() : 'x' + Math.random().toString(16).slice(2) + Date.now());
-const KINDS = { binary: 'בוצע / לא בוצע', duration: 'מדיד בזמן - דקות/שעות', quantity: 'כמות - יחידות', quality: 'איכות', frequency: 'תדירות', avoidance: 'הימנעות', composite: 'משולב' };
-const KIND_HELP = { binary: 'האם ביצעתי היום', quantity: 'מספר יחידות (כוסות, דפים, צעדים)', duration: 'זמן שהוקדש, בדקות', quality: 'דירוג אישי של הביצוע', frequency: 'מספר פעמים בשבוע או בחודש', avoidance: 'התנהגות שרוצים להפחית', composite: 'ביצוע + משך + איכות יחד' };
+const KINDS = { binary: 'בוצע / לא בוצע', duration: 'מדיד בזמן - דקות/שעות', quantity: 'כמות - יחידות', event: 'לפי אירוע - כל פעם נרשמת בנפרד', range: 'טווח תקין - מינימום ומקסימום', quality: 'איכות', frequency: 'תדירות', avoidance: 'הימנעות', composite: 'משולב' };
+const KIND_HELP = { binary: 'האם ביצעתי היום', quantity: 'מספר יחידות (כוסות, דפים, צעדים)', duration: 'זמן שהוקדש, בדקות', event: 'כל פעם שהפעולה קורית נרשמת כאירוע נפרד עם שעה (וכמות אם יש). בסוף היום, השבוע או החודש מקבלים מספר אירועים, כמות מצטברת, ממוצע לאירוע, מרווח בין אירועים ושעות ביצוע.', range: 'מגדירים מינימום ומקסימום רצויים, והאפליקציה בודקת אם התוצאה בתוך הטווח. גם תוצאה גבוהה מדי נחשבת חריגה (למשל שעות שינה).', quality: 'דירוג אישי של הביצוע', frequency: 'מספר פעמים בשבוע או בחודש', avoidance: 'התנהגות שרוצים להפחית', composite: 'ביצוע + משך + איכות יחד' };
 const WD = ['א׳', 'ב׳', 'ג׳', 'ד׳', 'ה׳', 'ו׳', 'ש׳'];
 const STATUS = { done: ['הושלם', 'var(--done)'], partial: ['חלקי', 'var(--faint)'], missed: ['לא בוצע', 'var(--faint)'], pending: ['ממתין', 'var(--faint)'], rest: ['יום מנוחה', 'var(--rest)'], nodata: ['אין דיווח', 'var(--nodata)'], unscheduled: ['יום מנוחה', 'var(--rest)'], bonus: ['בונוס', 'var(--done)'], future: ['עתידי', 'var(--faint)'], inactive: ['לא פעיל', 'var(--faint)'] };
 const COLORS = ['#4f7cff', '#3ba3ff', '#14b8a6', '#34c38f', '#a3c93a', '#f2a93b', '#ff8a4c', '#ff6b6b', '#e5609c', '#8e7cff', '#64748b', '#2b50d8', '#06b6d4', '#0f766e', '#16a34a', '#eab308', '#b45309', '#dc2626', '#f43f5e', '#c026d3', '#6d28d9', '#1f2937'];
@@ -1593,6 +1707,8 @@ function goalSummary(h) {
   if (h.kind === 'quantity' || h.kind === 'duration') { const g = goalOf(v); if (g != null) p.push(`${clean(g)} ${v.unit || (h.kind === 'duration' ? 'דק׳' : '')}`); }
   if ((h.kind === 'binary' || h.kind === 'composite') && v.timesPerDay > 1) p.push(`${v.timesPerDay} פעמים ביום`);
   if (h.kind === 'avoidance') p.push(v.allowedLapses > 0 ? `עד ${v.allowedLapses} חריגות` : 'ללא חריגות');
+  if (h.kind === 'event') p.push(v.eventGoal === 'amount' ? `${clean(goalOf(v))} ${v.unit || ''} ביום`.replace('  ', ' ') : `${clean(goalOf(v))} אירועים ביום`);
+  if (h.kind === 'range') p.push(`טווח ${rangeText(v)}`);
   p.push(scheduleText(v.schedule || { type: 'daily' }));
   return p.join(' · ');
 }
@@ -1603,6 +1719,10 @@ function progressText(h, day = TODAY()) {
     case 'duration': return `\u2066${fmtClock(Math.round((a && a.hasDuration ? a.duration : 0) * 60) * 1000)}\u2069 מתוך ${fmtMin(goalOf(v))}`;   // "05:12 מתוך 55 דק׳" — exact, reads cleanly
     case 'frequency': { const r = E.analyze(spec(h), eventsOf(h.id), { from: day, to: day, today: TODAY() }); return r.period ? `${r.period.count} מתוך ${r.period.need} ${r.period.unit === 'week' ? 'השבוע' : 'החודש'}` : goalSummary(h); }
     case 'avoidance': return a && a.lapses ? `${a.lapses} חריגות היום` : (a && a.clean ? 'יום נקי' : 'טרם דווח');
+    case 'event': { const n = a ? a.completions : 0, tot = a && a.hasValue ? a.value : 0, u = v.unit || '';
+      return v.eventGoal === 'amount' ? `${clean(tot)} מתוך ${clean(goalOf(v))} ${u} · ${n === 1 ? 'אירוע אחד' : n + ' אירועים'}` : `${n} מתוך ${clean(goalOf(v))} אירועים${tot ? ` · ${clean(tot)} ${u}` : ''}`; }
+    case 'range': { const e = statusOf(h, day); if (e.value == null) return `טרם נמדד · טווח ${rangeText(v)}`;
+      return `${clean(e.value)} ${v.unit || ''} · ${e.side === 'low' ? `מתחת לטווח ב־${clean(e.deviation)}` : e.side === 'high' ? `מעל הטווח ב־${clean(e.deviation)}` : 'בתוך הטווח ✓'}`; }
     default: return v.timesPerDay > 1 ? `${a ? a.completions : 0} מתוך ${v.timesPerDay} ${day === TODAY() ? 'היום' : 'ביום הזה'}` : goalSummary(h);
   }
 }
@@ -1620,6 +1740,8 @@ function setDone(h, day, done, source = 'manual') {
     else if (h.kind === 'quantity') ev(h, day, 'log', { value: Math.max((goalOf(v) || 1) - (a ? a.value : 0), 0), source, targetAtTime: goalOf(v) });
     else if (h.kind === 'duration') ev(h, day, 'log', { duration: Math.max((goalOf(v) || 1) - (a ? a.duration : 0), 0), source, targetAtTime: goalOf(v) });
     else if (h.kind === 'frequency') ev(h, day, 'log', { source });
+    else if (h.kind === 'range') return false;
+    else if (h.kind === 'event') { if (v.eventGoal === 'amount') ev(h, day, 'log', { value: Math.max((goalOf(v) || 1) - (a && a.hasValue ? a.value : 0), 0), source }); else for (let i = a ? a.completions : 0; i < (goalOf(v) || 1); i++) ev(h, day, 'log', { value: v.eventAmount ?? undefined, source }); }
     else { const need = Math.max(1, v.timesPerDay || 1); for (let i = 0; i < Math.max(1, need - (a ? a.completions : 0)); i++) ev(h, day, 'log', { source }); }
   } else {
     for (const en of activeEntries(h, day, ['log', 'clean', 'lapse'])) ev(h, day, 'undo', { entryID: en.id, source });
@@ -1645,6 +1767,8 @@ function isOn(it) { return it.flexible ? (it.completionsToday > 0 || it.periodMe
 function tapPlan(it, h) {
   if (it.status === 'rest') return { mode: 'rest' };
   if (it.flexible) return { mode: 'done', want: it.completionsToday === 0 };
+  if (h && h.kind === 'event') return { mode: 'event' };
+  if (h && h.kind === 'range') return { mode: 'range' };
   // Quantity "tap to add": each tap adds one step (1 of 9 → 2 of 9 …); ✓ only at the goal; a tap on a full habit removes one step
   if (h && h.kind === 'quantity' && h.tapStep && it.goal) { const c = it.amountToday || 0, st = h.tapStep; return { mode: 'amount', target: c < it.goal ? c + st : Math.max(0, c - st) }; }
   if (it.need > 1) { const c = it.completionsToday; return { mode: 'count', target: c < it.need ? c + 1 : c - 1 }; }
@@ -1666,12 +1790,16 @@ function setAmount(h, day, target, source = 'manual') {
 /** Text inside the round button: "3/9" for tap-to-add amounts, "1/2" for twice-a-day. null → show ✓. */
 function countLabel(it, h) {
   if (it.flexible) return isOn(it) || !it.periodNeed ? null : `${it.periodCount}/${it.periodNeed}`;   // this week: 2/3
+  if (h.kind === 'range') return it.value != null ? clean(it.value) : null;
+  if (h.kind === 'event') return isOn(it) ? null : `${it.completionsToday}`;
   if (isOn(it)) return null;
   if (h.kind === 'quantity' && h.tapStep && it.goal) return `${clean(it.amountToday || 0)}/${clean(it.goal)}`;
   if (it.need > 1) return `${it.completionsToday}/${it.need}`;
   return null;
 }
 function applyPlan(h, day, plan, source = 'manual') {
+  if (plan.mode === 'event') { const r = addEvent(h, day, null, null, source); toast(r.merged ? 'נוסף לאירוע הקודם' : `נרשם אירוע · ${r.time}${r.amount != null ? ` · ${clean(r.amount)} ${versionNow(h).unit || ''}` : ''}`, { label: 'בטל', a: 'evUndo' }, { icon: h.icon, color: h.color }); ui.lastEvent = { id: h.id, entry: r.entry, merged: r.merged, prev: r.prev }; return true; }
+  if (plan.mode === 'range') { ui.sheet = { type: 'range', id: h.id, day }; return false; }
   if (plan.mode === 'amount') return setAmount(h, day, plan.target, source);
   if (plan.mode === 'rest') { setRest(h, day, false); if (h.kind !== 'duration') setDone(h, day, true, source); return true; }   // rest day → trained after all: one tap marks it done
   if (plan.mode === 'count') return setCount(h, day, plan.target, source);
@@ -1688,6 +1816,90 @@ function lineFor(h, it, day) {
   if (it.need > 1) return `${it.completionsToday} מתוך ${it.need} פעמים${it.status === 'done' ? ' ✓' : ''}`;
   if (h.kind === 'quantity' && h.tapStep) return progressText(h, day) + (it.status === 'done' ? ' ✓' : '');
   return todayLine(h, it, day);
+}
+/** Event-based: one tap = one event (with its time and the habit's fixed amount). Within the merge window it joins the previous event. */
+function addEvent(h, day, amount = null, time = null, source = 'manual') {
+  const v = versionNow(h), amt = amount ?? v.eventAmount ?? null, now = new Date();
+  const ts = time ? new Date(`${day}T${time}:00`) : (day === TODAY() ? now : new Date(`${day}T12:00:00`));
+  const list = activeEntries(h, day, ['log']).sort((x, y) => new Date(y.ts) - new Date(x.ts));
+  const last = list[0], hhmm = `${pad(ts.getHours())}:${pad(ts.getMinutes())}`;
+  if (last && v.mergeMinutes > 0 && Math.abs(ts - new Date(last.ts)) / 60000 <= v.mergeMinutes) {
+    if (amt != null) ev(h, day, 'correct', { entryID: last.id, value: (last.value || 0) + amt, previousValue: last.value, source });
+    save(); return { merged: true, entry: last.id, prev: last.value, time: hhmm, amount: amt };
+  }
+  const id = uid(); S.events.push({ id, entryID: id, habitID: h.id, day, ts: ts.toISOString(), action: 'log', source, ...(amt != null ? { value: amt } : {}) });
+  save(); return { merged: false, entry: id, time: hhmm, amount: amt };
+}
+function rangeText(v) { const r = v.range || {}, u = v.unit ? ' ' + v.unit : ''; return r.min != null && r.max != null ? `${clean(r.min)}–${clean(r.max)}${u}` : r.min != null ? `לפחות ${clean(r.min)}${u}` : r.max != null ? `עד ${clean(r.max)}${u}` : '—'; }
+/** Visual target range: a track, the green band between min and max, and a marker for the value. */
+function rangeBar(min, max, val, unit) {
+  if (min == null && max == null) return '';
+  const lo = min ?? max * 0.5, hi = max ?? min * 1.5, span = Math.max(hi - lo, 1e-9);
+  const a = Math.min(lo, val ?? lo) - span * .35, b = Math.max(hi, val ?? hi) + span * .35, W = b - a, pos = x => Math.max(0, Math.min(100, (x - a) / W * 100));
+  const inR = val != null && (min == null || val >= min) && (max == null || val <= max);
+  return `<div class="rbar"><div class="rb-track"><i class="rb-band" style="right:${min != null ? pos(min) : 0}%;left:${100 - (max != null ? pos(max) : 100)}%"></i>${val != null ? `<b class="rb-mark ${inR ? 'in' : 'out'}" style="right:${pos(val)}%"><span class="num">${clean(val)}</span></b>` : ''}</div>
+    <div class="rb-labels">${min != null ? `<span style="right:${pos(min)}%">מינ׳ ${clean(min)}</span>` : ''}${max != null ? `<span style="right:${pos(max)}%">מקס׳ ${clean(max)}</span>` : ''}</div></div>`;
+}
+/** Sheet: all events of one day — time, amount, delete — and add one with a chosen time/amount. */
+function sheetEvents(h, day) {
+  const v = versionNow(h), u = v.unit || '';
+  const list = activeEntries(h, day, ['log']).sort((x, y) => new Date(x.ts) - new Date(y.ts));
+  const tot = list.reduce((s2, x) => s2 + (x.value || 0), 0), hasAmt = list.some(x => x.value != null);
+  const gaps = []; for (let i = 1; i < list.length; i++) gaps.push((new Date(list[i].ts) - new Date(list[i - 1].ts)) / 60000);
+  const gap = gaps.length ? Math.round(gaps.reduce((a2, b2) => a2 + b2, 0) / gaps.length) : null;
+  const hm = x => { const d2 = new Date(x.ts); return `${pad(d2.getHours())}:${pad(d2.getMinutes())}`; };
+  const fmtGap = m => m >= 60 ? `${Math.floor(m / 60)} ש׳ ${m % 60 ? (m % 60) + ' ד׳' : ''}` : `${m} ד׳`;
+  const goal = goalOf(v), cur = v.eventGoal === 'amount' ? tot : list.length, now = new Date();
+  return sheet(`${h.name} · ${dayName(day)}`, `<div class="stack evs" style="--hc:${h.color}">
+    <div class="ev-goal ${cur >= goal ? 'ok' : ''}"><b class="num">${clean(cur)}</b><span>מתוך ${clean(goal)} ${v.eventGoal === 'amount' ? u : 'אירועים'}${cur >= goal ? ' · הגעת ליעד ✓' : ''}</span><i style="width:${Math.min(100, goal ? cur / goal * 100 : 0)}%"></i></div>
+    <div class="ev-stats"><div><b class="num">${list.length}</b><span>אירועים</span></div>${hasAmt ? `<div><b class="num">${clean(Math.round(tot * 10) / 10)}</b><span>כמות מצטברת${u ? ' · ' + esc(u) : ''}</span></div><div><b class="num">${list.length ? clean(Math.round(tot / list.length * 10) / 10) : '—'}</b><span>ממוצע לאירוע</span></div>` : ''}<div><b class="num">${gap != null ? fmtGap(gap) : '—'}</b><span>מרווח ממוצע</span></div></div>
+    <div class="ev-list">${list.length ? list.map((x, i) => `<div class="ev-row"><span class="ev-dot"></span><b class="num ev-t">${hm(x)}</b><span class="grow">${x.value != null ? `${clean(x.value)} ${esc(u)}` : 'אירוע'}${i ? `<small> · ${fmtGap(Math.round(gaps[i - 1]))} אחרי הקודם</small>` : ''}</span><button class="ev-del" data-a="evDel" data-id="${h.id}" data-day="${day}" data-v="${x.id}" aria-label="מחק אירוע">✕</button></div>`).join('') : '<div class="ev-empty">עוד אין אירועים ביום הזה</div>'}</div>
+    <div class="form-title">אירוע חדש</div>
+    <div class="form"><div class="field"><label for="ev-time">שעה</label><input type="time" id="ev-time" value="${day === TODAY() ? `${pad(now.getHours())}:${pad(now.getMinutes())}` : '12:00'}"></div>
+      <div class="field"><label for="ev-amt">כמות${u ? ` (${esc(u)})` : ''}</label><input type="number" id="ev-amt" min="0" step="any" placeholder="לא חובה" value="${v.eventAmount ?? ''}"></div></div>
+    <button class="pill-btn" data-a="evAdd" data-id="${h.id}" data-day="${day}">+ הוסף אירוע</button>
+    ${v.mergeMinutes ? `<p class="tiny muted" style="margin:0">אירוע עד ${v.mergeMinutes} דקות אחרי הקודם מתאחד איתו.</p>` : ''}</div>`);
+}
+/** Sheet: the day's measured value for a target-range habit, with the range drawn and the verdict. */
+function sheetRange(h, day) {
+  const v = versionNow(h), r = v.range || {}, u = v.unit || '', st = v.step || 1;
+  const mid = r.min != null && r.max != null ? Math.round((r.min + r.max) / 2 / st) * st : (r.min ?? r.max ?? 0);
+  const a = aggOf(h, day), cur = ui.rangeDraft != null ? ui.rangeDraft : (a && a.hasValue ? a.value : mid);
+  const has = ui.rangeDraft != null || (a && a.hasValue);
+  const low = r.min != null && cur < r.min, high = r.max != null && cur > r.max;
+  const verdict = !has ? ['', 'עוד לא נמדד ביום הזה', 'קבע ערך ולחץ שמור'] : low ? ['out', 'מתחת לטווח', `חסרים ${clean(Math.round((r.min - cur) * 100) / 100)} ${u} עד המינימום`] : high ? ['out', 'מעל הטווח', `חריגה של ${clean(Math.round((cur - r.max) * 100) / 100)} ${u} מעל המקסימום`] : ['in', 'בתוך הטווח', 'התוצאה עומדת בטווח שהגדרת'];
+  return sheet(`${h.name} · ${dayName(day)}`, `<div class="stack rng" style="--hc:${h.color}">
+    <div class="rng-big"><button data-a="rgStep" data-id="${h.id}" data-day="${day}" data-v="-1" aria-label="הורד">−</button><div><input type="number" id="rg-val" step="any" value="${clean(Math.round(cur * 100) / 100)}" aria-label="הערך"><small>${esc(u)}</small></div><button data-a="rgStep" data-id="${h.id}" data-day="${day}" data-v="1" aria-label="הוסף">+</button></div>
+    ${rangeBar(r.min, r.max, has ? cur : null, u)}
+    <div class="rng-verdict ${verdict[0]}"><span>${verdict[0] === 'in' ? '✓' : verdict[0] === 'out' ? '!' : '•'}</span><div><b>${verdict[1]}</b><small>${verdict[2]}</small></div></div>
+    <p class="tiny muted" style="margin:0">טווח רצוי: ${rangeText(v)} · הכפתורים משנים ב־${clean(st)}</p>
+    <div class="row" style="gap:8px"><button class="pill-btn" style="flex:1" data-a="rgSave" data-id="${h.id}" data-day="${day}">שמור</button>${a && a.hasValue ? `<button class="pill-btn secondary" data-a="rgClear" data-id="${h.id}" data-day="${day}">מחק מדידה</button>` : ''}</div></div>`);
+}
+/** Habit page: event stats over the last 30 days. */
+function eventsCard(h, sp, evs, t, td) {
+  const r = E.analyze(sp, evs, { from: S_(td - 29), to: t, today: t }).events; if (!r || !r.count) return '';
+  const v = versionNow(h), u = v.unit || '', mx = Math.max(1, ...r.hours);
+  const fmtGap = m => m == null ? '—' : m >= 60 ? `${Math.floor(m / 60)}:${pad(Math.round(m % 60))} ש׳` : `${Math.round(m)} ד׳`;
+  const tile = (ic, b, l) => `<div class="mx-t"><span>${ic}</span><b class="num">${b}</b><small>${l}</small></div>`;
+  return `<section class="card mx" style="--hc:${h.color}"><h3>⚡ אירועים · 30 יום</h3><div class="mx-grid">
+    ${tile('🔢', r.count, 'אירועים')}${r.total ? tile('💧', clean(r.total), 'כמות מצטברת' + (u ? ' · ' + esc(u) : '')) : ''}${r.meanPerEvent != null ? tile('⚖️', clean(r.meanPerEvent), 'ממוצע לאירוע') : ''}
+    ${tile('📅', clean(r.meanPerActiveDay ?? 0), 'אירועים ביום פעיל')}${tile('⏱️', fmtGap(r.meanGapMinutes), 'מרווח ממוצע')}${tile(r.changeVsPrevious == null ? '➖' : r.changeVsPrevious >= 0 ? '📈' : '📉', r.changeVsPrevious == null ? '—' : (r.changeVsPrevious > 0 ? '+' : '') + r.changeVsPrevious + '%', 'לעומת 30 הימים הקודמים')}</div>
+    <div class="mx-h">באילו שעות${r.peakHour != null ? ` · הכי הרבה ב־<b class="num">${pad(r.peakHour)}:00</b>` : ''}</div>
+    <div class="mx-hours">${r.hours.map((n, i) => `<i style="height:${Math.max(4, n / mx * 100)}%" class="${n ? 'y' : ''}" title="${pad(i)}:00 · ${n}"></i>`).join('')}</div><div class="mx-hl"><span>00</span><span>06</span><span>12</span><span>18</span><span>23</span></div></section>`;
+}
+/** Habit page: target-range stats over the last 30 days. */
+function rangeCard(h, sp, evs, t, td) {
+  const rep2 = E.analyze(sp, evs, { from: S_(td - 29), to: t, today: t }), r = rep2.range; if (!r) return '';
+  const v = versionNow(h), u = v.unit || '';
+  const tile = (ic, b, l) => `<div class="mx-t"><span>${ic}</span><b class="num">${b}</b><small>${l}</small></div>`;
+  const tr = { closer: ['📈', 'מתקרב לטווח'], farther: ['📉', 'מתרחק מהטווח'], stable: ['➖', 'יציב'], insufficient: ['…', 'אין מספיק נתונים'] }[r.trend];
+  const ser = r.series.slice(-14), vals = ser.map(x => x.value).concat([r.min, r.max].filter(x => x != null));
+  const lo = Math.min(...vals), hi = Math.max(...vals), pad2 = (hi - lo) * .15 || 1, A = lo - pad2, B = hi + pad2, y = x => 100 - (x - A) / (B - A) * 100;
+  const chart = ser.length ? `<div class="rg-chart">${r.min != null || r.max != null ? `<i class="rg-band" style="top:${y(r.max ?? B)}%;bottom:${100 - y(r.min ?? A)}%"></i>` : ''}${ser.map((x, i) => `<b class="rg-pt ${x.side ? 'out' : 'in'}" style="right:${ser.length === 1 ? 50 : i / (ser.length - 1) * 100}%;top:${y(x.value)}%" title="${x.day}: ${clean(x.value)}"></b>`).join('')}</div>` : '';
+  return `<section class="card mx" style="--hc:${h.color}"><h3>🎯 טווח תקין · 30 יום</h3>
+    ${r.measured ? `<div class="mx-grid">${tile('✅', `${r.inRange}<small>/${r.measured}</small>`, 'ימים בטווח')}${tile('📊', r.inRangeRate + '%', 'אחוז ימים בטווח')}${tile('🔥', rep2.streak.current, 'רצף בטווח')}
+      ${tile('⬇️', r.below, 'מתחת למינימום')}${tile('⬆️', r.above, 'מעל המקסימום')}${tile('📏', clean(r.meanDeviation), 'מרחק ממוצע בחריגה' + (u ? ' · ' + esc(u) : ''))}</div>
+      <div class="mx-h">${tr[0]} מגמה: <b>${tr[1]}</b>${r.mean != null ? ` · ממוצע ${clean(r.mean)} ${esc(u)}` : ''}</div>${chart}` : '<p class="muted small" style="margin:0">עוד אין מדידות. הקש על הכפתור כדי לרשום את הערך של היום.</p>'}</section>`;
 }
 function setRest(h, day, on) {
   const rests = activeEntries(h, day, ['rest']);
@@ -1796,6 +2008,7 @@ function weekStrip(h) {
   return `<span class="wstrip" aria-label="שבוע מראשון עד שבת">${out.join('')}</span>`;
 }
 function todayLine(h, it, day = TODAY()) {
+  if (h.kind === 'event' || h.kind === 'range') return it.status === 'rest' ? 'יום מנוחה' : progressText(h, day);
   if (it.status === 'done') return day === TODAY() ? 'בוצע היום' : 'בוצע';
   if (it.status === 'rest') return 'יום מנוחה';
   return progressText(h, day);
@@ -1873,7 +2086,7 @@ function habitRow(h, it, day = TODAY()) {
     <div class="hmain"><button class="hlink" data-a="detail" data-id="${h.id}"><span class="hname">${esc(h.name)}${streakBadge(h)}<span class="hgo" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5 8 12l7 7"/></svg></span></span><span class="hsub">${timerOf(h) ? `⏱ <b data-timer="${h.id}" class="num">${fmtClock(timerElapsed(timerOf(h)))}</b> ${timerOf(h).running ? "סופר עכשיו" : "מושהה"}` : esc(lineFor(h, it, day))}</span></button>${weekStrip(h)}</div>
     ${it.status === 'rest' ? chip('rest') : ''}
     <button class="more" data-a="menu" data-id="${h.id}" aria-label="פעולות נוספות">⋯</button>
-    <button class="check ${on ? 'on' : ''}" data-a="check" data-id="${h.id}" data-day="${day}" aria-label="${plan.mode === 'amount' ? `הוסף ${clean(h.tapStep)} (${cl || 'הושלם'})` : plan.mode === 'count' ? (plan.target > it.completionsToday ? `הוסף ביצוע (${it.completionsToday} מתוך ${it.need})` : 'הסר ביצוע אחד') : on ? 'בוצע. הקש לביטול' : 'סמן כבוצע'}">
+    <button class="check ${on ? 'on' : ''} ${it.side ? 'out' : ''}" data-a="check" data-id="${h.id}" data-day="${day}" aria-label="${plan.mode === 'amount' ? `הוסף ${clean(h.tapStep)} (${cl || 'הושלם'})` : plan.mode === 'count' ? (plan.target > it.completionsToday ? `הוסף ביצוע (${it.completionsToday} מתוך ${it.need})` : 'הסר ביצוע אחד') : on ? 'בוצע. הקש לביטול' : 'סמן כבוצע'}">
       ${prog ? `<svg class="p" viewBox="0 0 44 44"><circle cx="22" cy="22" r="${r}" fill="none" stroke="${h.color}" stroke-width="3" stroke-dasharray="${c}" stroke-dashoffset="${c * (1 - prog)}" stroke-linecap="round"/></svg>` : ''}
       ${cl ? `<span class="cnt num">${cl}</span>` : ICON.tick}</button></div>`;
 }
@@ -2377,6 +2590,11 @@ function screenDetail() {
     const amt = (a ? (h.kind === 'duration' ? a.duration : a.value) : 0) + liveMin(h, td);
     const shown = h.kind === 'duration' ? Math.round(amt) : amt, left = h.kind === 'duration' ? Math.round(Math.max(0, goalOf(v) - amt)) : Math.max(0, goalOf(v) - amt);
     bigNum = h.kind === 'duration' ? null : `${clean(shown)}<small>/${clean(goalOf(v))}</small>`; bigSub = amt >= goalOf(v) ? `${h.kind === 'duration' ? '' : unit + ' · '}הגעת ליעד ✓` : h.kind === 'duration' ? `עוד ${leftClock(goalOf(v) - amt)} ליעד` : `${unit} · עוד ${clean(left)} ליעד`; prog = Math.min(1, amt / goalOf(v));
+  } else if (h.kind === 'event') {
+    const n = a ? a.completions : 0, tot = a && a.hasValue ? a.value : 0, cur = v.eventGoal === 'amount' ? tot : n, g = goalOf(v) || 1;
+    bigNum = `${clean(cur)}<small>/${clean(g)}</small>`; bigSub = `${v.eventGoal === 'amount' ? unit + ' · ' + (n === 1 ? 'אירוע אחד' : n + ' אירועים') : 'אירועים היום' + (tot ? ` · ${clean(tot)} ${unit}` : '')}${cur >= g ? ' · ✓' : ''}`; prog = Math.min(1, cur / g);
+  } else if (h.kind === 'range') {
+    bigNum = it.value != null ? clean(it.value) : '—'; bigSub = it.value == null ? `טרם נמדד · ${rangeText(v)}` : it.side === 'low' ? `${unit} · מתחת לטווח ב־${clean(it.deviation)}` : it.side === 'high' ? `${unit} · מעל הטווח ב־${clean(it.deviation)}` : `${unit} · בתוך הטווח ✓`; prog = it.value == null ? 0 : it.side ? .35 : 1;
   } else if (it.flexible) {
     bigNum = `${it.periodCount}<small>/${it.periodNeed}</small>`; bigSub = it.periodMet ? 'היעד השבועי הושג ✓' : `השבוע · עוד ${it.periodNeed - it.periodCount}`; prog = Math.min(1, it.periodCount / it.periodNeed);
   } else if (it.need > 1) {
@@ -2388,6 +2606,7 @@ function screenDetail() {
   }
   const btn = plan.mode === 'amount' ? (plan.target > (it.amountToday || 0) ? `+${clean(h.tapStep)} ${unit}` : `הורד ${clean(h.tapStep)}`)
     : plan.mode === 'count' ? (plan.target > it.completionsToday ? '+1 ביצוע' : 'הורד ביצוע')
+    : plan.mode === 'event' ? '+ אירוע עכשיו' : plan.mode === 'range' ? (it.value != null ? 'עדכון מדידה' : 'רישום מדידה')
     : plan.mode === 'rest' ? 'בטל יום מנוחה' : plan.want ? (h.kind === 'avoidance' ? 'יום נקי' : 'סמן כבוצע') : 'בטל סימון';
   // ── This week vs last week (count of days done)
   const off = Math.min(0, ui.wkOff || 0), ws0 = E.weekStartOf(td, S.settings.weekStart), ws = ws0 + 7 * off, we = Math.min(ws + 6, td);
@@ -2398,7 +2617,7 @@ function screenDetail() {
   const diff = thisWeek - lastWeekSameDays;
   const weekCells = [0, 1, 2, 3, 4, 5, 6].map(i => {
     const d = ws + i, ds = S_(d), st = d > td ? 'future' : cellState(h, ds), g = byDay.get(d);
-    const amt = g && (h.kind === 'quantity' ? (g.hasValue ? g.value : null) : h.kind === 'duration' ? (g.hasDuration ? g.duration : null) : null);
+    const amt = g && (['quantity', 'range'].includes(h.kind) || (h.kind === 'event' && v.eventGoal === 'amount') ? (g.hasValue ? g.value : null) : h.kind === 'duration' ? (g.hasDuration ? g.duration : null) : h.kind === 'event' ? g.completions : null);
     return `<div class="wk-day ${d === td ? 'is-today' : ''}"><span class="wk-l">${WD[E.weekday(d)]}</span>
       ${d > td ? '<span class="wk-c wk-future"></span>' : `<button class="wk-c wk-${st}" style="--hc:${h.color}" data-a="toggleDayHabit" data-id="${h.id}" data-day="${ds}" aria-label="${dayName(ds)}: ${CELL_TITLE[st]}">${st === 'done' ? '✓' : ''}</button>`}
       <span class="wk-v num">${amt != null ? clean(amt) : (g && g.completions > 1 && h.kind !== 'frequency' ? '×' + g.completions : `${+ds.slice(8)}.${+ds.slice(5, 7)}`)}</span></div>`;
@@ -2436,6 +2655,7 @@ function screenDetail() {
       ${h.kind === 'duration' ? timerCard(h) : ''}
     </section>
     ${freezeCard(h)}
+    ${h.kind === 'event' ? eventsCard(h, sp, evs, t, td) : h.kind === 'range' ? rangeCard(h, sp, evs, t, td) : ''}
     ${milesCard(h, rAll)}
     <div class="big3 card">
       ${bigStat(rAll.streak.current, 'רצף נוכחי', flexible ? 'שבועות' : 'ימים', '🔥')}
@@ -2562,7 +2782,7 @@ function screenCalendar() {
     if (sel) {
       // longest run of done days in the month
       let run = 0, bestRun = 0; for (const x of past) { if (x.per[0].done) { run++; bestRun = Math.max(bestRun, run); } else if (x.per[0].planned) run = 0; }
-      const isAmt = sel.kind === 'quantity' || sel.kind === 'duration';
+      const isAmt = sel.kind === 'quantity' || sel.kind === 'duration' || sel.kind === 'range' || sel.kind === 'event';
       let total = 0, act = 0; if (isAmt) for (const x of past) { const a = aggOf(sel, S_(x.d)); const v = a ? (sel.kind === 'duration' ? (a.hasDuration ? a.duration : 0) : (a.hasValue ? a.value : 0)) : 0; total += v; if (v > 0) act++; }
       const fmt = v => fmtVal(sel, v);
       // previous month, same habit
@@ -2631,12 +2851,13 @@ function screenStats() {
   const cards = hs.map(h => {
     const from = n ? S_(td - n + 1) : h.startDay;
     const r = E.analyze(spec(h), eventsOf(h.id), { from, to: t, today: t });
+    if (h.kind === 'event') r.events = E.analyze(spec(h), eventsOf(h.id), { from, to: t, today: t }).events;
     const doneN = r.basis.unit !== 'day' ? r.totalCompletions : r.fullDays; rs.push({ h, r, doneN });
     const spark = []; for (let d = td - 13; d <= td; d++) { const c = D(h.startDay) > d ? null : calCell(h, d, td); spark.push(`<i class="${!c ? 'x' : c.done ? 'y' : c.planned ? 'n' : 'o'}"></i>`); }
     const tier = tierOf(r.streak.current);
     const flexible = r.basis.unit !== 'day';
     const main = flexible ? `${r.totalCompletions} פעמים` : `${r.fullDays} ימים`;
-    const extra = r.amount && r.amount.total ? ` · סה״כ ${h.kind === 'duration' ? hoursText(r.amount.total) : `${clean(r.amount.total)} ${r.amount.unit}`}` : (r.avoidance ? ` · ${r.avoidance.lapses} חריגות` : '');
+    const extra = r.range ? (r.range.measured ? ` · ${r.range.inRange} מתוך ${r.range.measured} ימים בטווח` : ' · עוד אין מדידות') : r.events ? ` · ${r.events.count} אירועים` : r.amount && r.amount.total ? ` · סה״כ ${h.kind === 'duration' ? hoursText(r.amount.total) : `${clean(r.amount.total)} ${r.amount.unit}`}` : (r.avoidance ? ` · ${r.avoidance.lapses} חריגות` : '');
     return `<div class="card hstat st2" style="--hc:${h.color};animation-delay:${rs.length * 60}ms">
       <div class="st2-top">${hicon(h)}<div class="grow st2-txt"><b>${esc(h.name)}${tier ? ` <span class="sbadge">${tier[1]} ${esc(tier[2].replace('!', ''))}</span>` : ''}</b><span>בוצע ${main}${extra}</span></div>
         <div class="st2-n fire"><b class="num">${r.streak.current}</b><span>🔥 רצף</span></div><div class="st2-n gold"><b class="num">${r.streak.best}</b><span>🏆 שיא</span></div></div>
@@ -2935,7 +3156,18 @@ function sheetEditor(h) {
     composite: `<div class="field"><label for="e-tpd">פעמים ביום</label><input type="number" id="e-tpd" min="1" max="20" value="${d.timesPerDay}"></div>`,
     quality: `<div class="field"><label for="e-qs">סולם דירוג (1–X)</label><input type="number" id="e-qs" min="3" max="10" value="${d.qualityScale}"></div>`,
     avoidance: `<div class="field"><label for="e-al">חריגות מותרות ביום</label><input type="number" id="e-al" min="0" value="${d.allowedLapses}"></div><div class="field small muted">יום נספר רק אם דיווחת עליו. ימים בלי דיווח מוצגים כ״אין דיווח״.</div>`,
-    frequency: `<div class="field small muted">בחר למטה כמה פעמים בשבוע או בחודש.</div>` }[V];
+    frequency: `<div class="field small muted">בחר למטה כמה פעמים בשבוע או בחודש.</div>`,
+    event: `<div class="field"><label for="e-unit">יחידה (לא חובה)</label><input type="text" id="e-unit" placeholder="מ״ל, עמודים, דקות" value="${esc(d.unit)}"></div>
+      <div class="field"><label for="e-egoal">היעד היומי לפי</label><select id="e-egoal"><option value="count" ${d.eventGoal !== 'amount' ? 'selected' : ''}>מספר אירועים</option><option value="amount" ${d.eventGoal === 'amount' ? 'selected' : ''}>כמות מצטברת</option></select></div>
+      <div class="field"><label for="e-goal">${d.eventGoal === 'amount' ? `יעד כמות ביום${d.unit ? ` (${esc(d.unit)})` : ''}` : 'יעד אירועים ביום'}</label><input type="number" id="e-goal" min="0" step="any" value="${d.goal}"></div>
+      <div class="field"><label for="e-eamt">כמות קבועה לכל אירוע</label><input type="number" id="e-eamt" min="0" step="any" placeholder="לא חובה" value="${d.eventAmount ?? ''}"></div>
+      <div class="field"><label for="e-merge">איחוד אירועים קרובים (דקות)</label><input type="number" id="e-merge" min="0" max="240" value="${d.mergeMin || 0}"></div>
+      <div class="field small muted">0 = כל לחיצה היא אירוע חדש. אם תגדיר למשל 30, אירוע שנרשם עד 30 דקות אחרי הקודם יתאחד איתו ולא ייספר פעמיים.</div>`,
+    range: `<div class="field"><label for="e-unit">יחידה</label><input type="text" id="e-unit" placeholder="שעות, ק״ג, צעדים" value="${esc(d.unit)}"></div>
+      <div class="field"><label for="e-rmin">מינימום רצוי</label><input type="number" id="e-rmin" step="any" placeholder="אין" value="${d.rmin ?? ''}"></div>
+      <div class="field"><label for="e-rmax">מקסימום רצוי</label><input type="number" id="e-rmax" step="any" placeholder="אין" value="${d.rmax ?? ''}"></div>
+      <div class="field"><label for="e-rstep">קפיצה בכפתורי + / −</label><input type="number" id="e-rstep" min="0.01" step="any" value="${d.rstep || 1}"></div>
+      ${rangeBar(d.rmin, d.rmax, null, d.unit)}` }[V];
   const sched = d.schedType;
   return sheet(h ? 'עריכת הרגל' : 'הרגל חדש', `<div class="stack">
     <div class="form">
@@ -2967,7 +3199,12 @@ function sheetEditor(h) {
   </div>`);
 }
 function draftFrom(h) {
-  if (!h) return { tapOn: true, tapStep: 1, name: '', icon: '✓', color: '#4f7cff', kind: 'binary', unit: '', goal: 1, timesPerDay: 1, qualityScale: 5, allowedLapses: 0, schedType: 'daily', days: [], every: 2, count: 3, startDay: TODAY(), reminder: false, reminderTime: '08:00', category: 'כללי', details: '', min: null, advanced: null, weight: 1, showOnHome: false, showInWidget: false };
+  const d0 = draftFrom0(h); if (!h) return d0;
+  const v = versionNow(h), r = v.range || {};
+  return { ...d0, eventGoal: v.eventGoal || 'count', eventAmount: v.eventAmount ?? null, mergeMin: v.mergeMinutes || 0, rmin: r.min ?? null, rmax: r.max ?? null, rstep: v.step || 1 };
+}
+function draftFrom0(h) {
+  if (!h) return { tapOn: true, tapStep: 1, name: '', icon: '✓', color: '#4f7cff', kind: 'binary', unit: '', goal: 1, timesPerDay: 1, qualityScale: 5, allowedLapses: 0, schedType: 'daily', days: [], every: 2, count: 3, startDay: TODAY(), reminder: false, reminderTime: '08:00', category: 'כללי', details: '', min: null, advanced: null, weight: 1, showOnHome: false, showInWidget: false, eventGoal: 'count', eventAmount: null, mergeMin: 0, rmin: null, rmax: null, rstep: 1 };
   const v = versionNow(h), s = v.schedule || { type: 'daily' }, t = v.target || {};
   return { tapOn: !!h.tapStep, tapStep: h.tapStep || 1, name: h.name, icon: h.icon, color: h.color, kind: h.kind, unit: v.unit || '', goal: t.normal ?? t.min ?? 1, timesPerDay: v.timesPerDay || 1, qualityScale: v.qualityScale || 5, allowedLapses: v.allowedLapses || 0, schedType: s.type, days: s.type === 'weekdays' ? (s.days || []) : [], every: s.every || 2, count: s.count || 3, startDay: h.startDay, reminder: !!h.reminder, reminderTime: h.reminder || '08:00', category: h.category, details: h.details || '', min: t.normal != null ? t.min ?? null : null, advanced: t.advanced ?? null, weight: h.weight || 1, showOnHome: h.showOnHome, showInWidget: h.showInWidget };
 }
@@ -3007,6 +3244,13 @@ function readDraft() {
   d.weight = num('e-weight', d.weight);
   if (g('e-home')) d.showOnHome = g('e-home').checked; if (g('e-widget')) d.showInWidget = g('e-widget').checked;
   if (g('e-adv')) d.adv = g('e-adv').open;
+  const opt = id => { const el = g(id); return !el ? undefined : el.value === '' ? null : (isFinite(Number(el.value)) ? Number(el.value) : null); };
+  if (g('e-egoal')) d.eventGoal = g('e-egoal').value;
+  if (g('e-eamt')) d.eventAmount = opt('e-eamt');
+  if (g('e-merge')) d.mergeMin = Math.max(0, opt('e-merge') || 0);
+  if (g('e-rmin')) d.rmin = opt('e-rmin');
+  if (g('e-rmax')) d.rmax = opt('e-rmax');
+  if (g('e-rstep')) d.rstep = opt('e-rstep') || 1;
 }
 function buildVersion(d, from) {
   const schedule = { type: d.schedType };
@@ -3018,12 +3262,17 @@ function buildVersion(d, from) {
   if ((d.kind === 'binary' || d.kind === 'composite') && d.timesPerDay > 1) v.timesPerDay = d.timesPerDay;
   if (['quality', 'composite', 'duration'].includes(d.kind)) v.qualityScale = d.qualityScale;
   if (d.kind === 'avoidance') v.allowedLapses = d.allowedLapses;
+  if (d.kind === 'event') { v.target = { normal: d.goal }; v.eventGoal = d.eventGoal === 'amount' ? 'amount' : 'count'; v.unit = d.unit || ''; if (d.eventAmount != null) v.eventAmount = d.eventAmount; if (d.mergeMin > 0) v.mergeMinutes = d.mergeMin; }
+  if (d.kind === 'range') { v.range = { min: d.rmin ?? null, max: d.rmax ?? null }; v.unit = d.unit || ''; v.step = d.rstep || 1; }
   return v;
 }
 function saveHabit() {
   readDraft(); const d = ui.draft;
   if (!d.name.trim()) { toast('צריך לתת שם להרגל', null, { error: true }); const f = document.getElementById('e-name'); if (f) { const w = f.parentElement; w.classList.remove('name-err'); void w.offsetWidth; w.classList.add('name-err'); f.focus(); } return; }
   if (d.schedType === 'weekdays' && !d.days.length) { toast('בחר לפחות יום אחד', null, { error: true }); return; }
+  if (d.kind === 'range' && d.rmin == null && d.rmax == null) { toast('צריך מינימום או מקסימום לטווח', null, { error: true }); return; }
+  if (d.kind === 'range' && d.rmin != null && d.rmax != null && d.rmin > d.rmax) { toast('המינימום גדול מהמקסימום', null, { error: true }); return; }
+  if (d.kind === 'event' && !(d.goal > 0)) { toast('צריך יעד גדול מ־0', null, { error: true }); return; }
   if (d.kind === 'frequency' && !['perWeek', 'perMonth'].includes(d.schedType)) d.schedType = 'perWeek';
   let h = ui.editing && habitById(ui.editing);
   if (!h) {
@@ -3214,7 +3463,7 @@ function render() {
   const sameSheet = !!oldSheet && sheetKey === ui.lastSheetKey;
   const sheetTop = oldSheet ? oldSheet.scrollTop : 0;
   const focusedId = sameSheet && document.activeElement && ov.contains(document.activeElement) ? document.activeElement.id : null;
-  ov.innerHTML = !s ? '' : s.type === 'menu' ? sheetMenu(habitById(s.id)) : s.type === 'log' ? sheetLog(habitById(s.id), s.day) : s.type === 'editor' ? sheetEditor(ui.editing && habitById(ui.editing)) : s.type === 'goal' ? sheetGoal() : s.type === 'settings' ? sheetSettings() : s.type === 'day' ? sheetDay(s.day) : s.type === 'dtime' ? sheetDayTime(habitById(s.id), s.day) : s.type === 'damt' ? sheetDayAmount(habitById(s.id), s.day) : '';
+  ov.innerHTML = !s ? '' : s.type === 'menu' ? sheetMenu(habitById(s.id)) : s.type === 'log' ? sheetLog(habitById(s.id), s.day) : s.type === 'editor' ? sheetEditor(ui.editing && habitById(ui.editing)) : s.type === 'goal' ? sheetGoal() : s.type === 'settings' ? sheetSettings() : s.type === 'day' ? sheetDay(s.day) : s.type === 'dtime' ? sheetDayTime(habitById(s.id), s.day) : s.type === 'damt' ? sheetDayAmount(habitById(s.id), s.day) : s.type === 'events' ? sheetEvents(habitById(s.id), s.day) : s.type === 'range' ? sheetRange(habitById(s.id), s.day) : '';
   ui.lastSheetKey = sheetKey;
   if (sameSheet) {
     const ns = ov.querySelector('.sheet'), sc = ov.querySelector('.scrim');
@@ -3229,6 +3478,7 @@ function rerender() { ui.keepScroll = true; render(); }
 
 document.addEventListener('input', e => {
   if (e.target.id === 'e-name') { const w = e.target.parentElement; w.classList.toggle('name-ok', !!e.target.value.trim()); w.classList.remove('name-err'); }
+  if (e.target.id === 'e-rmin' || e.target.id === 'e-rmax') { const n = x => { const el = document.getElementById(x); return !el || el.value === '' || !isFinite(Number(el.value)) ? null : Number(el.value); }; const bar = document.querySelector('.sheet .rbar'), u = (document.getElementById('e-unit') || {}).value || ''; const html = rangeBar(n('e-rmin'), n('e-rmax'), null, u); if (bar && html) bar.outerHTML = html; }
   if (e.target.id === 'search') { ui.search = e.target.value; const pos = e.target.selectionStart; rerender(); const s = document.getElementById('search'); s.focus(); s.setSelectionRange(pos, pos); }
 });
 document.addEventListener('change', e => {
@@ -3241,7 +3491,8 @@ document.addEventListener('change', e => {
     const h = habitById(e.target.dataset.hid);
     if (h) { h.timerLimitOn = e.target.checked; save(); rerender(); }
   }
-  if (id === 'e-kind' || id === 'e-sched') { readDraft(); if (id === 'e-kind') { const k = ui.draft.kind; if (k === 'quantity' && ui.draft.goal <= 1) { ui.draft.goal = 8; ui.draft.unit ||= 'יחידות'; } if (k === 'duration' && ui.draft.goal <= 1) ui.draft.goal = 20; if (k === 'frequency' && !['perWeek', 'perMonth'].includes(ui.draft.schedType)) ui.draft.schedType = 'perWeek'; if (k === 'avoidance') ui.draft.category = 'הרגלים לצמצום'; } rerender(); }
+  if (id === 'e-kind' || id === 'e-sched') { readDraft(); if (id === 'e-kind') { const k = ui.draft.kind; if (k === 'quantity' && ui.draft.goal <= 1) { ui.draft.goal = 8; ui.draft.unit ||= 'יחידות'; } if (k === 'duration' && ui.draft.goal <= 1) ui.draft.goal = 20; if (k === 'frequency' && !['perWeek', 'perMonth'].includes(ui.draft.schedType)) ui.draft.schedType = 'perWeek'; if (k === 'avoidance') ui.draft.category = 'הרגלים לצמצום'; if (k === 'event' && ui.draft.goal <= 1) ui.draft.goal = 4; if (k === 'range' && ui.draft.rmin == null && ui.draft.rmax == null) { ui.draft.rmin = 7; ui.draft.rmax = 9; ui.draft.unit ||= 'שעות'; ui.draft.rstep = 0.5; } } rerender(); }
+  if (id === 'e-egoal') { readDraft(); const d = ui.draft; if (d.eventGoal === 'amount' && d.goal <= 20) d.goal = (d.eventAmount || 250) * 8; if (d.eventGoal === 'count' && d.goal > 50) d.goal = 4; rerender(); }
   if (id === 'logday') { ui.sheet.day = e.target.value || TODAY(); ui.editEntry = null; rerender(); }
   if (id === 'show-archived') { ui.showArchived = e.target.checked; rerender(); }
 });
@@ -3333,14 +3584,20 @@ document.addEventListener('click', e => {
       el.classList.add('saved'); el.textContent = `✓ נשמר · ${fmtMin(n)}`;
       setTimeout(() => { ui.sheet = null; rerender(); toast(`נשמר: ${fmtMin(n)} ב${dayName(el.dataset.day) === 'היום' ? 'היום' : '-' + dayName(el.dataset.day)}`); }, 300);
       break; }
-    case 'toggleDayHabit': { if (h.kind === 'duration' && statusOf(h, el.dataset.day).status !== 'rest') { ui.sheet = { type: 'dtime', id, day: el.dataset.day }; rerender(); break; }
+    case 'evAdd': { const tm = document.getElementById('ev-time').value || null, am = document.getElementById('ev-amt').value; const r = addEvent(h, el.dataset.day, am === '' ? null : Number(am), tm); toast(r.merged ? 'נוסף לאירוע הקודם' : `נרשם אירוע · ${r.time}`, null, { icon: h.icon, color: h.color }); rerender(); break; }
+    case 'evDel': ev(h, el.dataset.day, 'undo', { entryID: v }); save(); toast('האירוע נמחק', null, { error: true }); rerender(); break;
+    case 'evUndo': { const L = ui.lastEvent; const hh = L && habitById(L.id); if (hh) { if (L.merged) { if (L.prev !== undefined) ev(hh, TODAY(), 'correct', { entryID: L.entry, value: L.prev }); } else ev(hh, TODAY(), 'undo', { entryID: L.entry }); save(); } ui.lastEvent = null; toast('בוטל', null, { error: true }); rerender(); break; }
+    case 'rgStep': { const inp = document.getElementById('rg-val'), st = versionNow(h).step || 1; ui.rangeDraft = Math.max(0, Math.round(((Number(inp.value) || 0) + Number(v) * st) * 100) / 100); rerender(); break; }
+    case 'rgSave': { const n = Number(document.getElementById('rg-val').value); if (!isFinite(n) || n < 0) { toast('הקלד מספר תקין', null, { error: true }); break; } setAmount(h, el.dataset.day, n); ui.rangeDraft = null; ui.sheet = null; const e2 = statusOf(h, el.dataset.day); if (e2.side) toast(e2.side === 'low' ? 'מתחת לטווח' : 'מעל הטווח', null, { error: true, sub: `${clean(n)} ${versionNow(h).unit || ''}` }); else toast('בתוך הטווח', null, { sub: `${clean(n)} ${versionNow(h).unit || ''}` }); rerender(); break; }
+    case 'rgClear': setAmount(h, el.dataset.day, 0); for (const en of activeEntries(h, el.dataset.day, ['log'])) ev(h, el.dataset.day, 'undo', { entryID: en.id }); save(); ui.rangeDraft = null; ui.sheet = null; toast('המדידה נמחקה', null, { error: true }); rerender(); break;
+    case 'toggleDayHabit': { if (h.kind === 'event' || h.kind === 'range') { ui.rangeDraft = null; ui.sheet = { type: h.kind === 'event' ? 'events' : 'range', id, day: el.dataset.day }; rerender(); break; } if (h.kind === 'duration' && statusOf(h, el.dataset.day).status !== 'rest') { ui.sheet = { type: 'dtime', id, day: el.dataset.day }; rerender(); break; }
       if (h.kind === 'quantity') { if (statusOf(h, el.dataset.day).status === 'rest') setRest(h, el.dataset.day, false); ui.sheet = { type: 'damt', id, day: el.dataset.day }; rerender(); break; } const day = el.dataset.day; const st = statusOf(h, day).status; if (st === 'rest') { setRest(h, day, false); setDone(h, day, true); } else if (h.kind === 'quantity') setDone(h, day, st !== 'done'); else applyPlan(h, day, tapPlan(itemOf(h, day), h)); if (statusOf(h, day).status === 'done') toast('בוצע'); else toast('בוטל', null, { error: true }); rerender(); break; }
     case 'menu': ui.sheet = { type: 'menu', id }; ui.confirm = null; rerender(); break;
     case 'close': case 'closeScrim':
       // "סיום" in the habit editor saves (a new habit with no name yet just closes)
       if (a === 'close' && ui.sheet && ui.sheet.type === 'editor') { readDraft(); if (ui.editing || ui.draft.name.trim()) { saveHabit(); break; } }
-      ui.sheet = null; ui.exportText = null; ui.confirm = null; ui.editEntry = null; rerender(); break;
-    case 'log': if (h.kind === 'duration') { ui.sheet = { type: 'dtime', id, day: el.dataset.day || (ui.detail ? TODAY() : ui.viewDay) }; rerender(); break; } ui.sheet = { type: 'log', id, day: el.dataset.day || (ui.detail ? TODAY() : ui.viewDay) }; ui.editEntry = null; rerender(); break;
+      ui.sheet = null; ui.exportText = null; ui.confirm = null; ui.editEntry = null; ui.rangeDraft = null; rerender(); break;
+    case 'log': if (h.kind === 'event' || h.kind === 'range') { ui.rangeDraft = null; ui.sheet = { type: h.kind === 'event' ? 'events' : 'range', id, day: el.dataset.day || (ui.detail ? TODAY() : ui.viewDay) }; rerender(); break; } if (h.kind === 'duration') { ui.sheet = { type: 'dtime', id, day: el.dataset.day || (ui.detail ? TODAY() : ui.viewDay) }; rerender(); break; } ui.sheet = { type: 'log', id, day: el.dataset.day || (ui.detail ? TODAY() : ui.viewDay) }; ui.editEntry = null; rerender(); break;
     case 'addOne': ev(h, ui.viewDay, 'log'); save(); ui.sheet = null; toast('נוסף ביצוע'); rerender(); break;
     case 'lapse': ev(h, ui.viewDay, 'lapse', { value: 1 }); save(); ui.sheet = null; toast('החריגה נרשמה'); rerender(); break;
     case 'rest': setRest(h, ui.viewDay, statusOf(h, ui.viewDay).status !== 'rest'); ui.sheet = null; rerender(); break;
