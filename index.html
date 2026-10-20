@@ -157,7 +157,41 @@ button { cursor: pointer; }
 .habit.dragging .grip { color: var(--hc); }
 .hlist.sorting .habit:not(.dragging) { transition: transform .15s; }
 .habit { display: flex; align-items: center; gap: 12px; background: var(--surface); border-radius: 18px; padding: 10px 12px; min-width: 0; transition: opacity .25s; }
-.habit.is-done { opacity: .72; }
+.habit.is-done { opacity: 1; }
+/* Colorful cards: habit-color stripe on the start edge + soft tint; done fills the card with its color */
+.habit { position: relative; overflow: hidden; background: linear-gradient(to left, color-mix(in srgb, var(--hc) 10%, var(--surface)), var(--surface) 65%); box-shadow: 0 6px 16px -14px color-mix(in srgb, var(--hc) 80%, transparent); }
+.habit::before { content: ""; position: absolute; inset-block: 12px; inset-inline-start: 0; width: 4px; border-radius: 4px 0 0 4px; background: var(--hc); }
+.habit.is-done { background: color-mix(in srgb, var(--hc) 17%, var(--surface)); }
+.habit.is-done .hicon { background: color-mix(in srgb, var(--hc) 30%, transparent); }
+.habit.delrow::before { display: none; }
+.sbadge { display: inline-flex; align-items: center; gap: 2px; margin-inline-start: 6px; padding: 1px 7px; border-radius: 99px; font-size: 11.5px; font-weight: 800; vertical-align: 1px; background: color-mix(in srgb, var(--hc) 18%, transparent); color: var(--fg); text-decoration: none; display: inline-flex; }
+.habit.is-done .sbadge { text-decoration: none; }
+/* Streak milestones: celebration card + badges on the habit page */
+.mile-scrim { position: absolute; inset: 0; z-index: 60; display: grid; place-items: center; background: rgba(8,10,20,.55); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); animation: mFade .25s ease; overflow: hidden; }
+.mile-card { position: relative; width: min(290px, 84%); text-align: center; padding: 26px 20px 20px; border-radius: 28px; color: #fff; background: linear-gradient(150deg, var(--m1), var(--m2)); box-shadow: 0 24px 60px -20px var(--m2); animation: mPop .55s cubic-bezier(.2,1.5,.4,1); direction: rtl; }
+.mile-card .m-em { font-size: 64px; line-height: 1; display: inline-block; animation: mBounce 1.2s ease-in-out .4s infinite; filter: drop-shadow(0 6px 10px rgba(0,0,0,.25)); }
+.mile-card .m-title { font-family: var(--font-display); font-size: 28px; margin: 12px 0 4px; }
+.mile-card .m-sub { font-size: 14px; opacity: .92; }
+.mile-card .m-line { font-size: 15px; font-weight: 700; margin: 12px 0 18px; }
+.mile-card button { border: 0; border-radius: 99px; padding: 11px 30px; font: inherit; font-weight: 800; font-size: 15px; background: #fff; color: var(--m2); cursor: pointer; }
+.mile-card .m-ray { position: absolute; inset: -40px; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,.35), transparent 60%); z-index: -1; animation: mGlow 2s ease-in-out infinite; }
+.confetti { position: absolute; top: -12px; width: 8px; height: 13px; border-radius: 2px; animation: cFall linear forwards; }
+@keyframes mFade { from { opacity: 0; } }
+@keyframes mPop { from { transform: scale(.4) rotate(-6deg); opacity: 0; } }
+@keyframes mBounce { 0%,100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-8px) scale(1.08); } }
+@keyframes mGlow { 0%,100% { opacity: .6; } 50% { opacity: 1; } }
+@keyframes cFall { to { transform: translate(var(--dx), 760px) rotate(var(--rot)); opacity: .9; } }
+.miles { padding: 14px; direction: rtl; text-align: right; }
+.miles-row { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
+.mb { flex: none; width: 62px; text-align: center; padding: 8px 4px; border-radius: 16px; background: var(--surface-2); }
+.mb .e { font-size: 24px; display: block; filter: grayscale(1); opacity: .35; }
+.mb small { display: block; font-size: 10.5px; font-weight: 700; color: var(--faint); margin-top: 3px; }
+.mb.got { background: color-mix(in srgb, var(--hc) 16%, var(--surface)); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--hc) 50%, transparent); }
+.mb.got .e { filter: none; opacity: 1; }
+.mb.got small { color: var(--fg); }
+.miles-next { font-size: 13px; font-weight: 700; margin-top: 10px; }
+.miles-bar { height: 7px; border-radius: 99px; background: var(--surface-2); margin-top: 6px; overflow: hidden; }
+.miles-bar i { display: block; height: 100%; border-radius: inherit; background: var(--hc); }
 /* "you're on this habit — tap to open": hover / keyboard focus lights the row in its color, press shrinks it */
 .habit { transition: opacity .25s, transform .16s ease, box-shadow .2s ease, background-color .2s ease; }
 .habit:has(.hlink:hover), .habit:has(.hlink:focus-visible) {
@@ -1687,6 +1721,33 @@ function deleteRow(h) {
       : `<button class="del-ask" data-a="askDelete" data-id="${h.id}" aria-label="מחק את ${esc(h.name)}"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>מחק</button>`}
   </div>`;
 }
+const MILES = [[3, '✨', 'התחלה חמה', '#ffb347', '#ff7a59'], [7, '🔥', 'שבוע שלם!', '#ff8a3d', '#ff3d6e'], [14, '⚡', 'שבועיים!', '#ffcc33', '#ff8a00'], [30, '🏅', 'חודש שלם!', '#4facfe', '#6a5cff'], [50, '💎', 'חצי דרך למאה', '#22d3ee', '#6366f1'], [100, '🏆', 'מאה ימים!', '#f7b733', '#fc4a1a'], [365, '👑', 'שנה שלמה!', '#a855f7', '#ec4899']];
+const MILE_LINES = ['ככה בונים הרגל.', 'אתה על גל, תמשיך!', 'עקביות זה הכוח שלך.', 'כל יום נחשב, וזה מוכיח.', 'אי אפשר לעצור אותך עכשיו.'];
+function streakNow(h) { try { const t = TODAY(); return E.analyze(spec(h), eventsOf(h.id), { from: h.startDay, to: t, today: t }).streak; } catch (e) { return { current: 0, best: 0 }; } }
+function tierOf(n) { let t = null; for (const m of MILES) if (n >= m[0]) t = m; return t; }
+function streakBadge(h) { const n = streakNow(h).current, t = tierOf(n); return t ? `<span class="sbadge" title="${n} ימים ברצף">${t[1]} <bdi class="num">${n}</bdi></span>` : ''; }
+/** After a check: if the streak just crossed a milestone (first time for this habit), celebrate. */
+function checkMilestone(h, before) {
+  const n = streakNow(h).current; h.miles = h.miles || [];
+  const hit = MILES.filter(m => before < m[0] && n >= m[0] && !h.miles.includes(m[0])).pop();
+  if (!hit) return; MILES.forEach(m => { if (n >= m[0] && !h.miles.includes(m[0])) h.miles.push(m[0]); }); save();
+  const phone = document.getElementById('phone'); if (!phone) return;
+  const old = phone.querySelector('.mile-scrim'); if (old) old.remove();
+  const el = document.createElement('div'); el.className = 'mile-scrim'; el.setAttribute('role', 'dialog');
+  const cols = ['#ff4f8b', '#ffd23f', '#34c759', '#4f7cff', '#ff8a3d', '#a855f7', '#22d3ee', '#fff'];
+  const conf = Array.from({ length: 46 }, () => `<i class="confetti" style="left:${Math.random() * 100}%;background:${cols[Math.random() * cols.length | 0]};--dx:${(Math.random() * 120 - 60) | 0}px;--rot:${(Math.random() * 720 - 360) | 0}deg;animation-duration:${(1.8 + Math.random() * 1.6).toFixed(2)}s;animation-delay:${(Math.random() * .5).toFixed(2)}s"></i>`).join('');
+  el.innerHTML = `${conf}<div class="mile-card" style="--m1:${hit[3]};--m2:${hit[4]}"><i class="m-ray"></i><span class="m-em">${hit[1]}</span><div class="m-title">${hit[2]}</div><div class="m-sub">${esc(h.icon + ' ' + h.name)} · <b>${n}</b> ימים ברצף</div><div class="m-line">${MILE_LINES[n % MILE_LINES.length]}</div><button type="button">יש! 🙌</button></div>`;
+  el.addEventListener('click', e => { if (e.target === el || e.target.closest('button')) { e.stopPropagation(); el.remove(); } });
+  phone.appendChild(el); try { navigator.vibrate && navigator.vibrate([30, 40, 60]); } catch (e) {}
+}
+/** Habit page: earned streak badges + progress to the next one. */
+function milesCard(h, r) {
+  const best = Math.max(r.streak.best, r.streak.current), cur = r.streak.current, next = MILES.find(m => cur < m[0]);
+  const prev = [...MILES].reverse().find(m => cur >= m[0]), from = prev ? prev[0] : 0;
+  return `<section class="card miles" style="--hc:${h.color}"><div class="form-title" style="margin:0 0 10px">אבני דרך</div>
+    <div class="miles-row">${MILES.map(m => `<div class="mb ${best >= m[0] ? 'got' : ''}"><span class="e">${m[1]}</span><small>${m[0]} ימים</small></div>`).join('')}</div>
+    ${next ? `<div class="miles-next">עוד ${next[0] - cur === 1 ? 'יום אחד' : (next[0] - cur) + ' ימים'} ל־${next[1]} ${next[2].replace('!', '')}</div><div class="miles-bar"><i style="width:${Math.round((cur - from) / (next[0] - from) * 100)}%"></i></div>` : '<div class="miles-next">👑 השגת את כל אבני הדרך!</div>'}</section>`;
+}
 function habitRow(h, it, day = TODAY()) {
   if (ui.editList) return deleteRow(h);
   const on = isOn(it), plan = tapPlan(it, h), cl = countLabel(it, h);
@@ -1695,7 +1756,7 @@ function habitRow(h, it, day = TODAY()) {
   return `<div class="habit ${on ? 'is-done' : ''}" style="--hc:${h.color}" data-hid="${h.id}">
     <span class="grip" data-id="${h.id}" role="button" aria-label="גרור כדי לשנות את הסדר" title="גרור כדי לשנות את הסדר"><svg viewBox="0 0 10 16" width="10" height="16" fill="currentColor"><circle cx="2" cy="2" r="1.6"/><circle cx="8" cy="2" r="1.6"/><circle cx="2" cy="8" r="1.6"/><circle cx="8" cy="8" r="1.6"/><circle cx="2" cy="14" r="1.6"/><circle cx="8" cy="14" r="1.6"/></svg></span>
     ${hicon(h)}
-    <div class="hmain"><button class="hlink" data-a="detail" data-id="${h.id}"><span class="hname">${esc(h.name)}<span class="hgo" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5 8 12l7 7"/></svg></span></span><span class="hsub">${timerOf(h) ? `⏱ <b data-timer="${h.id}" class="num">${fmtClock(timerElapsed(timerOf(h)))}</b> ${timerOf(h).running ? "סופר עכשיו" : "מושהה"}` : esc(lineFor(h, it, day))}</span></button>${weekStrip(h)}</div>
+    <div class="hmain"><button class="hlink" data-a="detail" data-id="${h.id}"><span class="hname">${esc(h.name)}${streakBadge(h)}<span class="hgo" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5 8 12l7 7"/></svg></span></span><span class="hsub">${timerOf(h) ? `⏱ <b data-timer="${h.id}" class="num">${fmtClock(timerElapsed(timerOf(h)))}</b> ${timerOf(h).running ? "סופר עכשיו" : "מושהה"}` : esc(lineFor(h, it, day))}</span></button>${weekStrip(h)}</div>
     ${it.status === 'rest' ? chip('rest') : ''}
     <button class="more" data-a="menu" data-id="${h.id}" aria-label="פעולות נוספות">⋯</button>
     <button class="check ${on ? 'on' : ''}" data-a="check" data-id="${h.id}" data-day="${day}" aria-label="${plan.mode === 'amount' ? `הוסף ${clean(h.tapStep)} (${cl || 'הושלם'})` : plan.mode === 'count' ? (plan.target > it.completionsToday ? `הוסף ביצוע (${it.completionsToday} מתוך ${it.need})` : 'הסר ביצוע אחד') : on ? 'בוצע. הקש לביטול' : 'סמן כבוצע'}">
@@ -2261,6 +2322,7 @@ function screenDetail() {
       ${h.kind === 'duration' ? timerCard(h) : ''}
     </section>
     ${freezeCard(h)}
+    ${milesCard(h, rAll)}
     <div class="big3 card">
       ${bigStat(rAll.streak.current, 'רצף נוכחי', flexible ? 'שבועות' : 'ימים', '🔥')}
       ${bigStat(rAll.streak.best, 'שיא רצף', flexible ? 'שבועות' : 'ימים', '🏆')}
@@ -3062,9 +3124,11 @@ document.addEventListener('click', e => {
       const day = el.dataset.day || TODAY();
       if (h.kind === 'duration' && (day !== TODAY() || a === 'checkDay')) { ui.sheet = { type: 'dtime', id, day }; rerender(); break; }
       if (h.kind === 'quantity' && a === 'checkDay') { ui.sheet = { type: 'damt', id, day }; rerender(); break; }   // pick the exact amount (0–10)
+      const sBefore = streakNow(h).current;
       applyPlan(h, day, tapPlan(itemOf(h, day), h));
       const after = isOn(itemOf(h, day));
       rerender();
+      if (after) checkMilestone(h, sBefore);
       if (after) { const b = document.querySelector(`[data-a="${a}"][data-id="${id}"]`); if (b) b.classList.add('pop'); }
       break; }
     case 'widget': { const plan = JSON.parse(el.dataset.plan); const changed = applyPlan(h, TODAY(), plan, 'widget'); if (!changed) toast('כבר במצב הזה — לא נרשם דבר'); rerender(); break; }
