@@ -760,8 +760,14 @@ textarea.export { width: 100%; height: 160px; font-family: var(--font-data); fon
 .st2-spark { display: flex; gap: 3px; direction: rtl; }
 .st2-spark i { flex: 1; height: 10px; border-radius: 4px; background: var(--surface-2); }
 .st2-spark i.y { background: linear-gradient(to top, var(--hc), color-mix(in srgb, var(--hc) 65%, #fff)); }
-.st2-spark i.n { background: color-mix(in srgb, #ff5c7a 22%, var(--surface-2)); }
-.st2-spark i.o { background: color-mix(in srgb, var(--rest) 25%, var(--surface-2)); }
+.st2-spark { align-items: center; }
+.st2-spark i.n { background: #f2576b; height: 4px; opacity: .85; }
+.st2-spark i.t { background: transparent; box-shadow: inset 0 0 0 1.5px var(--hc, var(--accent)); }
+.sp-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; font-size: 12.5px; color: var(--muted); direction: rtl; }
+.sp-legend span { display: inline-flex; align-items: center; gap: 5px; }
+.sp-legend i { width: 14px; height: 9px; border-radius: 3px; display: inline-block; }
+.sp-legend i.y { background: var(--accent); } .sp-legend i.n { background: #f2576b; height: 4px; } .sp-legend i.o { background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--line); } .sp-legend i.t { box-shadow: inset 0 0 0 1.5px var(--accent); }
+.st2-spark i.o { background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--line); }
 .st2-spark i.x { opacity: .35; }
 .sx-ins .insight { background: linear-gradient(to left, color-mix(in srgb, var(--c) 10%, var(--surface)), var(--surface-2)); border-radius: 14px; padding: 10px 12px; margin-bottom: 8px; direction: rtl; }
 .st2 { direction: rtl; display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 22px;
@@ -2356,7 +2362,7 @@ function screenToday() {
   const y = S_(D(t) - 1);
   const forgot = isToday ? S.habits.filter(h => !h.archived && ['missed', 'partial', 'nodata'].includes(statusOf(h, y).status)) : [];
   const oldest = Math.min(...S.habits.map(h => D(h.startDay)), D(t));
-  return `<div class="navbar"><button class="iconbtn" data-a="new" aria-label="הרגל חדש">${ICON.plus}</button><h2>ההרגלים שלי</h2><span class="nb-r">${todBtn()}${themeBtn()}</span></div>
+  return `<div class="navbar"><button class="iconbtn" data-a="new" aria-label="הרגל חדש">${ICON.plus}</button><h2>ההרגלים שלי</h2><span class="nb-r">${themeBtn()}</span></div>
   <div class="stack">
     ${isToday ? heroCard(todays, by) : ''}
     <section class="card daynav ${todCls()} ${isToday ? '' : 'past'}">
@@ -3092,7 +3098,7 @@ function screenStats() {
     const r = E.analyze(spec(h), eventsOf(h.id), { from, to: t, today: t });
     if (h.kind === 'event') r.events = E.analyze(spec(h), eventsOf(h.id), { from, to: t, today: t }).events;
     const doneN = r.basis.unit !== 'day' ? r.totalCompletions : r.fullDays; rs.push({ h, r, doneN });
-    const spark = []; for (let d = td - 13; d <= td; d++) { const c = D(h.startDay) > d ? null : calCell(h, d, td); spark.push(`<i class="${!c ? 'x' : c.done ? 'y' : c.planned ? 'n' : 'o'}"></i>`); }
+    const SP = { done: 'y', miss: 'n', today: 't' }, spark = []; for (let d = td - 13; d <= td; d++) { const st = D(h.startDay) > d ? null : cellState(h, S_(d)); spark.push(`<i class="${!st ? 'x' : SP[st] || 'o'}" title="${S_(d).split('-').reverse().join('.')} · ${!st ? 'לפני ההתחלה' : st === 'done' ? 'בוצע' : st === 'miss' ? 'לא בוצע' : st === 'today' ? 'היום' : 'מנוחה / לא נדרש'}"></i>`); }
     const tier = tierOf(r.streak.current);
     const flexible = r.basis.unit !== 'day';
     const main = flexible ? `${r.totalCompletions} פעמים` : `${r.fullDays} ימים`;
@@ -3116,7 +3122,7 @@ function screenStats() {
   return `<div class="navbar"><h2>סטטיסטיקות</h2></div>
   <div class="stack">${seg('statsPeriod', [[7, '7 ימים'], [30, '30 יום'], [90, '90 יום'], [365, 'שנה'], [0, 'הכל']], ui.statsPeriod)}
     ${hero}${podium}
-    <p class="small muted" style="margin:0">כל הרגל נמדד בנפרד. הפס הצבעוני = 14 הימים האחרונים.</p>
+    <div class="sp-legend"><span>14 הימים האחרונים:</span><span><i class="y"></i>בוצע</span><span><i class="n"></i>לא בוצע</span><span><i class="o"></i>מנוחה</span><span><i class="t"></i>היום</span></div>
     ${cards || '<div class="card empty">אין הרגלים עדיין</div>'}
     <section class="card sx-ins"><h3>💡 תובנות</h3>${ins.length ? ins.map(i => `<div class="insight" style="--c:${i.certainty === 'measured' ? 'var(--accent)' : 'var(--partial)'}"><span class="chip" style="--c:${i.certainty === 'measured' ? 'var(--accent)' : 'var(--partial)'};align-self:flex-start">${i.certainty === 'measured' ? 'נמדד' : 'השערה'}</span><span class="small">${esc(i.text)}</span><span class="tiny faint">מבוסס על: ${esc(i.basis)}</span></div>`).join('') : '<p class="muted small">תובנות יופיעו כשיצטברו מספיק נתונים.</p>'}
       <span class="tiny faint">״נמדד״ = עובדה מהנתונים. ״השערה״ = הצעה לבדיקה, לא קשר סיבתי.</span></section>
