@@ -2046,7 +2046,7 @@ function openDatePicker(btn) {
     let cells = '<span></span>'.repeat(lead);
     for (let d = 1; d <= days; d++) { const ds = `${y}-${pad(m)}-${pad(d)}`; cells += `<button type="button" class="dp-d ${ds === inp.value ? 'sel' : ''} ${ds === TODAY() ? 'tod' : ''}" data-d="${ds}" ${ok(ds) ? '' : 'disabled'} style="animation-delay:${d * 8}ms">${d}</button>`; }
     const q = [['היום', TODAY()], ['אתמול', S_(D(TODAY()) - 1)], ['מחר', S_(D(TODAY()) + 1)]].filter(([, ds]) => ok(ds));
-    el.innerHTML = `<div class="dp-card" role="dialog" aria-label="בחירת תאריך"><div class="dp-top"><button type="button" class="dp-nav" data-n="-1" aria-label="חודש קודם">›</button><b>${title}</b><button type="button" class="dp-nav" data-n="1" aria-label="חודש הבא">‹</button></div>
+    el.innerHTML = `<div class="dp-card" role="dialog" aria-label="בחירת תאריך"><div class="dp-top"><button type="button" class="dp-nav" data-n="1" aria-label="חודש הבא">›</button><b>${title}</b><button type="button" class="dp-nav" data-n="-1" aria-label="חודש קודם">‹</button></div>
       <div class="dp-grid">${heads}${cells}</div><div class="dp-quick">${q.map(([t, ds]) => `<button type="button" class="dp-q" data-d="${ds}">${t}</button>`).join('')}<button type="button" class="dp-x">ביטול</button></div></div>`;
   };
   el.addEventListener('click', e => {
