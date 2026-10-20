@@ -331,6 +331,10 @@ details.others summary { cursor: pointer; color: var(--muted); font-size: 14px; 
 .toast.out { animation: toastOut .26s ease-in both; }
 @keyframes toastIn { from { opacity: 0; transform: translate(-50%, -24px) scale(.88); } to { opacity: 1; transform: translate(-50%, 0) scale(1); } }
 @keyframes toastOut { to { opacity: 0; transform: translate(-50%, -16px) scale(.94); } }
+.name-field .name-ic { width: 24px; height: 24px; flex: none; border-radius: 50%; display: grid; place-items: center; background: #34c759; color: #fff; transform: scale(0); opacity: 0; transition: transform .25s cubic-bezier(.2,1.5,.4,1), opacity .2s; }
+.name-field.name-ok .name-ic { transform: scale(1); opacity: 1; }
+.name-field.name-err { box-shadow: inset 0 0 0 2px #ff3b30; border-radius: 12px; animation: nameShake .4s; }
+@keyframes nameShake { 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }
 .t-ic { width: 30px; height: 30px; flex: none; border-radius: 50%; display: grid; place-items: center; background: var(--tc); color: #fff; box-shadow: 0 0 0 3px color-mix(in srgb, var(--tc) 30%, transparent); }
 .t-ic.emoji { background: color-mix(in srgb, var(--tc) 30%, rgba(255,255,255,.08)); font-size: 16px; }
 .t-txt { display: flex; flex-direction: column; min-width: 0; line-height: 1.25; }
@@ -2697,7 +2701,7 @@ function sheetEditor(h) {
   const sched = d.schedType;
   return sheet(h ? 'עריכת הרגל' : 'הרגל חדש', `<div class="stack">
     <div class="form">
-      <div class="field"><span class="hicon" style="--hc:${d.color}">${esc(d.icon)}</span><input class="wide" type="text" id="e-name" placeholder="שם ההרגל" value="${esc(d.name)}" aria-label="שם ההרגל"></div>
+      <div class="field name-field ${d.name.trim() ? 'name-ok' : ''}"><span class="hicon" style="--hc:${d.color}">${esc(d.icon)}</span><input class="wide" type="text" id="e-name" placeholder="שם ההרגל" value="${esc(d.name)}" aria-label="שם ההרגל"><span class="name-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span></div>
       <div class="icons" role="group" aria-label="אייקון">${(ui.moreIcons ? ICONS : ICONS.slice(0, 14)).map(i => `<button data-a="draft" data-k="icon" data-v="${i}" aria-pressed="${i === d.icon}">${i}</button>`).join('')}</div>
       <button class="more-icons" data-a="moreIcons" aria-label="${ui.moreIcons ? 'פחות אימוג׳ים' : 'עוד אימוג׳ים'}"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="${ui.moreIcons ? 'm6 15 6-6 6 6' : 'm6 9 6 6 6-6'}"/></svg></button>
       <div class="swatches" role="group" aria-label="צבע">${COLORS.map(c => `<button style="background:${c}" data-a="draft" data-k="color" data-v="${c}" aria-pressed="${c === d.color}" aria-label="צבע"></button>`).join('')}</div>
@@ -2780,8 +2784,8 @@ function buildVersion(d, from) {
 }
 function saveHabit() {
   readDraft(); const d = ui.draft;
-  if (!d.name.trim()) { toast('צריך לתת שם להרגל'); return; }
-  if (d.schedType === 'weekdays' && !d.days.length) { toast('בחר לפחות יום אחד'); return; }
+  if (!d.name.trim()) { toast('צריך לתת שם להרגל', null, { error: true }); const f = document.getElementById('e-name'); if (f) { const w = f.parentElement; w.classList.remove('name-err'); void w.offsetWidth; w.classList.add('name-err'); f.focus(); } return; }
+  if (d.schedType === 'weekdays' && !d.days.length) { toast('בחר לפחות יום אחד', null, { error: true }); return; }
   if (d.kind === 'frequency' && !['perWeek', 'perMonth'].includes(d.schedType)) d.schedType = 'perWeek';
   let h = ui.editing && habitById(ui.editing);
   if (!h) {
@@ -2890,8 +2894,8 @@ function toast(msg, action, opt = {}) {
   const o = document.getElementById('phone'); let el = document.getElementById('toast');
   if (!el) { el = document.createElement('div'); el.id = 'toast'; el.setAttribute('role', 'status'); o.appendChild(el); }
   el.className = 'toast'; void el.offsetWidth; el.classList.add('in');
-  const icon = opt.icon ? esc(opt.icon) : `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>`;
-  el.innerHTML = `<span class="t-ic ${opt.icon ? 'emoji' : ''}" style="--tc:${opt.color || '#34c759'}">${icon}</span><span class="t-txt"><b>${esc(msg)}</b>${opt.sub ? `<small>${esc(opt.sub)}</small>` : ''}</span>${action ? `<button class="toast-act" data-a="${action.a}">${esc(action.label)}</button>` : ''}`;
+  const icon = opt.icon ? esc(opt.icon) : `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="${opt.error ? 'M6 6l12 12M18 6 6 18' : 'm5 12.5 4.5 4.5L19 7.5'}"/></svg>`;
+  el.innerHTML = `<span class="t-ic ${opt.icon ? 'emoji' : ''}" style="--tc:${opt.color || (opt.error ? '#ff3b30' : '#34c759')}">${icon}</span><span class="t-txt"><b>${esc(msg)}</b>${opt.sub ? `<small>${esc(opt.sub)}</small>` : ''}</span>${action ? `<button class="toast-act" data-a="${action.a}">${esc(action.label)}</button>` : ''}`;
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => { el.classList.add('out'); toastTimer = setTimeout(() => el.remove(), 260); }, action ? 6000 : 2200);
 }
@@ -2986,6 +2990,7 @@ function render() {
 function rerender() { ui.keepScroll = true; render(); }
 
 document.addEventListener('input', e => {
+  if (e.target.id === 'e-name') { const w = e.target.parentElement; w.classList.toggle('name-ok', !!e.target.value.trim()); w.classList.remove('name-err'); }
   if (e.target.id === 'search') { ui.search = e.target.value; const pos = e.target.selectionStart; rerender(); const s = document.getElementById('search'); s.focus(); s.setSelectionRange(pos, pos); }
 });
 document.addEventListener('change', e => {
@@ -3089,7 +3094,7 @@ document.addEventListener('click', e => {
       setTimeout(() => { ui.sheet = null; rerender(); toast(`נשמר: ${fmtMin(n)} ב${dayName(el.dataset.day) === 'היום' ? 'היום' : '-' + dayName(el.dataset.day)}`); }, 300);
       break; }
     case 'toggleDayHabit': { if (h.kind === 'duration' && statusOf(h, el.dataset.day).status !== 'rest') { ui.sheet = { type: 'dtime', id, day: el.dataset.day }; rerender(); break; }
-      if (h.kind === 'quantity') { if (statusOf(h, el.dataset.day).status === 'rest') setRest(h, el.dataset.day, false); ui.sheet = { type: 'damt', id, day: el.dataset.day }; rerender(); break; } const day = el.dataset.day; const st = statusOf(h, day).status; if (st === 'rest') { setRest(h, day, false); setDone(h, day, true); } else if (h.kind === 'quantity') setDone(h, day, st !== 'done'); else applyPlan(h, day, tapPlan(itemOf(h, day), h)); toast(statusOf(h, day).status === 'done' ? `סומן כבוצע ב${dayName(day) === 'היום' ? 'היום' : '-' + dayName(day)}` : 'הסימון בוטל'); rerender(); break; }
+      if (h.kind === 'quantity') { if (statusOf(h, el.dataset.day).status === 'rest') setRest(h, el.dataset.day, false); ui.sheet = { type: 'damt', id, day: el.dataset.day }; rerender(); break; } const day = el.dataset.day; const st = statusOf(h, day).status; if (st === 'rest') { setRest(h, day, false); setDone(h, day, true); } else if (h.kind === 'quantity') setDone(h, day, st !== 'done'); else applyPlan(h, day, tapPlan(itemOf(h, day), h)); if (statusOf(h, day).status === 'done') toast('בוצע'); else toast('בוטל', null, { error: true }); rerender(); break; }
     case 'menu': ui.sheet = { type: 'menu', id }; ui.confirm = null; rerender(); break;
     case 'close': case 'closeScrim':
       // "סיום" in the habit editor saves (a new habit with no name yet just closes)
