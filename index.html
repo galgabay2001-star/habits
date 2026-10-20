@@ -778,7 +778,9 @@ textarea.export { width: 100%; height: 160px; font-family: var(--font-data); fon
 .big-ring .lbl .ring-clock { font-size: 34px; letter-spacing: -.5px; }
 .big-ring .lbl .ring-of { display: block; font-size: 15px; font-weight: 700; margin-top: 4px; direction: rtl; }
 .today-sub { font-size: 16px; }
-.big-btn { background: var(--hc); color: #fff; font-size: 16px; padding: 12px 18px; }
+.big-btn { background: var(--hc); color: #fff; font-size: 16px; padding: 12px 18px; border-radius: 999px; box-shadow: 0 6px 16px -8px var(--hc), inset 0 1px 0 rgba(255,255,255,.25); transition: transform .22s cubic-bezier(.2,1.6,.4,1), box-shadow .22s; }
+.big-btn:hover { transform: scale(1.07); box-shadow: 0 12px 26px -8px var(--hc), inset 0 1px 0 rgba(255,255,255,.25); }
+.big-btn:active { transform: scale(1.13); }
 .big-btn.secondary { background: color-mix(in srgb, var(--hc) 16%, transparent); color: var(--hc); }
 .big3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 .card.big3 { gap: 8px; }
@@ -2661,7 +2663,7 @@ function screenDetail() {
   }
   const btn = plan.mode === 'amount' ? (plan.target > (it.amountToday || 0) ? `+${clean(h.tapStep)} ${unit}` : `הורד ${clean(h.tapStep)}`)
     : plan.mode === 'count' ? (plan.target > it.completionsToday ? '+1 ביצוע' : 'הורד ביצוע')
-    : plan.mode === 'event' ? '+ אירוע עכשיו' : plan.mode === 'range' ? (it.value != null ? 'עדכון מדידה' : 'רישום מדידה')
+    : plan.mode === 'event' ? 'רישום אירוע' : plan.mode === 'range' ? (it.value != null ? 'עדכון מדידה' : 'רישום מדידה')
     : plan.mode === 'rest' ? 'בטל יום מנוחה' : plan.want ? (h.kind === 'avoidance' ? 'יום נקי' : 'סמן כבוצע') : 'בטל סימון';
   // ── This week vs last week (count of days done)
   const off = Math.min(0, ui.wkOff || 0), ws0 = E.weekStartOf(td, S.settings.weekStart), ws = ws0 + 7 * off, we = Math.min(ws + 6, td);
