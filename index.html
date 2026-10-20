@@ -125,7 +125,8 @@ button { cursor: pointer; }
 .hero.h-intro circle.fg { animation: ringIn 1s cubic-bezier(.2,.8,.2,1); }
 @keyframes ringIn { from { stroke-dashoffset: 169.6; } }
 .hero.morning { --h1: #ffa24c; --h2: #ff4f8b; }
-.hero.noon { --h1: #fff3b0; --h2: #ffd23f; color: #5a4200; }
+.hero.noon { --h1: color-mix(in srgb, #ffd84d 16%, #fff); --h2: color-mix(in srgb, #ffe98f 12%, #fff); color: #5a4200; box-shadow: inset 0 0 0 1.5px color-mix(in srgb, #f5c518 28%, transparent), 0 10px 24px -18px #f5c518; }
+.hero.noon .hh { color: #b7860b; } .hero.noon .blob { background: color-mix(in srgb, #ffd84d 18%, transparent); }
 .hero.noon circle:not(.fg) { stroke: rgba(90,66,0,.14); } .hero.noon circle.fg { stroke: #e0a100; }
 .hero.noon .hero-quote, .hero.noon .hero-status { background: rgba(255,255,255,.55); }
 .hero.evening { --h1: #8b5cff; --h2: #ff679f; }
