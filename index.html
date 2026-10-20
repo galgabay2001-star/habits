@@ -2787,7 +2787,7 @@ function periodCard(h) {
   const buckets = chartBuckets(h, scale, r, byDay);
   const selB = ui.barSel != null && buckets[ui.barSel] ? buckets[ui.barSel] : null;
   let body = '';
-  if (scale === 'day') {
+  if (false) {   // per-day records list removed — not needed
     const list = [...entries.values()].filter(en => en.day === r.from && !en.removed && (en.kind === 'log' || en.kind === 'clean')).sort((a, b) => new Date(a.ts) - new Date(b.ts));
     const t = s => new Date(s).toTimeString().slice(0, 5);
     const tm = timerOf(h);
@@ -3333,8 +3333,6 @@ function sheetDayTime(h, day) {
     <button class="dt-save" data-a="dtSet" data-id="${h.id}" data-day="${day}">✓ שמור זמן</button>
     <div class="tm-chips">${[10, 15, 20, 30, 45, 60, 90].map(m => `<button data-a="dtChip" data-id="${h.id}" data-day="${day}" data-v="${m}" aria-pressed="${Math.round(cur) === m}">${m}</button>`).join('')}<span class="small muted">דק׳</span></div>
     ${cur > 0 ? `<button class="tm-reset" style="align-self:flex-start" data-a="dtChip" data-id="${h.id}" data-day="${day}" data-v="0">↺ איפוס ל-0</button>` : ''}
-    <div class="form-title">רישומים ביום הזה</div>
-    <div class="list">${list.length ? list.map(x => { const raw = S.events.find(e => e.entryID === x.id && e.action === 'log') || {}; return `<div class="li"><span class="sess-dot" style="background:${h.color}"></span><div class="grow"><b class="small">${fmtMin(x.duration)}</b></div><span class="data">${raw.startedAt ? `${t(raw.startedAt)}–${t(raw.endedAt || x.ts)} · סטופר` : `נרשם ידנית ${t(x.ts)}`}</span></div>`; }).join('') : '<div class="li muted small">עדיין לא נרשם זמן ביום הזה</div>'}</div>
     <p class="tiny muted" style="margin:0">כל שינוי נשמר מיד ונכנס לגרף ולטבלה. ההיסטוריה נשמרת.</p>
   </div>`);
 }
@@ -3388,8 +3386,6 @@ function sheetLog(h, day) {
     </div>
     <div class="row" style="flex-wrap:wrap">${h.kind === 'avoidance' ? `<button class="pill-btn" data-a="cleanDay" data-id="${h.id}">יום נקי</button><button class="pill-btn danger" data-a="lapseDay" data-id="${h.id}">דיווח חריגה</button>` : `<button class="pill-btn" data-a="submitLog" data-id="${h.id}">${edit ? 'שמור תיקון' : 'שמור רישום'}</button>`}${edit ? '<button class="pill-btn secondary" data-a="cancelEdit">ביטול תיקון</button>' : ''}</div>
 `}
-    <div class="form-title">רישומי היום</div>
-    <div class="list">${list.length ? list.map(x => `<div class="li"><div class="grow"><div class="small" style="${x.removed ? 'text-decoration:line-through;color:var(--faint)' : ''}">${esc(title(x))}</div><div class="data">${x.ts.slice(11, 16)}${x.corrections ? ` · תוקן ${x.corrections}×` : ''}${x.removed ? ' · בוטל' : ''}</div></div>${x.removed ? '' : `${x.kind === 'log' ? `<button class="link small" data-a="editEntry" data-v="${x.id}">תיקון</button>` : ''}<button class="link small" style="color:var(--missed)" data-a="undoEntry" data-id="${h.id}" data-v="${x.id}">ביטול</button>`}</div>`).join('') : '<div class="li muted small">אין רישומים ביום זה</div>'}</div>
   </div>`);
 }
 const UNITS = ['שעות', 'דקות', 'ק״ג', 'צעדים', 'ס״מ', 'ליטר'];
