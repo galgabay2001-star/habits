@@ -824,6 +824,15 @@ textarea.export { width: 100%; height: 160px; font-family: var(--font-data); fon
 .fg-cta:hover { transform: scale(1.12); box-shadow: 0 12px 24px -8px #f2b705, inset 0 1px 0 rgba(255,255,255,.35); }
 .forgot:active .fg-cta { transform: scale(1.16); }
 .fg-cta b { font-size: 16px; }
+/* Quieter "forgot yesterday": calm card, small accents, no big glow */
+.forgot.forgot { padding: 12px 14px; gap: 8px; border-radius: 20px; background: color-mix(in srgb, #ffd84d 7%, var(--surface)); box-shadow: inset 0 0 0 1px color-mix(in srgb, #f5c518 22%, transparent); }
+.forgot .fg-blob { display: none; }
+.forgot .fg-ic { width: 34px; height: 34px; border-radius: 11px; font-size: 17px; background: color-mix(in srgb, #ffd84d 18%, var(--surface)); animation: none; }
+.forgot .fg-t b { font-size: 15.5px; font-family: inherit; font-weight: 800; color: var(--fg); }
+.forgot .fg-t small { font-size: 12px; }
+.forgot .fg-chip { padding: 3px 9px; font-size: 12px; }
+.forgot .fg-cta { padding: 6px 14px; font-size: 13px; color: #8a6400; background: color-mix(in srgb, #ffd84d 22%, var(--surface)); box-shadow: inset 0 0 0 1px color-mix(in srgb, #f5c518 35%, transparent); }
+.forgot .fg-cta:hover { transform: scale(1.08); box-shadow: inset 0 0 0 1px color-mix(in srgb, #f5c518 55%, transparent), 0 6px 14px -8px #f5c518; }
 .dotbtn { border: none; background: none; padding: 0; width: 26px; height: 26px; display: grid; place-items: center; border-radius: 50%; cursor: pointer; }
 .dotbtn:hover { background: var(--surface-2); }
 .check .cnt { font-size: 13px; font-weight: 800; color: var(--hc); }
