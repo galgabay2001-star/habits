@@ -124,15 +124,20 @@ button { cursor: pointer; }
 .hero.h-intro { animation: heroIn .5s cubic-bezier(.2,.8,.2,1); }
 .hero.h-intro circle.fg { animation: ringIn 1s cubic-bezier(.2,.8,.2,1); }
 @keyframes ringIn { from { stroke-dashoffset: 169.6; } }
-.hero.morning { --h1: #ffa24c; --h2: #ff4f8b; }
-.hero.noon { --h1: color-mix(in srgb, #ffd84d 16%, var(--surface)); --h2: color-mix(in srgb, #ffe98f 12%, var(--surface)); color: var(--fg); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, #f5c518 28%, transparent), 0 10px 24px -18px #f5c518; }
-.hero.noon .hh { color: #b7860b; } .hero.noon .blob { background: color-mix(in srgb, #ffd84d 18%, transparent); }
-.hero.noon circle:not(.fg) { stroke: rgba(90,66,0,.14); } .hero.noon circle.fg { stroke: #e0a100; }
-.hero.noon .hero-quote { background: linear-gradient(135deg, #fff1c9, #ffd9b0); color: #7a3f00; box-shadow: inset 0 0 0 1.5px color-mix(in srgb, #ff9f43 35%, transparent), 0 8px 18px -12px #ff9f43; }
-.hero.noon .hero-status { background: linear-gradient(140deg, #ffc94d, #ff8a3d); color: #fff; box-shadow: 0 6px 14px -8px #ff8a3d, inset 0 1px 0 rgba(255,255,255,.35); }
-.hero.noon .b2, .hero.noon .b3 { display: none; } .hero.noon .hd { color: var(--muted); opacity: 1; }
-.hero.evening { --h1: #8b5cff; --h2: #ff679f; }
-.hero.night { --h1: #24307f; --h2: #7a45e0; }
+/* Hero: soft pastel card, each time of day with its own gentle tint */
+.hero.morning { --t1: #ffb08a; --t2: #ffc2d4; --t3: #ff8f6b; --tt: #d4573a; --ring: #ff7a59; --q1: #ffe8dc; --q2: #ffd3e2; --qt: #8a2f3d; --qa: #ff6f91; --p1: #ff9a6b; --p2: #ff5f8f; }
+.hero.noon { --t1: #ffd84d; --t2: #ffe98f; --t3: #f5c518; --tt: #b7860b; --ring: #e0a100; --q1: #fff1c9; --q2: #ffd9b0; --qt: #7a3f00; --qa: #ff9f43; --p1: #ffc94d; --p2: #ff8a3d; }
+.hero.evening { --t1: #c4a8ff; --t2: #ffc4e1; --t3: #a07cff; --tt: #7a4fd6; --ring: #9b6bff; --q1: #efe6ff; --q2: #ffdcef; --qt: #4b2a8a; --qa: #d16bff; --p1: #a78bfa; --p2: #ec6fb5; }
+.hero.night { --t1: #9fb4ff; --t2: #b9a6ff; --t3: #6f86f0; --tt: #4155c9; --ring: #5b6ff0; --q1: #e4eaff; --q2: #ece3ff; --qt: #26307a; --qa: #7a7dff; --p1: #6f86f0; --p2: #8b5cff; }
+.hero:is(.morning, .noon, .evening, .night) { --h1: color-mix(in srgb, var(--t1) 16%, var(--surface)); --h2: color-mix(in srgb, var(--t2) 12%, var(--surface)); color: var(--fg); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--t3) 28%, transparent), 0 10px 24px -18px var(--t3); }
+.hero:is(.morning, .noon, .evening, .night) .hh { color: var(--tt); }
+.hero:is(.morning, .noon, .evening, .night) .blob { background: color-mix(in srgb, var(--t1) 18%, transparent); }
+.hero:is(.morning, .noon, .evening, .night) circle:not(.fg) { stroke: color-mix(in srgb, var(--tt) 16%, transparent); }
+.hero:is(.morning, .noon, .evening, .night) circle.fg { stroke: var(--ring); }
+.hero:is(.morning, .noon, .evening, .night) .hero-quote { background: linear-gradient(135deg, var(--q1), var(--q2)); color: var(--qt); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--qa) 35%, transparent), 0 8px 18px -12px var(--qa); }
+.hero.hero:is(.morning, .noon, .evening, .night) .hero-status { background: linear-gradient(140deg, var(--p1), var(--p2)); color: #fff; box-shadow: 0 6px 14px -8px var(--p2), inset 0 1px 0 rgba(255,255,255,.35); }
+.hero:is(.morning, .noon, .evening, .night) :is(.b2, .b3) { display: none; }
+.hero:is(.morning, .noon, .evening, .night) .hd { color: var(--muted); opacity: 1; }
 .hero .blob { position: absolute; border-radius: 50%; background: rgba(255,255,255,.18); z-index: -1; filter: blur(2px); animation: floaty 9s ease-in-out infinite; }
 .hero .b1 { width: 160px; height: 160px; top: -60px; left: -40px; }
 .hero .b2 { width: 90px; height: 90px; bottom: -30px; left: 110px; animation-delay: -3s; background: rgba(255,255,255,.12); }
