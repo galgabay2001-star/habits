@@ -130,17 +130,17 @@ button { cursor: pointer; }
 .hero.h-intro circle.fg { animation: ringIn 1s cubic-bezier(.2,.8,.2,1); }
 @keyframes ringIn { from { stroke-dashoffset: 169.6; } }
 /* Hero: soft pastel card, each time of day with its own gentle tint */
-.hero.morning, .forgot.morning, .daynav.morning, .tod-btn.morning { --t1: #ffb08a; --t2: #ffc2d4; --t3: #ff8f6b; --tt: #d4573a; --ring: #ff7a59; --q1: #ffe8dc; --q2: #ffd3e2; --qt: #8a2f3d; --qa: #ff6f91; --p1: #ff9a6b; --p2: #ff5f8f; }
-.hero.noon, .forgot.noon, .daynav.noon, .tod-btn.noon { --t1: #ffd84d; --t2: #ffe98f; --t3: #f5c518; --tt: #b7860b; --ring: #e0a100; --q1: #fff1c9; --q2: #ffd9b0; --qt: #7a3f00; --qa: #ff9f43; --p1: #ffc94d; --p2: #ff8a3d; }
-.hero.evening, .forgot.evening, .daynav.evening, .tod-btn.evening { --t1: #f472b6; --t2: #fbbf77; --t3: #ec4899; --tt: #c0267a; --ring: #ec4899; --q1: #ffe1ef; --q2: #ffe6cc; --qt: #7a1f4f; --qa: #f472b6; --p1: #f78fb3; --p2: #e0457b; }
-.hero.night, .forgot.night, .daynav.night, .tod-btn.night { --t1: #9fb4ff; --t2: #b9a6ff; --t3: #6f86f0; --tt: #4155c9; --ring: #5b6ff0; --q1: #e4eaff; --q2: #ece3ff; --qt: #26307a; --qa: #7a7dff; --p1: #6f86f0; --p2: #8b5cff; }
+.hero.morning, .forgot.morning, .daynav.morning, .tod-btn.morning { --t1: #F4D58D; --t2: #f9e6b5; --t3: #e6bf5c; --tt: #a87d10; --ring: #e0b245; --q1: #fdf5dc; --q2: #f9e6b5; --qt: #6b4e00; --qa: #e6bf5c; --p1: #f8e2a8; --p2: #F4D58D; --on: #5c4300; }
+.hero.noon, .forgot.noon, .daynav.noon, .tod-btn.noon { --t1: #F4A261; --t2: #f8c79a; --t3: #F4A261; --tt: #c0652a; --ring: #F4A261; --q1: #fde9d6; --q2: #fbd8b8; --qt: #7a3a10; --qa: #F4A261; --p1: #f6b27a; --p2: #ef934a; --on: #fff; }
+.hero.evening, .forgot.evening, .daynav.evening, .tod-btn.evening { --t1: #C08497; --t2: #d8aebd; --t3: #C08497; --tt: #8f4f66; --ring: #b0718a; --q1: #f6e8ed; --q2: #efdbe3; --qt: #5a2a3c; --qa: #C08497; --p1: #cf9aab; --p2: #b0718a; --on: #fff; }
+.hero.night, .forgot.night, .daynav.night, .tod-btn.night { --t1: #344568; --t2: #5a6d96; --t3: #344568; --tt: #344568; --ring: #344568; --q1: #e6eaf3; --q2: #dde3ef; --qt: #1f2a44; --qa: #5a6d96; --p1: #4a5c85; --p2: #344568; --on: #fff; }
 .hero:is(.morning, .noon, .evening, .night) { --h1: color-mix(in srgb, var(--t1) 16%, var(--surface)); --h2: color-mix(in srgb, var(--t2) 12%, var(--surface)); color: var(--fg); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--t3) 28%, transparent), 0 10px 24px -18px var(--t3); }
 .hero:is(.morning, .noon, .evening, .night) .hh { color: var(--tt); }
 .hero:is(.morning, .noon, .evening, .night) .blob { background: color-mix(in srgb, var(--t1) 18%, transparent); }
 .hero:is(.morning, .noon, .evening, .night) circle:not(.fg) { stroke: color-mix(in srgb, var(--tt) 16%, transparent); }
 .hero:is(.morning, .noon, .evening, .night) circle.fg { stroke: var(--ring); }
 .hero:is(.morning, .noon, .evening, .night) .hero-quote { background: linear-gradient(135deg, var(--q1), var(--q2)); color: var(--qt); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--qa) 35%, transparent), 0 8px 18px -12px var(--qa); }
-.hero.hero:is(.morning, .noon, .evening, .night) .hero-status { background: linear-gradient(140deg, var(--p1), var(--p2)); color: #fff; box-shadow: 0 6px 14px -8px var(--p2), inset 0 1px 0 rgba(255,255,255,.35); }
+.hero.hero:is(.morning, .noon, .evening, .night) .hero-status { background: linear-gradient(140deg, var(--p1), var(--p2)); color: var(--on, #fff); box-shadow: 0 6px 14px -8px var(--p2), inset 0 1px 0 rgba(255,255,255,.35); }
 .hero:is(.morning, .noon, .evening, .night) :is(.b2, .b3) { display: none; }
 .hero:is(.morning, .noon, .evening, .night) .hd { color: var(--muted); opacity: 1; }
 .hero .blob { position: absolute; border-radius: 50%; background: rgba(255,255,255,.18); z-index: -1; filter: blur(2px); animation: floaty 9s ease-in-out infinite; }
@@ -837,23 +837,23 @@ textarea.export { width: 100%; height: 160px; font-family: var(--font-data); fon
 .forgot .fg-t small { font-size: 12px; }
 .forgot .fg-chip { padding: 3px 9px; font-size: 12px; }
 .forgot .fg-cta { padding: 6px 14px; font-size: 13px; color: var(--tt, #8a6400); background: color-mix(in srgb, var(--t1, #ffd84d) 22%, var(--surface)); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--t3, #f5c518) 35%, transparent); transition: transform .22s cubic-bezier(.2,1.6,.4,1), box-shadow .22s, color .2s, background-color .2s; }
-.forgot:hover .fg-cta, .forgot .fg-cta:hover { transform: scale(1.1); color: #fff; background: linear-gradient(140deg, var(--p1, #ffc94d), var(--p2, #ff8a3d)); box-shadow: 0 10px 20px -6px var(--p2, #ff8a3d), inset 0 1px 0 rgba(255,255,255,.35); }
+.forgot:hover .fg-cta, .forgot .fg-cta:hover { transform: scale(1.1); color: var(--on, #fff); background: linear-gradient(140deg, var(--p1, #ffc94d), var(--p2, #ff8a3d)); box-shadow: 0 10px 20px -6px var(--p2, #ff8a3d), inset 0 1px 0 rgba(255,255,255,.35); }
 /* "forgot yesterday" as one slim row */
 .forgot.forgot { flex-direction: row; align-items: center; padding: 10px 12px; }
 .forgot .fg-top { flex: 1; min-width: 0; gap: 10px; }
 .forgot .fg-chips { display: none; }
 .forgot .fg-cta { align-self: center; flex: none; white-space: nowrap; }
 /* Day navigator: a bold colored band so "היום" stands out */
-.daynav.daynav { background: linear-gradient(135deg, color-mix(in srgb, var(--p1, #8f8dff) 88%, #fff), color-mix(in srgb, var(--p2, #c79bff) 88%, #fff)); color: #fff; box-shadow: 0 14px 26px -18px var(--p2, #a68bff); transition: background .6s; }
+.daynav.daynav { background: linear-gradient(135deg, color-mix(in srgb, var(--p1, #8f8dff) 78%, #fff), color-mix(in srgb, var(--p2, #c79bff) 78%, #fff)); color: var(--on, #fff); box-shadow: 0 14px 26px -18px var(--p2, #a68bff); transition: background .6s; }
 .daynav.daynav::after { background: radial-gradient(circle, rgba(255,255,255,.22), transparent 70%); }
-.daynav.daynav .greet { background: none; box-shadow: none; animation: none; padding: 0; margin: 0; font-size: 32px; color: #fff; text-shadow: 0 2px 10px rgba(40,0,90,.25); }
-.daynav.daynav .greet + .muted { color: #fff; opacity: .88; }
-.daynav.daynav .navpill { background: rgba(255,255,255,.95); color: var(--p2, #6d4cff); box-shadow: 0 8px 18px -8px rgba(40,0,90,.5); }
-.daynav.daynav .navpill[disabled] { background: rgba(255,255,255,.18); color: rgba(255,255,255,.7); opacity: 1; }
-.daynav.daynav .weekjump button { background: rgba(255,255,255,.16) !important; border-color: rgba(255,255,255,.35) !important; color: #fff; box-shadow: none; }
-.daynav.daynav .weekjump button:not(:disabled):hover { background: #fff !important; color: var(--p2, #6d4cff); }
+.daynav.daynav .greet { background: none; box-shadow: none; animation: none; padding: 0; margin: 0; font-size: 32px; color: var(--on, #fff); text-shadow: 0 2px 10px rgba(0,0,0,.12); }
+.daynav.daynav .greet + .muted { color: var(--on, #fff); opacity: .88; }
+.daynav.daynav .navpill { background: rgba(255,255,255,.95); color: var(--tt, #6d4cff); box-shadow: 0 8px 18px -8px rgba(40,0,90,.5); }
+.daynav.daynav .navpill[disabled] { background: rgba(255,255,255,.22); color: var(--on, #fff); opacity: 1; }
+.daynav.daynav .weekjump button { background: rgba(255,255,255,.16) !important; border-color: rgba(255,255,255,.35) !important; color: var(--on, #fff); box-shadow: none; }
+.daynav.daynav .weekjump button:not(:disabled):hover { background: #fff !important; color: var(--tt, #6d4cff); }
 .daynav.daynav .weekjump button:disabled { opacity: .45; }
-.daynav.daynav .weekjump .wj-range { background: rgba(255,255,255,.22); color: #fff; }
+.daynav.daynav .weekjump .wj-range { background: rgba(255,255,255,.22); color: var(--on, #fff); }
 .dotbtn { border: none; background: none; padding: 0; width: 26px; height: 26px; display: grid; place-items: center; border-radius: 50%; cursor: pointer; }
 .dotbtn:hover { background: var(--surface-2); }
 .check .cnt { font-size: 13px; font-weight: 800; color: var(--hc); }
