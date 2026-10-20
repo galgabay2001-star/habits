@@ -315,6 +315,39 @@ details.others summary { cursor: pointer; color: var(--muted); font-size: 14px; 
 .day { aspect-ratio: 1; border: none; border-radius: 9px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 13px; background: var(--surface-2); padding: 0; }
 .day small { font-size: 9px; font-variant-numeric: tabular-nums; opacity: .85; }
 .day.today { outline: 2px solid var(--fg); outline-offset: -2px; }
+/* Lively calendar: month banner, colorful tiles, heat-tinted days with habit dots */
+.mbanner { position: relative; overflow: hidden; isolation: isolate; border-radius: 22px; padding: 12px 10px; color: #fff; background: linear-gradient(135deg, var(--g1), var(--g2)); box-shadow: 0 14px 30px -18px var(--g2); direction: rtl; }
+.mbanner .blob { position: absolute; border-radius: 50%; background: rgba(255,255,255,.16); z-index: -1; animation: floaty 9s ease-in-out infinite; }
+.mbanner .b1 { width: 140px; height: 140px; top: -60px; right: -30px; }
+.mbanner .b2 { width: 70px; height: 70px; bottom: -25px; left: 30%; animation-delay: -4s; background: rgba(255,255,255,.1); }
+.mb-mid { text-align: center; display: flex; flex-direction: column; align-items: center; }
+.mb-mid h3 { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 22px; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+.mb-em { display: inline-block; animation: bob 3s ease-in-out infinite; }
+.mb-mid small { font-size: 12px; opacity: .92; }
+.mbanner .navpill { background: rgba(255,255,255,.22); color: #fff; }
+.mbanner .navpill:disabled { opacity: .35; }
+.mb-chips { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.mb-chips span { background: rgba(255,255,255,.22); border-radius: 99px; padding: 4px 10px; font-size: 12px; font-weight: 700; }
+.ctile { position: relative; overflow: hidden; background: linear-gradient(135deg, color-mix(in srgb, var(--tc) 16%, var(--surface)), color-mix(in srgb, var(--tc) 5%, var(--surface-2))) !important; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--tc) 22%, transparent); }
+.ctile b { color: var(--tc) !important; }
+.ct-ic { position: absolute; top: 9px; right: 10px; font-size: 17px; }
+.month .day { animation: dayIn .35s cubic-bezier(.2,.8,.2,1) both; transition: transform .15s; }
+.month .day:not(:disabled):active { transform: scale(.92); }
+@keyframes dayIn { from { opacity: 0; transform: translateY(6px) scale(.9); } }
+.cday { background: color-mix(in srgb, #22c55e var(--heat, 0%), var(--surface-2)); }
+.cday .cd-dots { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px; max-width: 90%; min-height: 5px; }
+.cday .cd-dots i { width: 5px; height: 5px; border-radius: 50%; }
+.cday.cal-perfect { background: linear-gradient(140deg, #ffe08a, #ffb347) !important; box-shadow: 0 6px 14px -8px #f59e0b !important; color: #5a3800; }
+.cday.cal-perfect .cd-f { color: #5a3800; }
+.cday.cal-perfect .cd-n i { color: #fff; text-shadow: 0 0 6px #fff; display: inline-block; animation: twinkle 2.2s ease-in-out infinite; }
+@keyframes twinkle { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .6; transform: scale(1.3); } }
+.month .day.today { outline: none; box-shadow: 0 0 0 2px var(--accent); animation: dayIn .35s both, todayPulse 2.4s ease-in-out .5s infinite; }
+@keyframes todayPulse { 0%,100% { box-shadow: 0 0 0 2px var(--accent), 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent); } 50% { box-shadow: 0 0 0 2px var(--accent), 0 0 0 6px color-mix(in srgb, var(--accent) 10%, transparent); } }
+.month .cal-done { background: linear-gradient(140deg, var(--hc), color-mix(in srgb, var(--hc) 70%, #fff)); box-shadow: 0 4px 10px -6px var(--hc); }
+.lg-dots { display: inline-flex; gap: 2px; vertical-align: middle; margin-inline-end: 4px; }
+.lg-dots i { width: 6px; height: 6px; border-radius: 50%; background: #4f7cff; }
+.lg-dots i:nth-child(2) { background: #f5a623; }
+.lg-dots i:nth-child(3) { background: #22c55e; }
 .st-full { background: var(--done); color: #fff; }
 .st-partial { background: color-mix(in srgb, var(--done) var(--p, 45%), var(--surface-2)); }
 .st-missed { background: color-mix(in srgb, var(--missed) 32%, var(--surface-2)); }
@@ -2447,7 +2480,17 @@ function calCell(h, d, td) {
 }
 function calTile(value, label, sub, accent) {
   const long = String(value).replace(/<[^>]+>/g, '').length > 6;
-  return `<div class="ctile" ${accent ? `style="--hc:${accent}"` : ''}><b class="num ${long ? 'long' : ''}">${value}</b><span>${esc(label)}</span>${sub ? `<small>${esc(sub)}</small>` : ''}</div>`;
+  const k = (calTile.i = ((calTile.i || 0) + 1)) % 4, TC = [['#4f7cff', '📊'], ['#f5a623', '⭐'], ['#22c55e', '🏆'], ['#ff5c7a', '🎯']][k === 0 ? 3 : k - 1];
+  return `<div class="ctile" style="--tc:${accent || TC[0]}"><span class="ct-ic">${TC[1]}</span><b class="num ${long ? 'long' : ''}">${value}</b><span>${esc(label)}</span>${sub ? `<small>${esc(sub)}</small>` : ''}</div>`;
+}
+/** Month banner: a gradient + emoji per month, with the arrows on it. */
+const MONTH_LOOK = [['❄️', '#4f7cff', '#22d3ee', 'חודש חדש, התחלה חדשה'], ['💝', '#ff5c8a', '#a855f7', 'קטן, פשוט, כל יום'], ['🌸', '#ff7eb3', '#ffb86b', 'הכל פורח, גם ההרגלים'], ['🌷', '#f472b6', '#8b5cf6', 'עוד צעד, עוד יום'], ['🌼', '#facc15', '#fb923c', 'אור ארוך, אנרגיה גבוהה'], ['☀️', '#fb923c', '#f43f5e', 'קיץ של עקביות'], ['🏖️', '#06b6d4', '#3b82f6', 'גם בחופש, ממשיכים'], ['🍉', '#22c55e', '#ef4444', 'מתוק להצליח'], ['🍎', '#ef4444', '#f59e0b', 'שנה טובה, הרגלים טובים'], ['🍂', '#f97316', '#b45309', 'שלכת בחוץ, צמיחה בפנים'], ['🌧️', '#6366f1', '#0ea5e9', 'גם בגשם מופיעים'], ['⛄', '#3b82f6', '#8b5cf6', 'מסיימים את השנה חזק']];
+function monthBanner(start, title, nav, perfect, sumDone, sumPlan) {
+  const m = +S_(start).slice(5, 7) - 1, [em, c1, c2, line] = MONTH_LOOK[m];
+  const pct = sumPlan ? Math.round(sumDone / sumPlan * 100) : 0;
+  return `<div class="mbanner" style="--g1:${c1};--g2:${c2}"><i class="blob b1"></i><i class="blob b2"></i>
+    <div class="row daynav-row">${nav(-1)}<div class="grow mb-mid"><h3><span class="mb-em">${em}</span>${title}</h3><small>${line}</small></div>${nav(1)}</div>
+    <div class="mb-chips"><span>✅ <b class="num">${sumDone}</b> סימונים</span>${perfect ? `<span>⭐ <b class="num">${perfect}</b> ימים מושלמים</span>` : ''}${sumPlan ? `<span>📈 <b class="num">${pct}%</b> הצלחה</span>` : ''}</div></div>`;
 }
 function screenCalendar() {
   const t = D(TODAY());
@@ -2475,7 +2518,7 @@ function screenCalendar() {
     const perfect = past.filter(x => x.perfect).length, empty = past.filter(x => x.planned > 0 && x.done === 0).length;
     const best = past.reduce((b, x) => (x.done > (b ? b.done : 0) ? x : b), null);
     const dm = d => `${+S_(d).slice(8)}/${+S_(d).slice(5, 7)}`;
-    let tiles, cells, below = '';
+    let tiles, cells, below = ''; calTile.i = 0;
     if (sel) {
       // longest run of done days in the month
       let run = 0, bestRun = 0; for (const x of past) { if (x.per[0].done) { run++; bestRun = Math.max(bestRun, run); } else if (x.per[0].planned) run = 0; }
@@ -2493,7 +2536,7 @@ function screenCalendar() {
         const ds = S_(x.d), s = x.fut ? 'future' : cellState(sel, ds);
         const a = !x.fut && isAmt ? aggOf(sel, ds) : null;
         const amt = a ? (sel.kind === 'duration' ? (a.hasDuration ? a.duration : null) : (a.hasValue ? a.value : null)) : null;
-        return `<button class="day cal-${s} ${x.d === t ? 'today' : ''}" style="--hc:${sel.color}" data-a="day" data-v="${ds}" ${x.fut ? 'disabled' : ''} aria-label="${dm(x.d)}: ${CELL_TITLE[s] || ''}"><span>${+ds.slice(8)}</span>${amt != null ? `<small>${clean(amt)}</small>` : (s === 'done' ? '<small>✓</small>' : '')}</button>`;
+        return `<button class="day cal-${s} ${x.d === t ? 'today' : ''}" style="--hc:${sel.color};animation-delay:${(x.d - start) * 12}ms" data-a="day" data-v="${ds}" ${x.fut ? 'disabled' : ''} aria-label="${dm(x.d)}: ${CELL_TITLE[s] || ''}"><span>${+ds.slice(8)}</span>${amt != null ? `<small>${clean(amt)}</small>` : (s === 'done' ? '<small>✓</small>' : '')}</button>`;
       }).join('');
     } else {
       tiles = calTile(`${sumDone}<small>/${sumPlan}</small>`, 'סימונים שבוצעו', 'כל הרגל בכל יום = סימון אחד')
@@ -2503,9 +2546,10 @@ function screenCalendar() {
       cells = days.map(x => {
         const ds = S_(x.d), ratio = x.show ? Math.min(1, x.done / x.show) : 0;
         const cls = x.fut ? 'cal-future' : x.perfect ? 'cal-perfect' : x.show === 0 ? 'cal-off' : '';
-        return `<button class="day cday ${cls} ${x.d === t ? 'today' : ''}" data-a="day" data-v="${ds}" ${x.fut ? 'disabled' : ''} aria-label="${dm(x.d)}: בוצעו ${x.done} מתוך ${x.show}">
+        const dots = x.fut ? '' : x.per.filter(y => y.done).slice(0, 6).map(y => `<i style="background:${y.h.color}"></i>`).join('');
+        return `<button class="day cday ${cls} ${x.d === t ? 'today' : ''}" style="--heat:${x.fut || !x.show ? 0 : Math.round(ratio * 26)}%;animation-delay:${(x.d - start) * 12}ms" data-a="day" data-v="${ds}" ${x.fut ? 'disabled' : ''} aria-label="${dm(x.d)}: בוצעו ${x.done} מתוך ${x.show}">
           <span class="cd-n">${+ds.slice(8)}${x.perfect ? '<i>★</i>' : ''}</span>
-          ${x.fut ? '' : x.show ? `<span class="cd-f num">${x.done}/${x.show}</span><span class="cd-bar"><i style="width:${Math.round(ratio * 100)}%"></i></span>` : '<span class="cd-f">—</span>'}</button>`;
+          ${x.fut ? '' : x.show ? `<span class="cd-f num">${x.done}/${x.show}</span><span class="cd-dots">${dots}</span>` : '<span class="cd-f">—</span>'}</button>`;
       }).join('');
       // every habit this month
       below = `<section class="card"><h3>כל הרגל החודש</h3><p class="tiny muted" style="margin:0">כמה ימים בוצע מתוך הימים שתוכננו לו. הקש על הרגל כדי לראות רק אותו בלוח.</p>
@@ -2513,12 +2557,12 @@ function screenCalendar() {
           return `<button class="chab" data-a="calHabit" data-id="${h.id}" style="--hc:${h.color}"><span class="chab-top">${hicon(h)}<b class="grow">${esc(h.name)}</b><span class="num chab-n">${dn}<small>/${pl}</small></span></span>
             <span class="chab-bar"><i style="width:${pl ? Math.round(dn / pl * 100) : 0}%"></i></span><span class="chab-dots">${dots.join('')}</span></button>`; }).join('')}</section>`;
     }
-    main = `<section class="card"><div class="row daynav-row">${navArrow(-1)}<h3 class="grow" style="text-align:center;direction:rtl">${title}</h3>${navArrow(1, D(nextMonth(S_(start))) > t)}</div>
+    main = `<section class="card">${monthBanner(start, title, dir => navArrow(dir, dir > 0 && D(nextMonth(S_(start))) > t), sel ? 0 : perfect, sumDone, sumPlan)}
       <div class="ctiles">${tiles}</div>
       <div class="month">${heads.map(x => `<span class="h">${x}</span>`).join('')}${'<span></span>'.repeat(lead)}${cells}</div>
       ${sel
         ? `<div class="legend"><span><i class="dot dot-done" style="--hc:${sel.color}"></i>בוצע${sel.kind === 'quantity' || sel.kind === 'duration' ? ' (המספר = הכמות באותו יום)' : ''}</span><span><i class="dot dot-open"></i>לא בוצע</span><span><i class="dot dot-off"></i>יום מנוחה</span></div>`
-        : `<div class="cal-legend"><span><b class="num">3/5</b> בוצעו 3 מתוך 5 ההרגלים שתוכננו לאותו יום</span><span><i class="lg-bar"><i></i></i> הפס = כמה מהיום הושלם</span><span><i class="lg-perfect">★</i> יום מושלם — הכל בוצע</span><span><b>—</b> אין הרגלים מתוכננים (מנוחה)</span></div>`}
+        : `<div class="cal-legend"><span><b class="num">3/5</b> בוצעו 3 מתוך 5 ההרגלים שתוכננו לאותו יום</span><span><i class="lg-dots"><i></i><i></i><i></i></i> נקודה בצבע של כל הרגל שבוצע</span><span><i class="lg-perfect">★</i> יום מושלם — הכל בוצע</span><span><b>—</b> אין הרגלים מתוכננים (מנוחה)</span></div>`}
       <p class="tiny muted" style="margin:0;text-align:center">הקש על יום כדי לראות כל הרגל ולתקן.</p></section>${below}`;
   } else {
     main = scoped.map(h => `<section class="card"><div class="row">${hicon(h)}<b class="grow">${esc(h.name)}</b><span class="small muted num">בוצע ב-${E.analyze(spec(h), eventsOf(h.id), { from: S_(t - 364), to: TODAY(), today: TODAY() }).fullDays} ימים בשנה</span></div><div class="year-wrap yearwrap">${yearGrid(h)}</div></section>`).join('')
