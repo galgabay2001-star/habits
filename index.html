@@ -142,8 +142,12 @@ button { cursor: pointer; }
 .hero-ring .rv { position: absolute; inset: 0; display: grid; place-items: center; font-weight: 800; font-size: 16px; line-height: 1; }
 .hero-ring .rv small { display: block; font-size: 10px; font-weight: 600; opacity: .85; margin-top: 2px; }
 .hero-ring circle.fg { transition: stroke-dashoffset .8s cubic-bezier(.2,.8,.2,1); }
-.hero-quote { margin: 14px 0 12px; font-size: 17px; font-weight: 700; line-height: 1.35; text-wrap: balance; }
-.hero-quote.swap { animation: fadeUp .45s ease; }
+.hero-quote { position: relative; overflow: hidden; margin: 14px 0 14px; padding: 12px 16px 14px; font-size: 17px; font-weight: 700; line-height: 1.35; text-wrap: balance; border-radius: 20px 20px 20px 6px; background: rgba(255,255,255,.2); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: inset 0 0 0 1px rgba(255,255,255,.35), 0 8px 18px -12px rgba(0,0,0,.35); }
+.hero-quote::before { content: "💬"; margin-left: 6px; font-size: 15px; }
+.hero-quote .hq-t { position: absolute; bottom: 0; right: 0; height: 3px; border-radius: 3px; background: rgba(255,255,255,.75); animation: hqTimer 10s linear forwards; }
+@keyframes hqTimer { from { width: 0; } to { width: 100%; } }
+.hero-quote.swap { animation: bubbleSwap .55s cubic-bezier(.2,1.4,.4,1); }
+@keyframes bubbleSwap { from { opacity: 0; transform: scale(.85) translateY(6px); } }
 .hero-status { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,.2); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-radius: 999px; padding: 6px 12px; font-size: 13px; font-weight: 700; }
 .hero-tip { position: absolute; bottom: 12px; left: 16px; font-size: 11px; opacity: .7; }
 .hero.alldone .hero-status { background: rgba(255,255,255,.32); }
@@ -738,6 +742,25 @@ textarea.export { width: 100%; height: 160px; font-family: var(--font-data); fon
 .w-tile.on { background: color-mix(in srgb, var(--hc) 14%, var(--surface-2)); }
 .w-tile.on .w-dot { background: var(--hc); color: #fff; font-weight: 800; }
 .daynav.past { outline: 2px solid var(--partial); outline-offset: -2px; }
+/* Home screen: soft colorful background instead of plain gray */
+.screen[data-tab="today"] { background:
+  radial-gradient(110% 38% at 100% 0%, color-mix(in srgb, #ff9a5a 20%, transparent), transparent 70%),
+  radial-gradient(90% 34% at 0% 22%, color-mix(in srgb, #8b5cff 16%, transparent), transparent 70%),
+  radial-gradient(100% 34% at 100% 55%, color-mix(in srgb, #22c55e 12%, transparent), transparent 70%),
+  radial-gradient(100% 34% at 0% 85%, color-mix(in srgb, #4f7cff 15%, transparent), transparent 70%),
+  var(--bg); background-attachment: local; }
+/* Day navigator: bubbly arrows and week buttons */
+.daynav { position: relative; overflow: hidden; isolation: isolate; background: linear-gradient(140deg, color-mix(in srgb, var(--accent) 12%, var(--surface)), var(--surface) 55%, color-mix(in srgb, #8b5cff 9%, var(--surface))); box-shadow: 0 10px 26px -18px var(--accent); }
+.daynav::after { content: ""; position: absolute; width: 120px; height: 120px; border-radius: 50%; top: -60px; left: 50%; transform: translateX(-50%); background: radial-gradient(circle, color-mix(in srgb, var(--accent) 18%, transparent), transparent 70%); z-index: -1; }
+.daynav .greet { font-size: 25px; background: linear-gradient(90deg, var(--accent), #8b5cff); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.daynav .navpill { background: linear-gradient(140deg, var(--accent), #8b5cff); color: #fff; box-shadow: 0 8px 18px -8px var(--accent), inset 0 1px 0 rgba(255,255,255,.3); transition: transform .22s cubic-bezier(.2,1.6,.4,1), box-shadow .22s, opacity .2s; }
+.daynav .navpill:not([disabled]):hover { transform: scale(1.12); box-shadow: 0 12px 24px -8px var(--accent), inset 0 1px 0 rgba(255,255,255,.3); }
+.daynav .navpill:not([disabled]):active { transform: scale(.9); }
+.daynav .navpill[disabled] { background: var(--surface-2); color: var(--faint); box-shadow: none; opacity: .55; }
+.weekjump button { border: 1.5px solid color-mix(in srgb, var(--accent) 25%, transparent) !important; background: var(--surface) !important; padding: 7px 12px !important; white-space: nowrap; box-shadow: 0 4px 12px -8px var(--accent); cursor: pointer; transition: transform .2s cubic-bezier(.2,1.6,.4,1), background-color .2s, color .2s, box-shadow .2s; }
+.weekjump button:not(:disabled):hover { transform: scale(1.08); background: linear-gradient(140deg, var(--accent), #8b5cff) !important; color: #fff; border-color: transparent !important; box-shadow: 0 8px 18px -8px var(--accent); }
+.weekjump button:not(:disabled):active { transform: scale(.94); }
+.weekjump .wj-range { white-space: nowrap; font-size: 12px; background: color-mix(in srgb, var(--accent) 10%, var(--surface-2)); color: var(--fg); font-weight: 800; padding: 5px 10px; border-radius: 999px; opacity: 1 !important; }
 .pastnote { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; background: color-mix(in srgb, var(--partial) 14%, transparent); border-radius: 10px; padding: 8px 10px; font-size: 13px; }
 .iconbtn[disabled] { opacity: .3; cursor: default; }
 .forgot { border: none; text-align: start; cursor: pointer; color: inherit; gap: 4px; outline: 1.5px dashed var(--partial); outline-offset: -1.5px; }
@@ -2147,6 +2170,15 @@ function habitRow(h, it, day = TODAY()) {
       ${prog ? `<svg class="p" viewBox="0 0 44 44"><circle cx="22" cy="22" r="${r}" fill="none" stroke="${h.color}" stroke-width="3" stroke-dasharray="${c}" stroke-dashoffset="${c * (1 - prog)}" stroke-linecap="round"/></svg>` : ''}
       ${cl ? `<span class="cnt num">${cl}</span>` : ICON.tick}</button></div>`;
 }
+/** Every 10 s: next line in the home-screen bubble (only the bubble is updated, the screen isn't rebuilt). */
+function rotateQuote() {
+  const q = document.querySelector('.hero-quote'); if (!q || ui.sheet || document.hidden) return;
+  if (Date.now() - (ui.quoteAt || 0) < 10000) return;
+  ui.quoteAt = Date.now(); ui.quoteShift = (ui.quoteShift || 0) + 1;
+  const qi = ((D(TODAY()) + ui.quoteShift) % QUOTES.length + QUOTES.length) % QUOTES.length;
+  q.innerHTML = `<span class="hq-txt">${QUOTES[qi]}</span><i class="hq-t"></i>`; q.classList.remove('swap'); void q.offsetWidth; q.classList.add('swap');
+}
+ui.quoteAt = Date.now(); setInterval(rotateQuote, 1000);
 const QUOTES = ['כל יום קטן בונה משהו גדול.', 'לא צריך להיות מושלם, צריך להופיע.', 'צעד אחד היום שווה יותר מתוכנית למחר.', 'ההרגלים של היום הם מי שתהיה מחר.', 'עקביות מנצחת מוטיבציה.', 'אל תשבור את השרשרת.', 'קטן, פשוט, כל יום.', 'ההתחלה היא החלק הכי קשה, ואתה כבר כאן.', 'התקדמות, לא שלמות.', 'מה שעושים כל יום חשוב יותר ממה שעושים לפעמים.', 'עוד סימון אחד ואתה קרוב יותר.', 'תהיה גאה בכל צעד קטן.', 'היום הוא הזדמנות חדשה להתחיל.', 'גם יום חלש נחשב, אם לא ויתרת.', 'שגרה טובה היא מתנה שאתה נותן לעצמך.', 'הכוח נמצא בחזרה.', 'תעשה היום משהו שתודה לעצמך עליו מחר.', 'כל יום הוא נקודה. יחד הן קו.', 'החמצת יום? פשוט חוזרים מחר.', 'מספיק שתתחיל, ההמשך יבוא.', 'הדרך הכי טובה לשנות חיים היא יום אחד בכל פעם.'];
 function heroCard(todays, by) {
   const hr = new Date().getHours();
@@ -2165,7 +2197,7 @@ function heroCard(todays, by) {
     <i class="blob b1"></i><i class="blob b2"></i><i class="blob b3"></i>
     <div class="hero-top"><div class="hero-hi"><div class="hh"><span class="em">${em}</span>${hi}</div><div class="hd">${date}</div></div>
       ${total ? `<div class="hero-ring"><svg viewBox="0 0 66 66" width="66" height="66"><circle cx="33" cy="33" r="${r}" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="7"/><circle class="fg" cx="33" cy="33" r="${r}" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-dasharray="${c.toFixed(1)}" stroke-dashoffset="${(c * (1 - frac)).toFixed(1)}"/></svg><div class="rv"><div><bdi dir="ltr">${done}/${total}</bdi><small>היום</small></div></div></div>` : ''}</div>
-    <div class="hero-quote ${swap ? 'swap' : ''}">${QUOTES[qi]}</div>
+    <div class="hero-quote ${swap ? 'swap' : ''}"><span class="hq-txt">${QUOTES[qi]}</span><i class="hq-t" style="animation-delay:-${Math.min(10, (Date.now() - (ui.quoteAt || Date.now())) / 1000).toFixed(1)}s"></i></div>
     <span class="hero-status">${status}</span>
   </button>`;
 }
@@ -2663,7 +2695,7 @@ function screenDetail() {
   }
   const btn = plan.mode === 'amount' ? (plan.target > (it.amountToday || 0) ? `+${clean(h.tapStep)} ${unit}` : `הורד ${clean(h.tapStep)}`)
     : plan.mode === 'count' ? (plan.target > it.completionsToday ? '+1 ביצוע' : 'הורד ביצוע')
-    : plan.mode === 'event' ? 'רישום אירוע' : plan.mode === 'range' ? (it.value != null ? 'עדכון מדידה' : 'רישום מדידה')
+    : plan.mode === 'event' ? 'הוספת אירוע' : plan.mode === 'range' ? (it.value != null ? 'עדכון מדידה' : 'רישום מדידה')
     : plan.mode === 'rest' ? 'בטל יום מנוחה' : plan.want ? (h.kind === 'avoidance' ? 'יום נקי' : 'סמן כבוצע') : 'בטל סימון';
   // ── This week vs last week (count of days done)
   const off = Math.min(0, ui.wkOff || 0), ws0 = E.weekStartOf(td, S.settings.weekStart), ws = ws0 + 7 * off, we = Math.min(ws + 6, td);
@@ -3358,7 +3390,7 @@ function saveHabit() {
   Object.assign(h, { name: d.name.trim(), icon: d.icon, color: d.color, kind: d.kind, category: d.category, details: d.details, startDay: d.startDay, weight: d.weight, showOnHome: d.showOnHome, showInWidget: d.showInWidget, tapStep: d.kind === 'quantity' && d.tapOn ? (d.tapStep > 0 ? d.tapStep : 1) : null, reminder: d.reminder ? d.reminderTime : null });
   if (before && before === JSON.stringify(h)) { ui.sheet = null; render(); return; }   // nothing changed → just close, no message
   save(); ui.sheet = null;
-  if (ui.editing) toast('ההרגל עודכן', null, { icon: h.icon, sub: h.name, color: h.color });
+  if (ui.editing) toast('ההרגל עודכן', null, { sub: `${h.icon} ${h.name}`, color: '#22c55e', ok: true });
   else toast('ההרגל נוסף', null, { sub: `${h.icon} ${h.name}`, color: '#22c55e', ok: true });
   render();
 }
@@ -3526,6 +3558,7 @@ function render() {
   const scr = document.getElementById('screen');
   const keepScroll = scr.scrollTop;
   scr.innerHTML = ui.detail ? screenDetail() : ({ today: screenToday, habits: screenHabits, calendar: screenCalendar, stats: screenStats, goals: screenWeekly }[ui.tab])();
+  scr.dataset.tab = ui.detail ? 'detail' : ui.tab;
   if (ui.keepScroll) scr.scrollTop = keepScroll; ui.keepScroll = false;
   renderTabbar(); renderHome();
   const fo = document.getElementById('focus'); fo.innerHTML = ui.focus ? focusView() : ''; fo.classList.toggle('on', !!ui.focus);
@@ -3775,7 +3808,8 @@ document.addEventListener('click', e => {
     case 'calFilterSet': ui.filter = v || ''; ui.calPop = false; rerender(); break;
     case 'deleteAll': S = { habits: [], events: [], goals: [], settings: S.settings, v: 1 }; save(); ui.sheet = null; ui.confirm = null; ui.detail = null; toast('כל הנתונים נמחקו'); render(); break;
     case 'askReset': S = seed(); save(); ui.sheet = null; ui.detail = null; toast('נטענו נתוני דוגמה חדשים'); render(); break;
-    case 'nextQuote': ui.quoteShift = (ui.quoteShift || 0) + 1; ui.quoteAnim = true; rerender(); break;
+    case 'nextQuote': ui.quoteShift = (ui.quoteShift || 0) + 1; ui.quoteAnim = true; ui.quoteAt = Date.now(); rerender(); break;
+    /* the quote bubble changes by itself every 10 seconds (see rotateQuote) */
     case 'quickTheme': S.settings.theme = isDark() ? 'light' : 'dark'; save(); applyTheme(); rerender(); break;
     case 'setTheme': S.settings.theme = v; save(); applyTheme(); rerender(); break;
     case 'theme': { const r = document.documentElement; const dark = r.dataset.theme ? r.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches; r.dataset.theme = dark ? 'light' : 'dark'; break; }
