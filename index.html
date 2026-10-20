@@ -3376,6 +3376,7 @@ function sheetEditor(h) {
         <div class="wd-sum ${d.days.length ? '' : 'empty'}">${d.days.length ? `✓ נבחרו ${d.days.length} ימים: ${[...d.days].sort().map(i => WD[i]).join(', ')}` : 'בחר לפחות יום אחד'}</div>` : ''}
       ${sched === 'interval' ? `<div class="field"><label for="e-every">כל X ימים</label><input type="number" id="e-every" min="2" max="30" value="${d.every}"></div>` : ''}
       ${sched === 'perWeek' || sched === 'perMonth' ? `<div class="field"><label for="e-count">פעמים</label><input type="number" id="e-count" min="1" max="31" value="${d.count}"></div>` : ''}
+      ${h && h.versions.some(x => JSON.stringify(x.schedule || { type: 'daily' }) !== JSON.stringify(buildVersion(d, TODAY()).schedule)) ? `<div class="field"><label for="e-schedall">החל את התדירות גם על ימים קודמים</label><input type="checkbox" id="e-schedall" ${d.schedAll === false ? '' : 'checked'}></div><div class="field-help">מסומן = גם השבועות שכבר עברו ייבדקו לפי התדירות החדשה (למשל 3 פעמים בשבוע), כך שימים בלי ביצוע לא ייצבעו באדום.</div>` : ''}
       <div class="field"><label for="e-start">תאריך התחלה</label>${dateField('e-start', d.startDay)}</div></div>
     <div class="form-title">תזכורת</div>
     <div class="form rem-card">${remPicker(d)}</div>
@@ -3442,6 +3443,7 @@ function readDraft() {
   if (g('e-rmin')) d.rmin = opt('e-rmin');
   if (g('e-rmax')) d.rmax = opt('e-rmax');
   if (g('e-rstep')) d.rstep = opt('e-rstep') || 1;
+  d.schedAll = g('e-schedall') ? g('e-schedall').checked : undefined;
 }
 function buildVersion(d, from) {
   const schedule = { type: d.schedType };
@@ -3481,6 +3483,7 @@ function saveHabit() {
       h.versions.sort((a, b) => D(a.effectiveFrom) - D(b.effectiveFrom));
     }
     if (d.startDay !== h.startDay && h.versions.length && D(h.versions[0].effectiveFrom) > D(d.startDay)) h.versions[0].effectiveFrom = d.startDay;
+    if (d.schedAll === true) { const sch = buildVersion(d, TODAY()).schedule; h.versions.forEach(x => { x.schedule = JSON.parse(JSON.stringify(sch)); }); }   // frequency applies to the whole history
   }
   Object.assign(h, { name: d.name.trim(), icon: d.icon, color: d.color, kind: d.kind, category: d.category, details: d.details, startDay: d.startDay, weight: d.weight, showOnHome: d.showOnHome, showInWidget: d.showInWidget, tapStep: d.kind === 'quantity' && d.tapOn ? (d.tapStep > 0 ? d.tapStep : 1) : null, reminder: d.reminder ? d.reminderTime : null });
   if (before && before === JSON.stringify(h)) { ui.sheet = null; render(); return; }   // nothing changed → just close, no message
