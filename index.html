@@ -831,8 +831,8 @@ textarea.export { width: 100%; height: 160px; font-family: var(--font-data); fon
 .forgot .fg-t b { font-size: 15.5px; font-family: inherit; font-weight: 800; color: var(--fg); }
 .forgot .fg-t small { font-size: 12px; }
 .forgot .fg-chip { padding: 3px 9px; font-size: 12px; }
-.forgot .fg-cta { padding: 6px 14px; font-size: 13px; color: #8a6400; background: color-mix(in srgb, #ffd84d 22%, var(--surface)); box-shadow: inset 0 0 0 1px color-mix(in srgb, #f5c518 35%, transparent); }
-.forgot .fg-cta:hover { transform: scale(1.08); box-shadow: inset 0 0 0 1px color-mix(in srgb, #f5c518 55%, transparent), 0 6px 14px -8px #f5c518; }
+.forgot .fg-cta { padding: 6px 14px; font-size: 13px; color: #8a6400; background: color-mix(in srgb, #ffd84d 22%, var(--surface)); box-shadow: inset 0 0 0 1px color-mix(in srgb, #f5c518 35%, transparent); transition: transform .22s cubic-bezier(.2,1.6,.4,1), box-shadow .22s, color .2s, background-color .2s; }
+.forgot:hover .fg-cta, .forgot .fg-cta:hover { transform: scale(1.1); color: #fff; background: linear-gradient(140deg, #ffc94d, #ff8a3d); box-shadow: 0 10px 20px -6px #ff8a3d, inset 0 1px 0 rgba(255,255,255,.35); }
 /* "forgot yesterday" as one slim row */
 .forgot.forgot { flex-direction: row; align-items: center; padding: 10px 12px; }
 .forgot .fg-top { flex: 1; min-width: 0; gap: 10px; }
