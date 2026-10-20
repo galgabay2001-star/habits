@@ -575,6 +575,30 @@ textarea.export { width: 100%; height: 160px; font-family: var(--font-data); fon
 .st-strip i { aspect-ratio: 1; border-radius: 2px; background: var(--surface-2); display: block; }
 .st-strip i.y { background: var(--hc); } .st-strip i.n { background: color-mix(in srgb, var(--missed) 35%, var(--surface-2)); } .st-strip i.x { opacity: .3; }
 .hstat { border: none; text-align: start; color: inherit; }
+/* Calendar habit picker: a bubble that pops from the button */
+.cf-nav { position: relative; z-index: 20; }
+.cf-wrap { position: relative; max-width: 58%; }
+.cf-btn { display: inline-flex; align-items: center; gap: 8px; max-width: 100%; border: 0; border-radius: 999px; padding: 6px 10px 6px 12px; background: var(--surface); color: var(--fg); font: inherit; font-weight: 700; font-size: 14px; cursor: pointer; box-shadow: 0 6px 16px -12px rgba(0,0,0,.4); direction: rtl; white-space: nowrap; overflow: hidden; transition: transform .15s, box-shadow .2s; }
+.cf-btn:active { transform: scale(.96); }
+.cf-btn svg { flex: none; color: var(--muted); transition: transform .25s; }
+.cf-btn.open svg { transform: rotate(180deg); }
+.cf-btn.open { box-shadow: 0 0 0 2px var(--accent), 0 8px 20px -12px var(--accent); }
+.cf-ic { width: 26px; height: 26px; border-radius: 50%; display: inline-grid; place-items: center; font-size: 14px; flex: none; background: color-mix(in srgb, var(--hc, var(--accent)) 20%, transparent); }
+.cf-back { position: fixed; inset: 0; z-index: 1; }
+.cf-pop { position: absolute; top: calc(100% + 12px); right: 0; z-index: 2; width: 230px; max-height: 360px; overflow-y: auto; padding: 8px; border-radius: 22px; background: color-mix(in srgb, var(--surface) 92%, transparent); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); box-shadow: 0 20px 50px -14px rgba(10,20,60,.45), 0 0 0 1px color-mix(in srgb, var(--fg) 6%, transparent); transform-origin: calc(100% - 30px) -8px; animation: bubbleIn .32s cubic-bezier(.2,1.4,.4,1); direction: rtl; }
+.cf-pop::before { content: ""; position: absolute; top: -7px; right: 26px; width: 16px; height: 16px; transform: rotate(45deg); border-radius: 4px 0 0 0; background: inherit; box-shadow: -1px -1px 0 color-mix(in srgb, var(--fg) 6%, transparent); }
+@keyframes bubbleIn { from { opacity: 0; transform: scale(.4) translateY(-10px); } 70% { opacity: 1; } }
+.cf-item { position: relative; display: flex; align-items: center; gap: 10px; width: 100%; border: 0; background: none; color: var(--fg); font: inherit; text-align: right; padding: 8px 10px; border-radius: 14px; cursor: pointer; animation: cfItem .3s cubic-bezier(.2,.8,.2,1) both; transition: background-color .15s; }
+@keyframes cfItem { from { opacity: 0; transform: translateX(8px); } }
+.cf-item:hover { background: color-mix(in srgb, var(--hc, var(--accent)) 10%, transparent); }
+.cf-item.on { background: color-mix(in srgb, var(--hc, var(--accent)) 16%, transparent); }
+.cf-item b { flex: 1; font-size: 14.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cf-item i { font-style: normal; font-weight: 900; color: var(--hc, var(--accent)); }
+/* Full app reset */
+.reset-btn { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; border-radius: 16px; border: 1.5px solid color-mix(in srgb, #ff3b30 35%, transparent); background: color-mix(in srgb, #ff3b30 7%, var(--surface)); color: var(--fg); font: inherit; text-align: right; cursor: pointer; direction: rtl; }
+.reset-btn > span:first-child { width: 36px; height: 36px; border-radius: 12px; display: grid; place-items: center; font-size: 18px; background: color-mix(in srgb, #ff3b30 15%, transparent); }
+.reset-btn b { display: block; color: #e5383b; font-size: 15px; }
+.reset-btn small { font-size: 12px; color: var(--muted); }
 /* Event-based + target-range measurement */
 .rbar { direction: rtl; padding: 18px 4px 4px; }
 .rb-track { position: relative; height: 12px; border-radius: 99px; background: color-mix(in srgb, #ff5c7a 18%, var(--surface-2)); }
@@ -630,7 +654,7 @@ textarea.export { width: 100%; height: 160px; font-family: var(--font-data); fon
 .sx-hero .b3 { width: 40px; height: 40px; top: 20px; right: 45%; animation-delay: -6s; }
 .sx-top { display: flex; align-items: center; gap: 10px; }
 .sx-top b { font-family: var(--font-display); font-weight: 400; font-size: 24px; display: block; line-height: 1.1; }
-.sx-top small { font-size: 12.5px; opacity: .9; }
+.sx-top small { font-size: 15px; font-weight: 600; opacity: .92; display: block; margin-top: 2px; }
 .sx-em { font-size: 28px; display: inline-block; animation: bob 3s ease-in-out infinite; }
 .sx-nums { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 14px; }
 .sx-nums div { background: rgba(255,255,255,.18); border-radius: 16px; padding: 10px 6px; text-align: center; display: flex; flex-direction: column; gap: 2px; }
@@ -2829,7 +2853,11 @@ function screenCalendar() {
       + `<div class="legend"><span><i class="dot dot-done" style="--hc:var(--accent)"></i>בוצע</span><span><i class="dot dot-open"></i>לא בוצע</span><span><i class="dot dot-off"></i>יום מנוחה</span></div>`;
   }
   const opts = [['', 'כל ההרגלים'], ...hs.map(h => [h.id, h.name])];
-  return `<div class="navbar"><h2>לוח שנה</h2><select id="calfilter" aria-label="בחירת הרגל" style="max-width:52%;border:none;background:var(--surface);border-radius:10px;padding:6px 8px">${opts.map(([v, l]) => `<option value="${esc(v)}" ${ui.filter === v || (!sel && v === '') ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select></div>
+  const cur = sel ? `<span class="cf-ic" style="--hc:${sel.color}">${esc(sel.icon)}</span>${esc(sel.name)}` : '<span class="cf-ic all">🗂️</span>כל ההרגלים';
+  const pop = ui.calPop ? `<div class="cf-back" data-a="calFilterClose"></div><div class="cf-pop" role="listbox" aria-label="בחירת הרגל">
+      <button class="cf-item ${!sel ? 'on' : ''}" data-a="calFilterSet" data-v="" role="option"><span class="cf-ic all">🗂️</span><b>כל ההרגלים</b>${!sel ? '<i>✓</i>' : ''}</button>
+      ${hs.map((h, i) => `<button class="cf-item ${sel && sel.id === h.id ? 'on' : ''}" style="--hc:${h.color};animation-delay:${(i + 1) * 30}ms" data-a="calFilterSet" data-v="${h.id}" role="option"><span class="cf-ic">${esc(h.icon)}</span><b>${esc(h.name)}</b>${sel && sel.id === h.id ? '<i>✓</i>' : ''}</button>`).join('')}</div>` : '';
+  return `<div class="navbar cf-nav"><h2>לוח שנה</h2><div class="cf-wrap"><button class="cf-btn ${ui.calPop ? 'open' : ''}" data-a="calFilterOpen" aria-haspopup="listbox" aria-expanded="${!!ui.calPop}">${cur}<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>${pop}</div></div>
   <div class="stack">${seg('calMode', [['month', 'חודש'], ['year', 'שנה']], ui.calMode)}${main}</div>`;
 }
 function yearGrid(h) {
@@ -3320,6 +3348,8 @@ function sheetSettings() {
       <div class="field"><button class="link" data-a="exportJSON">ייצוא JSON מלא</button><button class="link" data-a="exportCSV">ייצוא CSV של האירועים</button></div></div>
     ${json ? `<textarea class="export" id="export-text" readonly aria-label="נתוני ייצוא">${esc(json)}</textarea><button class="pill-btn secondary" data-a="copyExport">העתק</button>` : ''}
     ${ui.confirm === 'deleteAll' ? `<div class="confirm"><b>למחוק את כל ההרגלים, ההיסטוריה והמטרות?</b><span class="small">מומלץ לייצא קודם. הפעולה אינה הפיכה.</span><div class="row"><button class="pill-btn danger" data-a="deleteAll">מחק הכל</button><button class="pill-btn secondary" data-a="cancelConfirm">ביטול</button></div></div>` : '<button class="pill-btn danger" data-a="askDeleteAll">מחיקת כל הנתונים</button>'}
+    <div class="form-title">איפוס</div>
+    ${ui.confirm === 'resetApp' ? `<div class="confirm reset-confirm"><b>לאפס את כל האפליקציה?</b><span class="small">הכל יימחק: הרגלים, היסטוריה, מטרות, גיבויים והגדרות (כולל מצב כהה). האפליקציה תיפתח מחדש כאילו הותקנה עכשיו. הפעולה אינה הפיכה.</span><div class="row"><button class="pill-btn danger" data-a="resetApp">כן, אפס הכל</button><button class="pill-btn secondary" data-a="cancelConfirm">ביטול</button></div></div>` : '<button class="reset-btn" data-a="askResetApp"><span>🔄</span><span class="grow"><b>איפוס מלא של האפליקציה</b><small>מוחק הכל ומתחיל מאפס</small></span></button>'}
     <p class="tiny muted">באפליקציה האמיתית: תזכורות שמדלגות על הרגל שכבר סומן ועל ימי מנוחה, עם ״בוצע״ ו״דחה ב-30 דק׳״ בתוך ההתראה.</p></div>`);
 }
 /** Calendar day — view only (marking and fixing is done on the Habits screen). */
@@ -3692,6 +3722,11 @@ document.addEventListener('click', e => {
       ui.exportText = 'event_id,habit_name,entry_id,day,timestamp,action,value,duration,quality,source,previous_value,note\n' + S.events.map(x => [x.id, qq(names[x.habitID]), x.entryID, x.day, x.ts, x.action, x.value ?? '', x.duration ?? '', x.quality ?? '', x.source, x.previousValue ?? '', qq(x.note)].join(',')).join('\n'); rerender(); break; }
     case 'copyExport': { const ta = document.getElementById('export-text'); navigator.clipboard?.writeText(ta.value).then(() => toast('הועתק'), () => { ta.select(); toast('סמן והעתק ידנית'); }); if (!navigator.clipboard) { ta.select(); } break; }
     case 'askDeleteAll': ui.confirm = 'deleteAll'; rerender(); break;
+    case 'askResetApp': ui.confirm = 'resetApp'; rerender(); break;
+    case 'resetApp': try { localStorage.clear(); sessionStorage.clear(); } catch (e) {} location.reload(); break;
+    case 'calFilterOpen': ui.calPop = !ui.calPop; rerender(); break;
+    case 'calFilterClose': ui.calPop = false; rerender(); break;
+    case 'calFilterSet': ui.filter = v || ''; ui.calPop = false; rerender(); break;
     case 'deleteAll': S = { habits: [], events: [], goals: [], settings: S.settings, v: 1 }; save(); ui.sheet = null; ui.confirm = null; ui.detail = null; toast('כל הנתונים נמחקו'); render(); break;
     case 'askReset': S = seed(); save(); ui.sheet = null; ui.detail = null; toast('נטענו נתוני דוגמה חדשים'); render(); break;
     case 'nextQuote': ui.quoteShift = (ui.quoteShift || 0) + 1; ui.quoteAnim = true; rerender(); break;
