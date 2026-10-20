@@ -79,6 +79,11 @@ button { cursor: pointer; }
 .navbar h2 { font-family: var(--font-display); font-weight: 400; font-size: 26px; margin: 0; }
 .iconbtn { width: 38px; height: 38px; border-radius: 50%; border: none; background: var(--surface); display: grid; place-items: center; color: var(--accent); }
 .iconbtn svg { width: 20px; height: 20px; }
+.nb-r { display: flex; align-items: center; gap: 8px; }
+.tod-btn { background: color-mix(in srgb, var(--t1, #ffd84d) 28%, var(--surface)); font-size: 19px; line-height: 1; cursor: pointer; transition: transform .22s cubic-bezier(.2,1.6,.4,1), box-shadow .22s; }
+.tod-btn:hover { transform: scale(1.14); box-shadow: 0 6px 14px -6px var(--p2, var(--accent)); }
+.tod-btn:active { transform: scale(.9); }
+.tod-btn.on { box-shadow: 0 0 0 2px var(--p2, var(--accent)); }
 .backbtn { border: none; background: none; color: var(--accent); font-weight: 600; padding: 6px 0; display: inline-flex; gap: 4px; align-items: center; }
 
 .tabbar { position: absolute; inset-inline: 0; bottom: 0; display: grid; grid-template-columns: repeat(4, 1fr); padding: 8px 6px calc(16px + env(safe-area-inset-bottom, 0px)); background: color-mix(in srgb, var(--surface) 88%, transparent); backdrop-filter: blur(16px); border-top: 1px solid var(--line); z-index: 5; }
@@ -125,10 +130,10 @@ button { cursor: pointer; }
 .hero.h-intro circle.fg { animation: ringIn 1s cubic-bezier(.2,.8,.2,1); }
 @keyframes ringIn { from { stroke-dashoffset: 169.6; } }
 /* Hero: soft pastel card, each time of day with its own gentle tint */
-.hero.morning, .forgot.morning { --t1: #ffb08a; --t2: #ffc2d4; --t3: #ff8f6b; --tt: #d4573a; --ring: #ff7a59; --q1: #ffe8dc; --q2: #ffd3e2; --qt: #8a2f3d; --qa: #ff6f91; --p1: #ff9a6b; --p2: #ff5f8f; }
-.hero.noon, .forgot.noon { --t1: #ffd84d; --t2: #ffe98f; --t3: #f5c518; --tt: #b7860b; --ring: #e0a100; --q1: #fff1c9; --q2: #ffd9b0; --qt: #7a3f00; --qa: #ff9f43; --p1: #ffc94d; --p2: #ff8a3d; }
-.hero.evening, .forgot.evening { --t1: #f472b6; --t2: #fbbf77; --t3: #ec4899; --tt: #c0267a; --ring: #ec4899; --q1: #ffe1ef; --q2: #ffe6cc; --qt: #7a1f4f; --qa: #f472b6; --p1: #f78fb3; --p2: #e0457b; }
-.hero.night, .forgot.night { --t1: #9fb4ff; --t2: #b9a6ff; --t3: #6f86f0; --tt: #4155c9; --ring: #5b6ff0; --q1: #e4eaff; --q2: #ece3ff; --qt: #26307a; --qa: #7a7dff; --p1: #6f86f0; --p2: #8b5cff; }
+.hero.morning, .forgot.morning, .daynav.morning, .tod-btn.morning { --t1: #ffb08a; --t2: #ffc2d4; --t3: #ff8f6b; --tt: #d4573a; --ring: #ff7a59; --q1: #ffe8dc; --q2: #ffd3e2; --qt: #8a2f3d; --qa: #ff6f91; --p1: #ff9a6b; --p2: #ff5f8f; }
+.hero.noon, .forgot.noon, .daynav.noon, .tod-btn.noon { --t1: #ffd84d; --t2: #ffe98f; --t3: #f5c518; --tt: #b7860b; --ring: #e0a100; --q1: #fff1c9; --q2: #ffd9b0; --qt: #7a3f00; --qa: #ff9f43; --p1: #ffc94d; --p2: #ff8a3d; }
+.hero.evening, .forgot.evening, .daynav.evening, .tod-btn.evening { --t1: #f472b6; --t2: #fbbf77; --t3: #ec4899; --tt: #c0267a; --ring: #ec4899; --q1: #ffe1ef; --q2: #ffe6cc; --qt: #7a1f4f; --qa: #f472b6; --p1: #f78fb3; --p2: #e0457b; }
+.hero.night, .forgot.night, .daynav.night, .tod-btn.night { --t1: #9fb4ff; --t2: #b9a6ff; --t3: #6f86f0; --tt: #4155c9; --ring: #5b6ff0; --q1: #e4eaff; --q2: #ece3ff; --qt: #26307a; --qa: #7a7dff; --p1: #6f86f0; --p2: #8b5cff; }
 .hero:is(.morning, .noon, .evening, .night) { --h1: color-mix(in srgb, var(--t1) 16%, var(--surface)); --h2: color-mix(in srgb, var(--t2) 12%, var(--surface)); color: var(--fg); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--t3) 28%, transparent), 0 10px 24px -18px var(--t3); }
 .hero:is(.morning, .noon, .evening, .night) .hh { color: var(--tt); }
 .hero:is(.morning, .noon, .evening, .night) .blob { background: color-mix(in srgb, var(--t1) 18%, transparent); }
@@ -839,14 +844,14 @@ textarea.export { width: 100%; height: 160px; font-family: var(--font-data); fon
 .forgot .fg-chips { display: none; }
 .forgot .fg-cta { align-self: center; flex: none; white-space: nowrap; }
 /* Day navigator: a bold colored band so "היום" stands out */
-.daynav.daynav { background: linear-gradient(135deg, #8f8dff, #a68bff 55%, #c79bff); color: #fff; box-shadow: 0 14px 26px -18px #a68bff; }
+.daynav.daynav { background: linear-gradient(135deg, color-mix(in srgb, var(--p1, #8f8dff) 88%, #fff), color-mix(in srgb, var(--p2, #c79bff) 88%, #fff)); color: #fff; box-shadow: 0 14px 26px -18px var(--p2, #a68bff); transition: background .6s; }
 .daynav.daynav::after { background: radial-gradient(circle, rgba(255,255,255,.22), transparent 70%); }
 .daynav.daynav .greet { background: none; box-shadow: none; animation: none; padding: 0; margin: 0; font-size: 32px; color: #fff; text-shadow: 0 2px 10px rgba(40,0,90,.25); }
 .daynav.daynav .greet + .muted { color: #fff; opacity: .88; }
-.daynav.daynav .navpill { background: rgba(255,255,255,.95); color: #6d4cff; box-shadow: 0 8px 18px -8px rgba(40,0,90,.5); }
+.daynav.daynav .navpill { background: rgba(255,255,255,.95); color: var(--p2, #6d4cff); box-shadow: 0 8px 18px -8px rgba(40,0,90,.5); }
 .daynav.daynav .navpill[disabled] { background: rgba(255,255,255,.18); color: rgba(255,255,255,.7); opacity: 1; }
 .daynav.daynav .weekjump button { background: rgba(255,255,255,.16) !important; border-color: rgba(255,255,255,.35) !important; color: #fff; box-shadow: none; }
-.daynav.daynav .weekjump button:not(:disabled):hover { background: #fff !important; color: #6d4cff; }
+.daynav.daynav .weekjump button:not(:disabled):hover { background: #fff !important; color: var(--p2, #6d4cff); }
 .daynav.daynav .weekjump button:disabled { opacity: .45; }
 .daynav.daynav .weekjump .wj-range { background: rgba(255,255,255,.22); color: #fff; }
 .dotbtn { border: none; background: none; padding: 0; width: 26px; height: 26px; display: grid; place-items: center; border-radius: 50%; cursor: pointer; }
@@ -2312,8 +2317,16 @@ function rotateQuote() {
 }
 ui.quoteAt = Date.now(); setInterval(rotateQuote, 1000);
 const QUOTES = ['כל יום קטן בונה משהו גדול.', 'לא צריך להיות מושלם, צריך להופיע.', 'צעד אחד היום שווה יותר מתוכנית למחר.', 'ההרגלים של היום הם מי שתהיה מחר.', 'עקביות מנצחת מוטיבציה.', 'אל תשבור את השרשרת.', 'קטן, פשוט, כל יום.', 'ההתחלה היא החלק הכי קשה, ואתה כבר כאן.', 'התקדמות, לא שלמות.', 'מה שעושים כל יום חשוב יותר ממה שעושים לפעמים.', 'עוד סימון אחד ואתה קרוב יותר.', 'תהיה גאה בכל צעד קטן.', 'היום הוא הזדמנות חדשה להתחיל.', 'גם יום חלש נחשב, אם לא ויתרת.', 'שגרה טובה היא מתנה שאתה נותן לעצמך.', 'הכוח נמצא בחזרה.', 'תעשה היום משהו שתודה לעצמך עליו מחר.', 'כל יום הוא נקודה. יחד הן קו.', 'החמצת יום? פשוט חוזרים מחר.', 'מספיק שתתחיל, ההמשך יבוא.', 'הדרך הכי טובה לשנות חיים היא יום אחד בכל פעם.'];
+// Temporary preview: a button next to the theme toggle cycles morning → noon → evening → night → real time
+const TOD_HR = { morning: 8, noon: 13, evening: 19, night: 22 }, TOD_ORDER = ['morning', 'noon', 'evening', 'night'];
+const TOD_LBL = { morning: ['☀️', 'בוקר'], noon: ['🌤️', 'צהריים'], evening: ['🌅', 'ערב'], night: ['🌙', 'לילה'] };
+function curHour() { return ui.todPreview ? TOD_HR[ui.todPreview] : new Date().getHours(); }
+function todBtn() {
+  const c = todCls(), [em, l] = TOD_LBL[c];
+  return `<button class="iconbtn tod-btn ${c} ${ui.todPreview ? 'on' : ''}" data-a="todCycle" aria-label="החלפת תצוגה: בוקר, צהריים, ערב, לילה" title="${ui.todPreview ? 'תצוגה: ' + l : 'לפי השעה עכשיו'}">${em}</button>`;
+}
 function heroCard(todays, by) {
-  const hr = new Date().getHours();
+  const hr = curHour();
   const [cls, em, hi] = hr >= 5 && hr < 12 ? ['morning', '☀️', 'בוקר טוב'] : hr >= 12 && hr < 17 ? ['noon', '🌤️', 'צהריים טובים'] : hr >= 17 && hr < 21 ? ['evening', '🌅', 'ערב טוב'] : ['night', '🌙', 'לילה טוב'];
   const total = todays.length, done = todays.filter(h => by[h.id] && isOn(by[h.id])).length, left = total - done;
   const qi = ((D(TODAY()) + (ui.quoteShift || 0)) % QUOTES.length + QUOTES.length) % QUOTES.length;
@@ -2333,8 +2346,8 @@ function heroCard(todays, by) {
     <span class="hero-status">${status}</span>
   </button>`;
 }
-function todCls() { const h = new Date().getHours(); return h >= 5 && h < 12 ? 'morning' : h >= 12 && h < 17 ? 'noon' : h >= 17 && h < 21 ? 'evening' : 'night'; }
-function greet() { const h = new Date().getHours(); return h >= 5 && h < 12 ? 'בוקר טוב' : h < 17 && h >= 12 ? 'צהריים טובים' : h >= 17 && h < 21 ? 'ערב טוב' : 'לילה טוב'; }
+function todCls() { const h = curHour(); return h >= 5 && h < 12 ? 'morning' : h >= 12 && h < 17 ? 'noon' : h >= 17 && h < 21 ? 'evening' : 'night'; }
+function greet() { const h = curHour(); return h >= 5 && h < 12 ? 'בוקר טוב' : h < 17 && h >= 12 ? 'צהריים טובים' : h >= 17 && h < 21 ? 'ערב טוב' : 'לילה טוב'; }
 function screenToday() {
   const t = TODAY(), day = ui.viewDay, isToday = day === t;
   const { by, todays, others } = todayModel(day);
@@ -2343,10 +2356,10 @@ function screenToday() {
   const y = S_(D(t) - 1);
   const forgot = isToday ? S.habits.filter(h => !h.archived && ['missed', 'partial', 'nodata'].includes(statusOf(h, y).status)) : [];
   const oldest = Math.min(...S.habits.map(h => D(h.startDay)), D(t));
-  return `<div class="navbar"><button class="iconbtn" data-a="new" aria-label="הרגל חדש">${ICON.plus}</button><h2>ההרגלים שלי</h2>${themeBtn()}</div>
+  return `<div class="navbar"><button class="iconbtn" data-a="new" aria-label="הרגל חדש">${ICON.plus}</button><h2>ההרגלים שלי</h2><span class="nb-r">${todBtn()}${themeBtn()}</span></div>
   <div class="stack">
     ${isToday ? heroCard(todays, by) : ''}
-    <section class="card daynav ${isToday ? '' : 'past'}">
+    <section class="card daynav ${todCls()} ${isToday ? '' : 'past'}">
       <div class="row daynav-row">
         <button class="navpill" data-a="viewDay" data-v="-1" aria-label="יום קודם" ${D(day) <= oldest ? 'disabled' : ''}><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg></button>
         <div class="grow" style="text-align:center;direction:rtl"><span class="greet">${isToday ? 'היום' : dayName(day)}</span><div class="muted small">${date}</div></div>
@@ -3950,6 +3963,7 @@ document.addEventListener('click', e => {
     case 'askReset': S = seed(); save(); ui.sheet = null; ui.detail = null; toast('נטענו נתוני דוגמה חדשים'); render(); break;
     case 'nextQuote': ui.quoteAt = 0; rotateQuote(); break;   // only the bubble changes — the rest of the screen stays still
     /* the quote bubble changes by itself every 10 seconds (see rotateQuote) */
+    case 'todCycle': { const i = TOD_ORDER.indexOf(ui.todPreview); ui.todPreview = i === TOD_ORDER.length - 1 ? null : TOD_ORDER[i + 1]; toast(ui.todPreview ? `תצוגה: ${TOD_LBL[ui.todPreview][1]}` : 'חזרה לשעה האמיתית', null, { icon: TOD_LBL[todCls()][0] }); render(); break; }
     case 'quickTheme': S.settings.theme = isDark() ? 'light' : 'dark'; save(); applyTheme(); rerender(); break;
     case 'setTheme': S.settings.theme = v; save(); applyTheme(); rerender(); break;
     case 'theme': { const r = document.documentElement; const dark = r.dataset.theme ? r.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches; r.dataset.theme = dark ? 'light' : 'dark'; break; }
