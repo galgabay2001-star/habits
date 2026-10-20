@@ -121,8 +121,8 @@ button { cursor: pointer; }
 .greet { font-family: var(--font-display); font-size: 21px; line-height: 1.1; }
 /* Live hero header on the home screen: time-of-day gradient, greeting, daily line, today's progress ring. */
 .hero { position: relative; overflow: hidden; border-radius: 26px; padding: 18px 18px 16px; color: #fff; background: linear-gradient(135deg, var(--h1), var(--h2)); box-shadow: 0 18px 36px -20px var(--h2); cursor: pointer; isolation: isolate; text-align: right; direction: rtl; border: 0; font: inherit; width: 100%; display: block; }
-.hero.intro { animation: heroIn .5s cubic-bezier(.2,.8,.2,1); }
-.hero.intro circle.fg { animation: ringIn 1s cubic-bezier(.2,.8,.2,1); }
+.hero.h-intro { animation: heroIn .5s cubic-bezier(.2,.8,.2,1); }
+.hero.h-intro circle.fg { animation: ringIn 1s cubic-bezier(.2,.8,.2,1); }
 @keyframes ringIn { from { stroke-dashoffset: 169.6; } }
 .hero.morning { --h1: #ffa24c; --h2: #ff4f8b; }
 .hero.noon { --h1: #2f7bff; --h2: #14c2d4; }
@@ -1712,7 +1712,7 @@ function heroCard(todays, by) {
     : done / total >= .5 ? `🔥 יותר מחצי בדרך! ${left === 1 ? 'נשאר רק עוד אחד' : 'עוד ' + left}`
     : `💪 התחלה טובה! ${done} מתוך ${total}`;
   const r = 27, c = 2 * Math.PI * r, frac = total ? done / total : 0, first = !ui.heroSeen, swap = ui.quoteAnim; ui.heroSeen = true; ui.quoteAnim = false;
-  return `<button class="hero ${cls} ${first ? 'intro' : ''} ${total && !left ? 'alldone' : ''}" data-a="nextQuote" aria-label="משפט נוסף">
+  return `<button class="hero ${cls} ${first ? 'h-intro' : ''} ${total && !left ? 'alldone' : ''}" data-a="nextQuote" aria-label="משפט נוסף">
     <i class="blob b1"></i><i class="blob b2"></i><i class="blob b3"></i>
     <div class="hero-top"><div class="hero-hi"><div class="hh"><span class="em">${em}</span>${hi}</div><div class="hd">${date}</div></div>
       ${total ? `<div class="hero-ring"><svg viewBox="0 0 66 66" width="66" height="66"><circle cx="33" cy="33" r="${r}" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="7"/><circle class="fg" cx="33" cy="33" r="${r}" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-dasharray="${c.toFixed(1)}" stroke-dashoffset="${(c * (1 - frac)).toFixed(1)}"/></svg><div class="rv"><div><bdi dir="ltr">${done}/${total}</bdi><small>היום</small></div></div></div>` : ''}</div>
