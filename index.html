@@ -144,7 +144,7 @@ button { cursor: pointer; }
 .hero-ring circle.fg { transition: stroke-dashoffset .8s cubic-bezier(.2,.8,.2,1); }
 .hero-quote { position: relative; overflow: hidden; margin: 14px 0 14px; padding: 12px 16px 14px; font-size: 17px; font-weight: 700; line-height: 1.35; text-wrap: balance; border-radius: 20px 20px 20px 6px; background: rgba(255,255,255,.2); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: inset 0 0 0 1px rgba(255,255,255,.35), 0 8px 18px -12px rgba(0,0,0,.35); }
 .hero-quote::before { content: "💬"; margin-left: 6px; font-size: 15px; }
-.hero-quote .hq-t { position: absolute; bottom: 0; right: 0; height: 3px; border-radius: 3px; background: rgba(255,255,255,.75); animation: hqTimer 10s linear forwards; }
+.hero-quote .hq-t { display: none; }
 @keyframes hqTimer { from { width: 0; } to { width: 100%; } }
 .hero-quote.swap { animation: bubbleSwap .55s cubic-bezier(.2,1.4,.4,1); }
 @keyframes bubbleSwap { from { opacity: 0; transform: scale(.85) translateY(6px); } }
@@ -478,7 +478,6 @@ textarea.export { width: 100%; height: 160px; font-family: var(--font-data); fon
 .dot-done { background: var(--hc, var(--accent)); }
 .dot-open { box-shadow: inset 0 0 0 1.5px var(--faint); }
 .dot-miss { position: relative; background: linear-gradient(140deg, #ff6b6b, #e5383b); box-shadow: 0 0 0 2px color-mix(in srgb, #ff3b30 22%, transparent); }
-.wcell .dot-miss::after { content: "✕"; position: absolute; inset: 0; display: grid; place-items: center; color: #fff; font-size: 10px; font-weight: 900; font-style: normal; }
 .cal-miss { background: color-mix(in srgb, #ff3b30 15%, var(--surface-2)) !important; color: #d92d2d; box-shadow: inset 0 0 0 1.5px color-mix(in srgb, #ff3b30 45%, transparent); }
 .wk-miss { background: linear-gradient(140deg, #ff6b6b, #e5383b); border-color: #e5383b; color: #fff; }
 .yc-miss { background: color-mix(in srgb, #ff3b30 55%, var(--surface-2)); }
@@ -795,7 +794,7 @@ textarea.export { width: 100%; height: 160px; font-family: var(--font-data); fon
 .weekjump .wj-range { white-space: nowrap; font-size: 12px; background: color-mix(in srgb, var(--accent) 10%, var(--surface-2)); color: var(--fg); font-weight: 800; padding: 5px 10px; border-radius: 999px; opacity: 1 !important; }
 .pastnote { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; background: color-mix(in srgb, var(--partial) 14%, transparent); border-radius: 10px; padding: 8px 10px; font-size: 13px; }
 .iconbtn[disabled] { opacity: .3; cursor: default; }
-.forgot { position: relative; overflow: hidden; isolation: isolate; border: none; text-align: start; cursor: pointer; color: var(--fg); gap: 10px; display: flex; flex-direction: column; padding: 16px; border-radius: 24px; background: linear-gradient(135deg, color-mix(in srgb, #ffb547 16%, var(--surface)), color-mix(in srgb, #ff7a8a 12%, var(--surface))); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, #ff9a5a 28%, transparent), 0 10px 24px -18px #ff9a5a; direction: rtl; animation: heroIn .45s cubic-bezier(.2,.8,.2,1); }
+.forgot { position: relative; overflow: hidden; isolation: isolate; border: none; text-align: start; cursor: pointer; color: var(--fg); gap: 10px; display: flex; flex-direction: column; padding: 16px; border-radius: 24px; background: linear-gradient(135deg, color-mix(in srgb, #ffb547 16%, var(--surface)), color-mix(in srgb, #ff7a8a 12%, var(--surface))); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, #ff9a5a 28%, transparent), 0 10px 24px -18px #ff9a5a; direction: rtl; }
 .fg-blob { position: absolute; width: 140px; height: 140px; border-radius: 50%; left: -40px; top: -50px; background: color-mix(in srgb, #ffb547 18%, transparent); z-index: -1; animation: floaty 9s ease-in-out infinite; }
 .fg-top { display: flex; align-items: center; gap: 12px; }
 .fg-ic { width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; font-size: 22px; background: color-mix(in srgb, #ffb547 25%, var(--surface)); flex: none; animation: ring 2.6s ease-in-out infinite; }
@@ -2134,10 +2133,18 @@ function todayModel(t = TODAY()) {
 }
 // ── Per-habit, per-day views (no daily percentages) ──
 /** Day cell state for ONE habit: done | rest | off (not scheduled / inactive) | open (scheduled, not done) | today | future */
+/** "X times a week/month": was the target of the period containing `day` reached? */
+function periodMetOn(h, day) {
+  const v = versionAt(h, day), sc = v.schedule || {}; if (!['perWeek', 'perMonth'].includes(sc.type)) return false;
+  const d = D(day), from = sc.type === 'perWeek' ? E.weekStartOf(d, S.settings.weekStart) : D(day.slice(0, 8) + '01'), to = sc.type === 'perWeek' ? from + 6 : D(nextMonth(day.slice(0, 8) + '01')) - 1;
+  const { byDay } = E.foldEvents(eventsOf(h.id)); let n = 0;
+  for (let x = from; x <= to; x++) { const a = byDay.get(x); if (a && a.completions > 0) n++; }
+  return n >= (sc.count || 1);
+}
 function cellState(h, day) {
   const ev = statusOf(h, day), st = ev.status;
   // "X times a week": every day is a day you can train — not done yet = an open circle you can tap (not a gray rest dot)
-  if (ev.flexible && st === 'unscheduled') return day === TODAY() ? 'today' : 'open';
+  if (ev.flexible && st === 'unscheduled') return periodMetOn(h, day) ? 'rest' : day === TODAY() ? 'today' : 'open';   // weekly target reached → the other days are rest days
   if (st === 'done' || st === 'bonus') return 'done';
   if (st === 'rest') return 'rest';
   if (st === 'future') return 'future';
@@ -2791,7 +2798,7 @@ function screenDetail() {
     const d = ws + i, ds = S_(d), st = d > td ? 'future' : cellState(h, ds), g = byDay.get(d);
     const amt = g && (['quantity', 'range'].includes(h.kind) || (h.kind === 'event' && v.eventGoal === 'amount') ? (g.hasValue ? g.value : null) : h.kind === 'duration' ? (g.hasDuration ? g.duration : null) : h.kind === 'event' ? g.completions : null);
     return `<div class="wk-day ${d === td ? 'is-today' : ''}"><span class="wk-l">${WD[E.weekday(d)]}</span>
-      ${d > td ? '<span class="wk-c wk-future"></span>' : `<button class="wk-c wk-${st}" style="--hc:${h.color}" data-a="toggleDayHabit" data-id="${h.id}" data-day="${ds}" aria-label="${dayName(ds)}: ${CELL_TITLE[st]}">${st === 'done' ? '✓' : st === 'miss' ? '✕' : ''}</button>`}
+      ${d > td ? '<span class="wk-c wk-future"></span>' : `<button class="wk-c wk-${st}" style="--hc:${h.color}" data-a="toggleDayHabit" data-id="${h.id}" data-day="${ds}" aria-label="${dayName(ds)}: ${CELL_TITLE[st]}">${st === 'done' ? '✓' : ''}</button>`}
       <span class="wk-v num">${amt != null ? clean(amt) : (g && g.completions > 1 && h.kind !== 'frequency' ? '×' + g.completions : `${+ds.slice(8)}.${+ds.slice(5, 7)}`)}</span></div>`;
   }).join('');
   // ── Strongest weekday (all history, only if there's enough)
@@ -3779,7 +3786,7 @@ document.addEventListener('click', e => {
     case 'evDel': ev(h, el.dataset.day, 'undo', { entryID: v }); save(); toast('האירוע נמחק', null, { error: true }); rerender(); break;
     case 'evUndo': { const L = ui.lastEvent; const hh = L && habitById(L.id); if (hh) { if (L.merged) { if (L.prev !== undefined) ev(hh, TODAY(), 'correct', { entryID: L.entry, value: L.prev }); } else ev(hh, TODAY(), 'undo', { entryID: L.entry }); save(); } ui.lastEvent = null; toast('בוטל', null, { error: true }); rerender(); break; }
     case 'rgStep': { const inp = document.getElementById('rg-val'), st = versionNow(h).step || 1; ui.rangeDraft = Math.max(0, Math.round(((Number(inp.value) || 0) + Number(v) * st) * 100) / 100); rerender(); break; }
-    case 'rgSave': { const n = Number(document.getElementById('rg-val').value); if (!isFinite(n) || n < 0) { toast('הקלד מספר תקין', null, { error: true }); break; } setAmount(h, el.dataset.day, n); if (n === 0) { const ag0 = aggOf(h, el.dataset.day); if (!ag0 || !ag0.hasValue) { ev(h, el.dataset.day, 'log', { value: 0 }); save(); } } ui.rangeDraft = null; ui.sheet = null; const e2 = statusOf(h, el.dataset.day); if (e2.side) toast(e2.side === 'low' ? 'מתחת לטווח' : 'מעל הטווח', null, { error: true, sub: `${clean(n)} ${versionNow(h).unit || ''}` }); else toast('בתוך הטווח', null, { sub: `${clean(n)} ${versionNow(h).unit || ''}` }); rerender(); break; }
+    case 'rgSave': { const n = Number(document.getElementById('rg-val').value); if (!isFinite(n) || n < 0) { toast('הקלד מספר תקין', null, { error: true }); break; } setAmount(h, el.dataset.day, n); if (n === 0) { const ag0 = aggOf(h, el.dataset.day); if (!ag0 || !ag0.hasValue) { ev(h, el.dataset.day, 'log', { value: 0 }); save(); } } ui.rangeDraft = null; ui.sheet = null; const e2 = statusOf(h, el.dataset.day); toast('נשמר', null, { ok: true, color: '#22c55e', sub: `${clean(n)} ${versionNow(h).unit || ''} · ${e2.side === 'low' ? 'מתחת לטווח' : e2.side === 'high' ? 'מעל הטווח' : 'בתוך הטווח'}` }); rerender(); break; }
     case 'rgClear': setAmount(h, el.dataset.day, 0); for (const en of activeEntries(h, el.dataset.day, ['log'])) ev(h, el.dataset.day, 'undo', { entryID: en.id }); save(); ui.rangeDraft = null; ui.sheet = null; toast('המדידה נמחקה', null, { error: true }); rerender(); break;
     case 'toggleDayHabit': { if (h.kind === 'event' || h.kind === 'range') { ui.rangeDraft = null; ui.sheet = { type: h.kind === 'event' ? 'events' : 'range', id, day: el.dataset.day }; rerender(); break; } if (h.kind === 'duration' && statusOf(h, el.dataset.day).status !== 'rest') { ui.sheet = { type: 'dtime', id, day: el.dataset.day }; rerender(); break; }
       if (h.kind === 'quantity') { if (statusOf(h, el.dataset.day).status === 'rest') setRest(h, el.dataset.day, false); ui.sheet = { type: 'damt', id, day: el.dataset.day }; rerender(); break; } const day = el.dataset.day; const st = statusOf(h, day).status; if (st === 'rest') { setRest(h, day, false); setDone(h, day, true); } else if (h.kind === 'quantity') setDone(h, day, st !== 'done'); else applyPlan(h, day, tapPlan(itemOf(h, day), h)); if (statusOf(h, day).status === 'done') toast('בוצע'); else toast('בוטל', null, { error: true }); rerender(); break; }
@@ -3895,7 +3902,7 @@ document.addEventListener('click', e => {
     case 'calFilterSet': ui.filter = v || ''; ui.calPop = false; rerender(); break;
     case 'deleteAll': S = { habits: [], events: [], goals: [], settings: S.settings, v: 1 }; save(); ui.sheet = null; ui.confirm = null; ui.detail = null; toast('כל הנתונים נמחקו'); render(); break;
     case 'askReset': S = seed(); save(); ui.sheet = null; ui.detail = null; toast('נטענו נתוני דוגמה חדשים'); render(); break;
-    case 'nextQuote': ui.quoteShift = (ui.quoteShift || 0) + 1; ui.quoteAnim = true; ui.quoteAt = Date.now(); rerender(); break;
+    case 'nextQuote': ui.quoteAt = 0; rotateQuote(); break;   // only the bubble changes — the rest of the screen stays still
     /* the quote bubble changes by itself every 10 seconds (see rotateQuote) */
     case 'quickTheme': S.settings.theme = isDark() ? 'light' : 'dark'; save(); applyTheme(); rerender(); break;
     case 'setTheme': S.settings.theme = v; save(); applyTheme(); rerender(); break;
