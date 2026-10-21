@@ -773,6 +773,7 @@ textarea.export { width: 100%; height: 160px; font-family: var(--font-data); fon
 .screen[data-tab="goals"] .wx-cmp.up { background: #16a34a; color: #fff; box-shadow: 0 6px 14px -8px rgba(22,163,74,.7); }
 .screen[data-tab="goals"] .wx-sub { display: inline-block; color: #fff; font-weight: 700; font-size: 14px; background: var(--tt); padding: 4px 12px; border-radius: 999px; opacity: 1; box-shadow: 0 4px 12px -6px var(--tt); }
 .screen[data-tab="goals"] .wx-done { color: #fff; font-weight: 900; }
+.screen[data-tab="goals"] .pnav-t { display: inline-block; color: #fff; background: var(--tt); padding: 4px 14px; border-radius: 999px; box-shadow: 0 4px 12px -6px var(--tt); }
 .screen[data-tab="goals"] .wx-cmp, .screen[data-tab="goals"] .wx-cmp.up { background: none; box-shadow: none; padding: 0; color: var(--tt); font-size: 13px; }
 .screen[data-tab="goals"] .wx-ring circle { stroke: color-mix(in srgb, var(--tt) 16%, transparent); }
 .screen[data-tab="goals"] .wx-ring circle + circle { stroke: var(--ring); }
@@ -3342,7 +3343,7 @@ function screenWeekly() {
   <div class="stack">
     ${weekExtras(hs, rows, ws, pe, td)}
     <section class="card wt">
-      <div class="row daynav-row pnav">${nav(-1, ws <= first)}<div class="grow" style="display:flex;flex-direction:column;align-items:center;gap:2px;direction:rtl"><b>${title}${range}</b><small class="tiny muted">${!rows.length ? 'אין נתונים לתקופה הזו' : bad ? `${bad} לא הושלמו · ${rows.length - bad} עמדו ביעד` : '🎉 הכל עמד ביעד'}${off === 0 && pe > td ? ' · ' + U.open : ''}</small></div>${nav(1, off >= 0)}</div>
+      <div class="row daynav-row pnav">${nav(-1, ws <= first)}<div class="grow" style="display:flex;flex-direction:column;align-items:center;gap:2px;direction:rtl"><b class="pnav-t">${title}${range}</b><small class="tiny muted">${!rows.length ? 'אין נתונים לתקופה הזו' : bad ? `${bad} לא הושלמו · ${rows.length - bad} עמדו ביעד` : '🎉 הכל עמד ביעד'}${off === 0 && pe > td ? ' · ' + U.open : ''}</small></div>${nav(1, off >= 0)}</div>
       <div class="wt-table">
         <div class="wt-row wt-h"><span>הרגל</span><span>בוצע</span></div>
         ${rows.map(row).join('')}
