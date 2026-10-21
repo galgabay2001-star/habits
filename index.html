@@ -130,10 +130,10 @@ button { cursor: pointer; }
 .hero.h-intro circle.fg { animation: ringIn 1s cubic-bezier(.2,.8,.2,1); }
 @keyframes ringIn { from { stroke-dashoffset: 169.6; } }
 /* Hero: soft pastel card, each time of day with its own gentle tint */
-.hero.morning, .forgot.morning, .daynav.morning, .tod-btn.morning, .tod-wave.morning, .screen[data-tod="morning"] { --t1: #F4D58D; --t2: #f9e6b5; --t3: #e6bf5c; --tt: #a87d10; --ring: #e0b245; --q1: #fdf5dc; --q2: #f9e6b5; --qt: #6b4e00; --qa: #e6bf5c; --p1: #f8e2a8; --p2: #F4D58D; --on: #5c4300; }
-.hero.noon, .forgot.noon, .daynav.noon, .tod-btn.noon, .tod-wave.noon, .screen[data-tod="noon"] { --t1: #F4A261; --t2: #f8c79a; --t3: #F4A261; --tt: #c0652a; --ring: #F4A261; --q1: #fde9d6; --q2: #fbd8b8; --qt: #7a3a10; --qa: #F4A261; --p1: #f6b27a; --p2: #ef934a; --on: #fff; }
-.hero.evening, .forgot.evening, .daynav.evening, .tod-btn.evening, .tod-wave.evening, .screen[data-tod="evening"] { --t1: #C08497; --t2: #d8aebd; --t3: #C08497; --tt: #8f4f66; --ring: #b0718a; --q1: #f6e8ed; --q2: #efdbe3; --qt: #5a2a3c; --qa: #C08497; --p1: #cf9aab; --p2: #b0718a; --on: #fff; }
-.hero.night, .forgot.night, .daynav.night, .tod-btn.night, .tod-wave.night, .screen[data-tod="night"] { --t1: #344568; --t2: #5a6d96; --t3: #344568; --tt: #344568; --ring: #344568; --q1: #e6eaf3; --q2: #dde3ef; --qt: #1f2a44; --qa: #5a6d96; --p1: #4a5c85; --p2: #344568; --on: #fff; }
+.hero.morning, .forgot.morning, .daynav.morning, .tod-btn.morning, .tod-wave.morning, .screen[data-tod="morning"], .tod-bokeh.morning { --t1: #F4D58D; --t2: #f9e6b5; --t3: #e6bf5c; --tt: #a87d10; --ring: #e0b245; --q1: #fdf5dc; --q2: #f9e6b5; --qt: #6b4e00; --qa: #e6bf5c; --p1: #f8e2a8; --p2: #F4D58D; --on: #5c4300; }
+.hero.noon, .forgot.noon, .daynav.noon, .tod-btn.noon, .tod-wave.noon, .screen[data-tod="noon"], .tod-bokeh.noon { --t1: #F4A261; --t2: #f8c79a; --t3: #F4A261; --tt: #c0652a; --ring: #F4A261; --q1: #fde9d6; --q2: #fbd8b8; --qt: #7a3a10; --qa: #F4A261; --p1: #f6b27a; --p2: #ef934a; --on: #fff; }
+.hero.evening, .forgot.evening, .daynav.evening, .tod-btn.evening, .tod-wave.evening, .screen[data-tod="evening"], .tod-bokeh.evening { --t1: #C08497; --t2: #d8aebd; --t3: #C08497; --tt: #8f4f66; --ring: #b0718a; --q1: #f6e8ed; --q2: #efdbe3; --qt: #5a2a3c; --qa: #C08497; --p1: #cf9aab; --p2: #b0718a; --on: #fff; }
+.hero.night, .forgot.night, .daynav.night, .tod-btn.night, .tod-wave.night, .screen[data-tod="night"], .tod-bokeh.night { --t1: #344568; --t2: #5a6d96; --t3: #344568; --tt: #344568; --ring: #344568; --q1: #e6eaf3; --q2: #dde3ef; --qt: #1f2a44; --qa: #5a6d96; --p1: #4a5c85; --p2: #344568; --on: #fff; }
 .hero:is(.morning, .noon, .evening, .night) { --h1: color-mix(in srgb, var(--t1) 16%, var(--surface)); --h2: color-mix(in srgb, var(--t2) 12%, var(--surface)); color: var(--fg); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--t3) 28%, transparent), 0 10px 24px -18px var(--t3); }
 .hero:is(.morning, .noon, .evening, .night) .hh { color: var(--tt); }
 .hero:is(.morning, .noon, .evening, .night) .blob { background: color-mix(in srgb, var(--t1) 18%, transparent); }
@@ -750,6 +750,15 @@ textarea.export { width: 100%; height: 160px; font-family: var(--font-data); fon
 .sx-foot { margin-top: 12px; font-size: 13px; font-weight: 700; background: rgba(255,255,255,.18); border-radius: 99px; padding: 6px 12px; display: inline-block; }
 .sx-pod h3, .sx-ins h3 { margin: 0 0 12px; direction: rtl; text-align: right; }
 /* Statistics follow the time-of-day color, like the home screen */
+.screen[data-tab="stats"] { position: relative; }
+.tod-bokeh { position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+.tod-bokeh i { position: absolute; border-radius: 50%; filter: blur(6px); opacity: .7; animation: bkFloat 14s ease-in-out infinite; }
+.tod-bokeh i.bk1 { background: radial-gradient(circle at 35% 35%, color-mix(in srgb, var(--t1) 85%, transparent), color-mix(in srgb, var(--t1) 25%, transparent) 70%); }
+.tod-bokeh i.bk2 { background: radial-gradient(circle at 35% 35%, color-mix(in srgb, var(--t2) 90%, transparent), color-mix(in srgb, var(--t2) 28%, transparent) 70%); }
+.tod-bokeh i.bk3 { background: radial-gradient(circle at 35% 35%, color-mix(in srgb, var(--t3) 70%, transparent), color-mix(in srgb, var(--t3) 20%, transparent) 70%); }
+@keyframes bkFloat { 0%, 100% { transform: translate(0, 0) scale(1); } 33% { transform: translate(8px, -16px) scale(1.06); } 66% { transform: translate(-6px, 10px) scale(.95); } }
+@media (prefers-reduced-motion: reduce) { .tod-bokeh i { animation: none; } }
+.screen[data-tab="stats"] .card:not(.sx-hero) { background: linear-gradient(135deg, color-mix(in srgb, var(--hc, var(--surface)) 8%, color-mix(in srgb, var(--surface) 70%, transparent)), color-mix(in srgb, var(--surface) 62%, transparent)); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
 .screen[data-tab="stats"] { isolation: isolate; background: radial-gradient(110% 36% at 100% 0%, color-mix(in srgb, var(--t1) 22%, transparent), transparent 70%), radial-gradient(90% 32% at 0% 30%, color-mix(in srgb, var(--t2) 18%, transparent), transparent 70%), radial-gradient(100% 34% at 100% 70%, color-mix(in srgb, var(--t1) 12%, transparent), transparent 70%), var(--bg); background-attachment: local; }
 .screen[data-tab="stats"] .sx-hero { color: var(--fg); background: linear-gradient(135deg, color-mix(in srgb, var(--t1) 16%, var(--surface)), color-mix(in srgb, var(--t2) 12%, var(--surface))); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--t3) 28%, transparent), 0 10px 24px -18px var(--t3); }
 .screen[data-tab="stats"] .sx-hero .blob { background: color-mix(in srgb, var(--t1) 18%, transparent); }
@@ -3740,7 +3749,8 @@ function render() {
   scr.innerHTML = ui.detail ? screenDetail() : ({ today: screenToday, habits: screenHabits, calendar: screenCalendar, stats: screenStats, goals: screenWeekly }[ui.tab])();
   scr.dataset.tab = ui.detail ? 'detail' : ui.tab;
   scr.dataset.tod = todCls();
-  if (scr.dataset.tab === 'today' || scr.dataset.tab === 'stats') scr.insertAdjacentHTML('beforeend', `<div class="tod-wave ${todCls()}" aria-hidden="true"><i></i><i></i></div>`);   // soft sliding shape at the bottom, in the time-of-day color
+  if (scr.dataset.tab === 'stats') scr.insertAdjacentHTML('afterbegin', `<div class="tod-bokeh" aria-hidden="true">${[[4, 'r', 190, 1], [14, 'l', 150, 2], [25, 'r', 120, 3], [35, 'l', 200, 1], [46, 'r', 160, 2], [56, 'l', 130, 3], [66, 'r', 210, 1], [77, 'l', 160, 2], [88, 'r', 140, 3]].map(([t, side, sz, c], i) => `<i class="bk${c}" style="top:${t}%;${side === 'r' ? 'right' : 'left'}:${-sz / 2}px;width:${sz}px;height:${sz}px;animation-delay:-${i * 1.7}s"></i>`).join('')}</div>`);   // statistics: soft glowing bubbles floating along the page
+  if (scr.dataset.tab === 'today') scr.insertAdjacentHTML('beforeend', `<div class="tod-wave ${todCls()}" aria-hidden="true"><i></i><i></i></div>`);   // soft sliding shape at the bottom, in the time-of-day color
   if (ui.keepScroll) scr.scrollTop = keepScroll; ui.keepScroll = false;
   renderTabbar(); renderHome();
   const fo = document.getElementById('focus'); fo.innerHTML = ui.focus ? focusView() : ''; fo.classList.toggle('on', !!ui.focus);
