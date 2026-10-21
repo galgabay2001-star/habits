@@ -752,13 +752,19 @@ textarea.export { width: 100%; height: 160px; font-family: var(--font-data); fon
 /* Statistics follow the time-of-day color, like the home screen */
 .screen[data-tab="stats"] { position: relative; }
 .tod-bokeh { position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
-.tod-bokeh i { position: absolute; border-radius: 50%; filter: blur(6px); opacity: .7; animation: bkFloat 14s ease-in-out infinite; }
-.tod-bokeh i.bk1 { background: radial-gradient(circle at 35% 35%, color-mix(in srgb, var(--t1) 85%, transparent), color-mix(in srgb, var(--t1) 25%, transparent) 70%); }
-.tod-bokeh i.bk2 { background: radial-gradient(circle at 35% 35%, color-mix(in srgb, var(--t2) 90%, transparent), color-mix(in srgb, var(--t2) 28%, transparent) 70%); }
-.tod-bokeh i.bk3 { background: radial-gradient(circle at 35% 35%, color-mix(in srgb, var(--t3) 70%, transparent), color-mix(in srgb, var(--t3) 20%, transparent) 70%); }
-@keyframes bkFloat { 0%, 100% { transform: translate(0, 0) scale(1); } 33% { transform: translate(8px, -16px) scale(1.06); } 66% { transform: translate(-6px, 10px) scale(.95); } }
-@media (prefers-reduced-motion: reduce) { .tod-bokeh i { animation: none; } }
-.screen[data-tab="stats"] .card:not(.sx-hero) { background: linear-gradient(135deg, color-mix(in srgb, var(--hc, var(--surface)) 8%, color-mix(in srgb, var(--surface) 70%, transparent)), color-mix(in srgb, var(--surface) 62%, transparent)); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+.tod-snake svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.tod-snake path { fill: none; vector-effect: non-scaling-stroke; stroke-linecap: round; }
+.tod-snake .sn-glow { stroke: var(--t1); stroke-width: 60; opacity: .45; }
+.tod-snake svg { filter: drop-shadow(0 0 10px color-mix(in srgb, var(--t1) 70%, transparent)); }
+.tod-snake .sn-line { stroke: var(--t3); stroke-width: 6; opacity: .75; }
+.tod-snake .sn-flow { stroke: color-mix(in srgb, #fff 85%, var(--t1)); stroke-width: 3; stroke-dasharray: 2 26; animation: snFlow 2.4s linear infinite; }
+@keyframes snFlow { to { stroke-dashoffset: -28; } }
+.tod-snake b { position: absolute; width: 22px; height: 22px; margin: -11px 0 0 -11px; border-radius: 50%; background: radial-gradient(circle, #fff 0 28%, var(--p2) 32% 58%, color-mix(in srgb, var(--p2) 25%, transparent) 62%); box-shadow: 0 0 0 0 color-mix(in srgb, var(--p2) 50%, transparent); animation: snPulse 2.6s ease-out infinite; }
+@keyframes snPulse { 70% { box-shadow: 0 0 0 16px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
+.tod-snake i { position: absolute; bottom: -20px; width: 8px; height: 8px; border-radius: 50%; background: radial-gradient(circle, #fff, var(--t1) 60%, transparent 70%); opacity: 0; animation: snRise linear infinite; }
+@keyframes snRise { 0% { transform: translateY(0) scale(.6); opacity: 0; } 10% { opacity: .9; } 90% { opacity: .7; } 100% { transform: translateY(-1400px) scale(1.2); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .tod-snake *, .tod-snake .sn-flow { animation: none !important; } }
+.screen[data-tab="stats"] .card:not(.sx-hero) { background: linear-gradient(135deg, color-mix(in srgb, var(--hc, var(--surface)) 8%, color-mix(in srgb, var(--surface) 62%, transparent)), color-mix(in srgb, var(--surface) 52%, transparent)); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
 .screen[data-tab="stats"] { isolation: isolate; background: radial-gradient(110% 36% at 100% 0%, color-mix(in srgb, var(--t1) 22%, transparent), transparent 70%), radial-gradient(90% 32% at 0% 30%, color-mix(in srgb, var(--t2) 18%, transparent), transparent 70%), radial-gradient(100% 34% at 100% 70%, color-mix(in srgb, var(--t1) 12%, transparent), transparent 70%), var(--bg); background-attachment: local; }
 .screen[data-tab="stats"] .sx-hero { color: var(--fg); background: linear-gradient(135deg, color-mix(in srgb, var(--t1) 16%, var(--surface)), color-mix(in srgb, var(--t2) 12%, var(--surface))); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--t3) 28%, transparent), 0 10px 24px -18px var(--t3); }
 .screen[data-tab="stats"] .sx-hero .blob { background: color-mix(in srgb, var(--t1) 18%, transparent); }
@@ -3749,7 +3755,7 @@ function render() {
   scr.innerHTML = ui.detail ? screenDetail() : ({ today: screenToday, habits: screenHabits, calendar: screenCalendar, stats: screenStats, goals: screenWeekly }[ui.tab])();
   scr.dataset.tab = ui.detail ? 'detail' : ui.tab;
   scr.dataset.tod = todCls();
-  if (scr.dataset.tab === 'stats') scr.insertAdjacentHTML('afterbegin', `<div class="tod-bokeh" aria-hidden="true">${[[4, 'r', 190, 1], [14, 'l', 150, 2], [25, 'r', 120, 3], [35, 'l', 200, 1], [46, 'r', 160, 2], [56, 'l', 130, 3], [66, 'r', 210, 1], [77, 'l', 160, 2], [88, 'r', 140, 3]].map(([t, side, sz, c], i) => `<i class="bk${c}" style="top:${t}%;${side === 'r' ? 'right' : 'left'}:${-sz / 2}px;width:${sz}px;height:${sz}px;animation-delay:-${i * 1.7}s"></i>`).join('')}</div>`);   // statistics: soft glowing bubbles floating along the page
+  if (scr.dataset.tab === 'stats') scr.insertAdjacentHTML('afterbegin', `<div class="tod-bokeh tod-snake" aria-hidden="true"><svg viewBox="0 0 100 100" preserveAspectRatio="none"><path class="sn-glow" d="M 82 0 C 82 8.00, 18 8.66, 18 16.66 C 18 24.66, 82 25.32, 82 33.32 C 82 41.32, 18 41.98, 18 49.98 C 18 57.98, 82 58.64, 82 66.64 C 82 74.64, 18 75.30, 18 83.30 C 18 91.30, 82 91.96, 82 99.96"/><path class="sn-line" d="M 82 0 C 82 8.00, 18 8.66, 18 16.66 C 18 24.66, 82 25.32, 82 33.32 C 82 41.32, 18 41.98, 18 49.98 C 18 57.98, 82 58.64, 82 66.64 C 82 74.64, 18 75.30, 18 83.30 C 18 91.30, 82 91.96, 82 99.96"/><path class="sn-flow" d="M 82 0 C 82 8.00, 18 8.66, 18 16.66 C 18 24.66, 82 25.32, 82 33.32 C 82 41.32, 18 41.98, 18 49.98 C 18 57.98, 82 58.64, 82 66.64 C 82 74.64, 18 75.30, 18 83.30 C 18 91.30, 82 91.96, 82 99.96"/></svg><b style=\"top:16.7%;left:18%;animation-delay:-0.0s\"></b><b style=\"top:33.3%;left:82%;animation-delay:-0.6s\"></b><b style=\"top:50.0%;left:18%;animation-delay:-1.2s\"></b><b style=\"top:66.6%;left:82%;animation-delay:-1.8s\"></b><b style=\"top:83.3%;left:18%;animation-delay:-2.4s\"></b>${Array.from({ length: 10 }, (_, i) => `<i style="left:${8 + (i * 37) % 84}%;animation-delay:-${(i * 1.3).toFixed(1)}s;animation-duration:${9 + (i % 4) * 2}s"></i>`).join('')}</div>`);   // statistics: a glowing path winds down the page like a growth line, with pulsing milestones and rising sparkles
   if (scr.dataset.tab === 'today') scr.insertAdjacentHTML('beforeend', `<div class="tod-wave ${todCls()}" aria-hidden="true"><i></i><i></i></div>`);   // soft sliding shape at the bottom, in the time-of-day color
   if (ui.keepScroll) scr.scrollTop = keepScroll; ui.keepScroll = false;
   renderTabbar(); renderHome();
