@@ -754,15 +754,19 @@ textarea.export { width: 100%; height: 160px; font-family: var(--font-data); fon
 .screen[data-tab="goals"] { position: relative; isolation: isolate; background: radial-gradient(120% 40% at 0% 0%, color-mix(in srgb, var(--t1) 22%, transparent), transparent 70%), radial-gradient(100% 34% at 100% 45%, color-mix(in srgb, var(--t2) 18%, transparent), transparent 70%), radial-gradient(110% 36% at 0% 95%, color-mix(in srgb, var(--t1) 16%, transparent), transparent 70%), var(--bg); background-attachment: local; }
 .tod-beams i { position: absolute; left: -40%; width: 180%; height: 90px; border-radius: 999px; transform: rotate(-24deg); background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--t1) 55%, transparent) 30%, color-mix(in srgb, var(--t2) 75%, transparent) 50%, color-mix(in srgb, var(--t1) 55%, transparent) 70%, transparent); filter: blur(10px); animation: bmDrift 14s ease-in-out infinite alternate; }
 .tod-beams i:nth-child(1) { top: 3%; }
-.tod-beams i:nth-child(2) { top: 22%; height: 50px; opacity: .7; animation-delay: -4s; }
-.tod-beams i:nth-child(3) { top: 44%; height: 110px; animation-delay: -8s; }
-.tod-beams i:nth-child(4) { top: 66%; height: 60px; opacity: .7; animation-delay: -2s; }
+.tod-beams i:nth-child(2) { display: none; }
+.tod-beams i:nth-child(3) { top: 46%; height: 90px; opacity: .75; animation-delay: -8s; }
+.tod-beams i:nth-child(4) { display: none; }
 .tod-beams i:nth-child(5) { top: 86%; animation-delay: -6s; }
 @keyframes bmDrift { from { transform: rotate(-24deg) translateX(-8%); } to { transform: rotate(-24deg) translateX(8%); } }
 @media (prefers-reduced-motion: reduce) { .tod-beams i { animation: none; } }
 .screen[data-tab="goals"] .card { background-color: color-mix(in srgb, var(--surface) 62%, transparent); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
 .screen[data-tab="goals"] .wx-hero { color: var(--fg); background: linear-gradient(135deg, color-mix(in srgb, var(--t1) 16%, var(--surface)), color-mix(in srgb, var(--t2) 12%, var(--surface))); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--t3) 28%, transparent), 0 10px 24px -18px var(--t3); }
-.screen[data-tab="goals"] .wx-hero .blob { background: color-mix(in srgb, var(--t1) 18%, transparent); }
+.screen[data-tab="goals"] .wx-hero .blob { display: none; }
+.screen[data-tab="goals"] .wx-hero::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: linear-gradient(115deg, transparent 0 52%, color-mix(in srgb, var(--t1) 22%, transparent) 52% 60%, transparent 60% 64%, color-mix(in srgb, var(--t2) 30%, transparent) 64% 67%, transparent 67%); }
+.screen[data-tab="goals"] .wx-hero::after { content: ""; position: absolute; left: -10%; top: 0; bottom: 0; width: 40%; z-index: -1; pointer-events: none; background: linear-gradient(105deg, transparent, rgba(255,255,255,.45), transparent); transform: translateX(-120%) skewX(-12deg); animation: wxSheen 7s ease-in-out infinite; }
+@keyframes wxSheen { 0%, 60% { transform: translateX(-120%) skewX(-12deg); } 100% { transform: translateX(320%) skewX(-12deg); } }
+@media (prefers-reduced-motion: reduce) { .screen[data-tab="goals"] .wx-hero::after { animation: none; display: none; } }
 .screen[data-tab="goals"] .wx-mood { color: var(--tt); }
 .screen[data-tab="goals"] .wx-sub { color: var(--muted); opacity: 1; }
 .screen[data-tab="goals"] .wx-cmp { background: linear-gradient(140deg, var(--p1), var(--p2)); color: var(--on, #fff); box-shadow: 0 6px 14px -8px var(--p2); }
