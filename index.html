@@ -1934,7 +1934,7 @@ else {
 S.habits.forEach(h => { if (h.kind === 'quantity' && h.tapStep === undefined) h.tapStep = 1; });
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
 // Auto-update: phones keep an old copy of the site. When a newer version is online, reload into it (your data stays — it lives in the phone).
-const APP_VER = '46';
+const APP_VER = '47';
 function checkUpdate() {
   if (location.protocol !== 'https:') return;
   fetch(location.pathname + '?nc=' + Date.now(), { cache: 'no-store' }).then(r => r.text()).then(t => {
@@ -3672,7 +3672,7 @@ function sheetSettings() {
     <div class="form"><div class="field small muted">${S.habits.length} הרגלים · ${S.events.length} אירועים בהיסטוריה. כל הנתונים נשמרים מקומית בטלפון.</div>
       <div class="field"><button class="link" data-a="exportJSON">ייצוא JSON מלא</button><button class="link" data-a="exportCSV">ייצוא CSV של האירועים</button></div></div>
     ${json ? `<textarea class="export" id="export-text" readonly aria-label="נתוני ייצוא">${esc(json)}</textarea><button class="pill-btn secondary" data-a="copyExport">העתק</button>` : ''}
-    ${ui.confirm === 'deleteAll' ? `<div class="confirm"><b>למחוק את כל ההרגלים, ההיסטוריה והמטרות?</b><span class="small">מומלץ לייצא קודם. הפעולה אינה הפיכה.</span><div class="row"><button class="pill-btn danger" data-a="deleteAll">מחק הכל</button><button class="pill-btn secondary" data-a="cancelConfirm">ביטול</button></div></div>` : '<button class="pill-btn danger" data-a="askDeleteAll">מחיקת כל הנתונים</button>'}
+    ${ui.confirm === 'deleteAll' ? `<div class="confirm"><b>למחוק את כל ההרגלים, ההיסטוריה והמטרות?</b><span class="small">מומלץ לייצא קודם. הפעולה אינה הפיכה.</span><div class="row"><button class="pill-btn danger" data-a="askDeleteAll2">מחק הכל</button><button class="pill-btn secondary" data-a="cancelConfirm">ביטול</button></div></div>` : ui.confirm === 'deleteAll2' ? `<div class="confirm reset-confirm sure"><b>⚠️ אתה בטוח?</b><span class="small">זו ההזדמנות האחרונה. כל ההרגלים, ההיסטוריה והמטרות יימחקו ולא יהיה אפשר להחזיר.</span><div class="row"><button class="pill-btn danger" data-a="deleteAll">כן</button><button class="pill-btn secondary" data-a="cancelConfirm">לא</button></div></div>` : '<button class="pill-btn danger" data-a="askDeleteAll">מחיקת כל הנתונים</button>'}
     <div class="form-title">איפוס</div>
     ${ui.confirm === 'resetApp' ? `<div class="confirm reset-confirm"><b>לאפס את כל האפליקציה?</b><span class="small">הכל יימחק: הרגלים, היסטוריה, מטרות, גיבויים והגדרות (כולל מצב כהה). האפליקציה תיפתח מחדש כאילו הותקנה עכשיו. הפעולה אינה הפיכה.</span><div class="row"><button class="pill-btn danger" data-a="askResetApp2">כן, אפס הכל</button><button class="pill-btn secondary" data-a="cancelConfirm">ביטול</button></div></div>` : ui.confirm === 'resetApp2' ? `<div class="confirm reset-confirm sure"><b>⚠️ אתה בטוח?</b><span class="small">זו ההזדמנות האחרונה. אחרי הלחיצה הכל יימחק ולא יהיה אפשר להחזיר.</span><div class="row"><button class="pill-btn danger" data-a="resetApp">כן</button><button class="pill-btn secondary" data-a="cancelConfirm">לא</button></div></div>` : '<button class="reset-btn" data-a="askResetApp"><span>🔄</span><span class="grow"><b>איפוס מלא של האפליקציה</b><small>מוחק הכל ומתחיל מאפס</small></span></button>'}
     <p class="tiny muted">באפליקציה האמיתית: תזכורות שמדלגות על הרגל שכבר סומן ועל ימי מנוחה, עם ״בוצע״ ו״דחה ב-30 דק׳״ בתוך ההתראה.</p></div>`);
@@ -4089,6 +4089,7 @@ document.addEventListener('click', e => {
       ui.exportText = 'event_id,habit_name,entry_id,day,timestamp,action,value,duration,quality,source,previous_value,note\n' + S.events.map(x => [x.id, qq(names[x.habitID]), x.entryID, x.day, x.ts, x.action, x.value ?? '', x.duration ?? '', x.quality ?? '', x.source, x.previousValue ?? '', qq(x.note)].join(',')).join('\n'); rerender(); break; }
     case 'copyExport': { const ta = document.getElementById('export-text'); navigator.clipboard?.writeText(ta.value).then(() => toast('הועתק'), () => { ta.select(); toast('סמן והעתק ידנית'); }); if (!navigator.clipboard) { ta.select(); } break; }
     case 'askDeleteAll': ui.confirm = 'deleteAll'; rerender(); break;
+    case 'askDeleteAll2': ui.confirm = 'deleteAll2'; rerender(); break;   // second, final question before deleting all data
     case 'numStep': { const inp = document.getElementById(el.dataset.t); if (inp) { const n = Math.max(0, Math.round(((Number(inp.value) || 0) + Number(v) * Number(el.dataset.s || 1)) * 100) / 100); inp.value = n; inp.dispatchEvent(new Event('input', { bubbles: true })); el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); } break; }
     case 'unitPick': { readDraft(); const d = ui.draft; if (v === '__custom') { d.unitCustom = true; if (UNITS.includes(d.unit)) d.unit = ''; } else { d.unitCustom = false; d.unit = v || ''; } rerender(); if (v === '__custom') setTimeout(() => { const i = document.getElementById('e-unit'); if (i) i.focus(); }, 30); break; }
     case 'dpOpen': openDatePicker(el); break;
@@ -4098,7 +4099,7 @@ document.addEventListener('click', e => {
     case 'calFilterOpen': ui.calPop = !ui.calPop; rerender(); break;
     case 'calFilterClose': ui.calPop = false; rerender(); break;
     case 'calFilterSet': ui.filter = v || ''; ui.calPop = false; rerender(); break;
-    case 'deleteAll': S = { habits: [], events: [], goals: [], settings: S.settings, v: 1 }; save(); ui.sheet = null; ui.confirm = null; ui.detail = null; toast('כל הנתונים נמחקו'); render(); break;
+    case 'deleteAll': if (ui.confirm !== 'deleteAll2') break; S = { habits: [], events: [], goals: [], settings: S.settings, v: 1 }; save(); ui.sheet = null; ui.confirm = null; ui.detail = null; toast('כל הנתונים נמחקו'); render(); break;
     case 'askReset': S = seed(); save(); ui.sheet = null; ui.detail = null; toast('נטענו נתוני דוגמה חדשים'); render(); break;
     case 'nextQuote': ui.quoteAt = 0; rotateQuote(); break;   // only the bubble changes — the rest of the screen stays still
     /* the quote bubble changes by itself every 10 seconds (see rotateQuote) */
