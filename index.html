@@ -784,6 +784,7 @@ textarea.export { width: 100%; height: 160px; font-family: var(--font-data); fon
 /* Statistics follow the time-of-day color, like the home screen */
 .screen[data-tab="stats"] { position: relative; }
 .tod-bokeh { position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+.tod-snake { -webkit-mask: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent), linear-gradient(180deg, transparent, #000 160px, #000 calc(100% - 160px), transparent); -webkit-mask-composite: source-in; mask: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent), linear-gradient(180deg, transparent, #000 160px, #000 calc(100% - 160px), transparent); mask-composite: intersect; }
 .tod-snake svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
 .tod-snake path { fill: none; vector-effect: non-scaling-stroke; stroke-linecap: round; }
 .tod-snake .sn-glow { stroke: url(#snG); stroke-width: 64; opacity: .22; }
@@ -795,7 +796,7 @@ textarea.export { width: 100%; height: 160px; font-family: var(--font-data); fon
 @keyframes snPulse { 0% { box-shadow: 0 0 0 3px var(--p2), 0 0 0 3px color-mix(in srgb, var(--p2) 45%, transparent); } 70% { box-shadow: 0 0 0 3px var(--p2), 0 0 0 18px transparent; } 100% { box-shadow: 0 0 0 3px var(--p2), 0 0 0 3px transparent; } }
 @media (prefers-reduced-motion: reduce) { .tod-snake *, .tod-snake path { animation: none !important; } }
 .screen[data-tab="stats"] .card:not(.sx-hero) { background: linear-gradient(135deg, color-mix(in srgb, var(--hc, var(--surface)) 8%, color-mix(in srgb, var(--surface) 62%, transparent)), color-mix(in srgb, var(--surface) 52%, transparent)); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
-.screen[data-tab="stats"] { isolation: isolate; background: radial-gradient(110% 36% at 100% 0%, color-mix(in srgb, var(--t1) 22%, transparent), transparent 70%), radial-gradient(90% 32% at 0% 30%, color-mix(in srgb, var(--t2) 18%, transparent), transparent 70%), radial-gradient(100% 34% at 100% 70%, color-mix(in srgb, var(--t1) 12%, transparent), transparent 70%), var(--bg); background-attachment: local; }
+.screen[data-tab="stats"] { isolation: isolate; }
 .screen[data-tab="stats"] .sx-hero { color: var(--fg); background: linear-gradient(135deg, color-mix(in srgb, var(--t1) 16%, var(--surface)), color-mix(in srgb, var(--t2) 12%, var(--surface))); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--t3) 28%, transparent), 0 10px 24px -18px var(--t3); }
 .screen[data-tab="stats"] .sx-hero .blob { background: color-mix(in srgb, var(--t1) 18%, transparent); }
 .screen[data-tab="stats"] .sx-top b { color: var(--tt); }
