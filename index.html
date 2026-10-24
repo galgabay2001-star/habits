@@ -1939,7 +1939,7 @@ else {
 S.habits.forEach(h => { if (h.kind === 'quantity' && h.tapStep === undefined) h.tapStep = 1; });
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
 // Auto-update: phones keep an old copy of the site. When a newer version is online, reload into it (your data stays — it lives in the phone).
-const APP_VER = '48';
+const APP_VER = '49';
 function checkUpdate() {
   if (location.protocol !== 'https:') return;
   fetch(location.pathname + '?nc=' + Date.now(), { cache: 'no-store' }).then(r => r.text()).then(t => {
@@ -3677,7 +3677,6 @@ function sheetSettings() {
     <div class="form"><div class="field small muted">${S.habits.length} הרגלים · ${S.events.length} אירועים בהיסטוריה. כל הנתונים נשמרים מקומית בטלפון.</div>
       <div class="field"><button class="link" data-a="exportJSON">ייצוא JSON מלא</button><button class="link" data-a="exportCSV">ייצוא CSV של האירועים</button></div></div>
     ${json ? `<textarea class="export" id="export-text" readonly aria-label="נתוני ייצוא">${esc(json)}</textarea><button class="pill-btn secondary" data-a="copyExport">העתק</button>` : ''}
-    ${ui.confirm === 'deleteAll' ? `<div class="confirm"><b>למחוק את כל ההרגלים, ההיסטוריה והמטרות?</b><span class="small">מומלץ לייצא קודם. הפעולה אינה הפיכה.</span><div class="row"><button class="pill-btn danger" data-a="askDeleteAll2">מחק הכל</button><button class="pill-btn secondary" data-a="cancelConfirm">ביטול</button></div></div>` : ui.confirm === 'deleteAll2' ? `<div class="confirm reset-confirm sure"><b>⚠️ אתה בטוח?</b><span class="small">זו ההזדמנות האחרונה. כל ההרגלים, ההיסטוריה והמטרות יימחקו ולא יהיה אפשר להחזיר.</span><div class="row"><button class="pill-btn danger" data-a="deleteAll">כן, למחוק הכל</button><button class="pill-btn secondary" data-a="cancelConfirm">לא, תשאיר הכל</button></div></div>` : '<button class="pill-btn danger" data-a="askDeleteAll">מחיקת כל הנתונים</button>'}
     <div class="form-title">איפוס</div>
     ${ui.confirm === 'resetApp' ? `<div class="confirm reset-confirm"><b>לאפס את כל האפליקציה?</b><span class="small">הכל יימחק: הרגלים, היסטוריה, מטרות, גיבויים והגדרות (כולל מצב כהה). האפליקציה תיפתח מחדש כאילו הותקנה עכשיו. הפעולה אינה הפיכה.</span><div class="row"><button class="pill-btn danger" data-a="askResetApp2">כן, אפס הכל</button><button class="pill-btn secondary" data-a="cancelConfirm">ביטול</button></div></div>` : ui.confirm === 'resetApp2' ? `<div class="confirm reset-confirm sure"><b>⚠️ אתה בטוח?</b><span class="small">זו ההזדמנות האחרונה. אחרי הלחיצה הכל יימחק ולא יהיה אפשר להחזיר.</span><div class="row"><button class="pill-btn danger" data-a="resetApp">כן, למחוק הכל</button><button class="pill-btn secondary" data-a="cancelConfirm">לא, תשאיר הכל</button></div></div>` : '<button class="reset-btn" data-a="askResetApp"><span>🔄</span><span class="grow"><b>איפוס מלא של האפליקציה</b><small>מוחק הכל ומתחיל מאפס</small></span></button>'}
     <p class="tiny muted">באפליקציה האמיתית: תזכורות שמדלגות על הרגל שכבר סומן ועל ימי מנוחה, עם ״בוצע״ ו״דחה ב-30 דק׳״ בתוך ההתראה.</p></div>`);
