@@ -365,8 +365,14 @@ details.others summary { cursor: pointer; color: var(--muted); font-size: 14px; 
 .bk-btn { flex: 1; min-width: 130px; border: none; border-radius: 999px; padding: 10px 14px; font: inherit; font-weight: 800; font-size: 14px; color: #fff; background: linear-gradient(140deg, #34d399, #16a34a); box-shadow: 0 6px 14px -8px #16a34a; cursor: pointer; transition: transform .22s cubic-bezier(.2,1.6,.4,1), box-shadow .22s; }
 .bk-btn.alt { background: var(--surface); color: var(--accent); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--accent) 35%, transparent); }
 .bk-btn:hover { transform: scale(1.06); } .bk-btn:active { transform: scale(.95); }
-.confirm.sure .row { flex-direction: column-reverse; align-items: stretch; gap: 14px; margin-top: 6px; }
-.confirm.sure .row .pill-btn { width: 100%; min-height: 52px; font-size: 17px; font-weight: 800; border-radius: 16px; transition: transform .2s cubic-bezier(.2,1.6,.4,1), box-shadow .2s; }
+/* "are you sure?" pops up in the middle of the screen */
+.confirm.sure { position: fixed; z-index: 300; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(330px, calc(100vw - 40px)); padding: 20px 18px 18px; border-radius: 24px; background: var(--surface); text-align: center; align-items: center; gap: 10px; box-shadow: 0 0 0 100vmax rgba(8,10,20,.5), 0 24px 60px -18px rgba(0,0,0,.55); animation: surePop .32s cubic-bezier(.2,1.4,.4,1); }
+.confirm.sure b { font-size: 19px; }
+.confirm.sure .small { color: var(--muted); }
+.confirm.sure .row { width: 100%; }
+@keyframes surePop { from { opacity: 0; transform: translate(-50%, -50%) scale(.85); } }
+.confirm.sure .row { flex-direction: column-reverse; align-items: stretch; gap: 10px; margin-top: 4px; }
+.confirm.sure .row .pill-btn { box-sizing: border-box; width: 100%; min-height: 42px; padding: 8px 14px; font-size: 15px; font-weight: 800; border-radius: 14px; transition: transform .2s cubic-bezier(.2,1.6,.4,1), box-shadow .2s; }
 .confirm.sure .row .pill-btn.secondary { background: linear-gradient(140deg, #34d399, #16a34a); color: #fff; border: none; box-shadow: 0 8px 18px -8px #16a34a; }
 .confirm.sure .row .pill-btn.danger { background: var(--surface); color: #e5484d; border: 2px solid #e5484d; box-shadow: none; }
 .confirm.sure .row .pill-btn:hover { transform: scale(1.03); } .confirm.sure .row .pill-btn:active { transform: scale(.97); }
@@ -1939,7 +1945,7 @@ else {
 S.habits.forEach(h => { if (h.kind === 'quantity' && h.tapStep === undefined) h.tapStep = 1; });
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
 // Auto-update: phones keep an old copy of the site. When a newer version is online, reload into it (your data stays — it lives in the phone).
-const APP_VER = '49';
+const APP_VER = '51';
 function checkUpdate() {
   if (location.protocol !== 'https:') return;
   fetch(location.pathname + '?nc=' + Date.now(), { cache: 'no-store' }).then(r => r.text()).then(t => {
