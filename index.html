@@ -1934,7 +1934,7 @@ else {
 S.habits.forEach(h => { if (h.kind === 'quantity' && h.tapStep === undefined) h.tapStep = 1; });
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
 // Auto-update: phones keep an old copy of the site. When a newer version is online, reload into it (your data stays — it lives in the phone).
-const APP_VER = '45';
+const APP_VER = '46';
 function checkUpdate() {
   if (location.protocol !== 'https:') return;
   fetch(location.pathname + '?nc=' + Date.now(), { cache: 'no-store' }).then(r => r.text()).then(t => {
@@ -3674,7 +3674,7 @@ function sheetSettings() {
     ${json ? `<textarea class="export" id="export-text" readonly aria-label="נתוני ייצוא">${esc(json)}</textarea><button class="pill-btn secondary" data-a="copyExport">העתק</button>` : ''}
     ${ui.confirm === 'deleteAll' ? `<div class="confirm"><b>למחוק את כל ההרגלים, ההיסטוריה והמטרות?</b><span class="small">מומלץ לייצא קודם. הפעולה אינה הפיכה.</span><div class="row"><button class="pill-btn danger" data-a="deleteAll">מחק הכל</button><button class="pill-btn secondary" data-a="cancelConfirm">ביטול</button></div></div>` : '<button class="pill-btn danger" data-a="askDeleteAll">מחיקת כל הנתונים</button>'}
     <div class="form-title">איפוס</div>
-    ${ui.confirm === 'resetApp' ? `<div class="confirm reset-confirm"><b>לאפס את כל האפליקציה?</b><span class="small">הכל יימחק: הרגלים, היסטוריה, מטרות, גיבויים והגדרות (כולל מצב כהה). האפליקציה תיפתח מחדש כאילו הותקנה עכשיו. הפעולה אינה הפיכה.</span><div class="row"><button class="pill-btn danger" data-a="resetApp">כן, אפס הכל</button><button class="pill-btn secondary" data-a="cancelConfirm">ביטול</button></div></div>` : '<button class="reset-btn" data-a="askResetApp"><span>🔄</span><span class="grow"><b>איפוס מלא של האפליקציה</b><small>מוחק הכל ומתחיל מאפס</small></span></button>'}
+    ${ui.confirm === 'resetApp' ? `<div class="confirm reset-confirm"><b>לאפס את כל האפליקציה?</b><span class="small">הכל יימחק: הרגלים, היסטוריה, מטרות, גיבויים והגדרות (כולל מצב כהה). האפליקציה תיפתח מחדש כאילו הותקנה עכשיו. הפעולה אינה הפיכה.</span><div class="row"><button class="pill-btn danger" data-a="askResetApp2">כן, אפס הכל</button><button class="pill-btn secondary" data-a="cancelConfirm">ביטול</button></div></div>` : ui.confirm === 'resetApp2' ? `<div class="confirm reset-confirm sure"><b>⚠️ אתה בטוח?</b><span class="small">זו ההזדמנות האחרונה. אחרי הלחיצה הכל יימחק ולא יהיה אפשר להחזיר.</span><div class="row"><button class="pill-btn danger" data-a="resetApp">כן</button><button class="pill-btn secondary" data-a="cancelConfirm">לא</button></div></div>` : '<button class="reset-btn" data-a="askResetApp"><span>🔄</span><span class="grow"><b>איפוס מלא של האפליקציה</b><small>מוחק הכל ומתחיל מאפס</small></span></button>'}
     <p class="tiny muted">באפליקציה האמיתית: תזכורות שמדלגות על הרגל שכבר סומן ועל ימי מנוחה, עם ״בוצע״ ו״דחה ב-30 דק׳״ בתוך ההתראה.</p></div>`);
 }
 /** Calendar day — view only (marking and fixing is done on the Habits screen). */
@@ -4093,7 +4093,8 @@ document.addEventListener('click', e => {
     case 'unitPick': { readDraft(); const d = ui.draft; if (v === '__custom') { d.unitCustom = true; if (UNITS.includes(d.unit)) d.unit = ''; } else { d.unitCustom = false; d.unit = v || ''; } rerender(); if (v === '__custom') setTimeout(() => { const i = document.getElementById('e-unit'); if (i) i.focus(); }, 30); break; }
     case 'dpOpen': openDatePicker(el); break;
     case 'askResetApp': ui.confirm = 'resetApp'; rerender(); break;
-    case 'resetApp': try { localStorage.clear(); sessionStorage.clear(); } catch (e) {} location.reload(); break;
+    case 'askResetApp2': ui.confirm = 'resetApp2'; rerender(); break;   // second, final question before wiping everything
+    case 'resetApp': if (ui.confirm !== 'resetApp2') break; try { localStorage.clear(); sessionStorage.clear(); } catch (e) {} location.reload(); break;
     case 'calFilterOpen': ui.calPop = !ui.calPop; rerender(); break;
     case 'calFilterClose': ui.calPop = false; rerender(); break;
     case 'calFilterSet': ui.filter = v || ''; ui.calPop = false; rerender(); break;
