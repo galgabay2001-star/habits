@@ -3371,7 +3371,7 @@ function screenWeekly() {
       </div>
       <p class="tiny muted" style="margin:0">״בוצע״ = ימים שבוצע מתוך הימים שתוכננו ${U.in}. ← = מה לתקן ${U.fix}.</p>
     </section>
-    <button class="settings-row" data-a="settings"><span class="sr-ic">${ICON.gear}</span><span class="grow"><b>הגדרות</b><small>גיבוי ל-iCloud · ייצוא נתונים · מחיקה</small></span><span class="sr-go">‹</span></button>
+    <button class="settings-row" data-a="settings"><span class="sr-ic">${ICON.gear}</span><span class="grow"><b>הגדרות</b><small>גיבוי לקובץ · ייצוא נתונים · מחיקה</small></span><span class="sr-go">‹</span></button>
   </div>`;
 }
 
@@ -3392,7 +3392,7 @@ function screenGoals() {
     <div class="cat-title">הישגים</div>
     <div class="badge-grid">${ach.list.map(a => `<div class="badge ${a.unlocked ? 'on' : ''}"><span class="ic" aria-hidden="true">${icons[a.id]}</span><b class="small">${a.title}</b><span class="tiny muted">${a.desc}</span>${a.unlocked ? '' : `<div class="progress" style="width:80%"><div style="width:${Math.round(a.progress * 100)}%;background:var(--partial)"></div></div>`}</div>`).join('')}</div>
     <p class="tiny faint">יום חלש לא מוחק כלום. ״חזרה לשגרה״ הוא הישג בפני עצמו.</p>
-    <button class="settings-row" data-a="settings"><span class="sr-ic">${ICON.gear}</span><span class="grow"><b>הגדרות</b><small>גיבוי ל-iCloud · ייצוא נתונים · מחיקה</small></span><span class="sr-go">‹</span></button>
+    <button class="settings-row" data-a="settings"><span class="sr-ic">${ICON.gear}</span><span class="grow"><b>הגדרות</b><small>גיבוי לקובץ · ייצוא נתונים · מחיקה</small></span><span class="sr-go">‹</span></button>
   </div>`;
 }
 
@@ -3652,19 +3652,12 @@ function sheetGoal() {
 function sheetSettings() {
   const json = ui.exportText;
   return sheet('הגדרות', `<div class="stack" style="direction:rtl">
-    <div class="form-title">גיבוי ל-<bdi>iCloud</bdi> ☁️</div>
-    <div class="form">${(() => { const b = backupInfo(); if (!b) return '<div class="field"><span>גיבוי אחרון</span><span class="muted">עדיין אין גיבוי</span></div>';
-        const d = new Date(b.at), when = `${d.getDate()}/${d.getMonth() + 1} · ${pad(d.getHours())}:${pad(d.getMinutes())}`;
-        return `<div class="field"><span>גיבוי אחרון</span><b class="num" style="direction:ltr">${when}</b></div><div class="field"><span>מה נשמר</span><span class="muted">${b.habits} הרגלים · ${b.events} רישומים</span></div>`; })()}
-      <div class="field"><label for="auto-backup">גיבוי אוטומטי פעם ביום</label><input type="checkbox" id="auto-backup" ${S.settings.autoBackup === false ? '' : 'checked'}></div>
-      <div class="field"><button class="link" data-a="backupNow">☁️ גבה עכשיו</button><button class="link" data-a="askRestore" ${backupInfo() ? '' : 'disabled'}>שחזר מהגיבוי</button></div>
-      ${ui.confirm === 'restore' ? `<div class="confirm"><b>לשחזר מהגיבוי?</b><span class="small">הנתונים הנוכחיים יוחלפו בנתונים מהגיבוי האחרון.</span><div class="row"><button class="pill-btn" data-a="restore">שחזר</button><button class="pill-btn secondary" data-a="cancelConfirm">ביטול</button></div></div>` : ''}
-      <div class="field small muted">באייפון: קובץ גיבוי נשמר בתיקיית iCloud Drive של האפליקציה, ואפשר לשחזר ממנו גם במכשיר חדש. כאן באב-הטיפוס הגיבוי נשמר בדפדפן.</div></div>
-    <div class="form-title">נתונים</div>
+    <div class="form-title">גיבוי</div>
     <div class="bk-card"><div class="bk-top"><span class="bk-ic">🛡️</span><div><b>גיבוי לקובץ</b><small>שמור את כל ההרגלים וההיסטוריה לקובץ בטלפון. ככה אפשר לשחזר אותם, או להעביר לטלפון חדש.</small></div></div>
       <div class="bk-row"><button class="bk-btn" data-a="backupFile">⬇️ שמירת גיבוי לקובץ</button><button class="bk-btn alt" data-a="restoreFile">⬆️ שחזור מקובץ</button></div>
       <input type="file" id="restore-file" accept=".json,application/json" hidden>
       ${ui.pendingRestore ? `<div class="confirm"><b>לשחזר מהקובץ?</b><span class="small">בקובץ יש ${ui.pendingRestore.habits.length} הרגלים ו-${(ui.pendingRestore.events || []).length} רישומים. הנתונים שיש עכשיו באפליקציה יוחלפו בהם.</span><div class="row"><button class="pill-btn" data-a="restoreYes">כן, שחזר</button><button class="pill-btn secondary" data-a="restoreNo">ביטול</button></div></div>` : ''}</div>
+    <div class="form-title">נתונים</div>
     <div class="form"><div class="field small muted">${S.habits.length} הרגלים · ${S.events.length} אירועים בהיסטוריה. כל הנתונים נשמרים מקומית בטלפון.</div>
       <div class="field"><button class="link" data-a="exportJSON">ייצוא JSON מלא</button><button class="link" data-a="exportCSV">ייצוא CSV של האירועים</button></div></div>
     ${json ? `<textarea class="export" id="export-text" readonly aria-label="נתוני ייצוא">${esc(json)}</textarea><button class="pill-btn secondary" data-a="copyExport">העתק</button>` : ''}
