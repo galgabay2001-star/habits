@@ -1912,7 +1912,15 @@ function seed() {
 }
 let S;
 try { S = JSON.parse(localStorage.getItem(KEY)); } catch (e) { S = null; }
+// Your data is safe across app updates: it lives in this browser, not in the app file. As an extra safety net we keep
+// a copy of the last good data; if the main copy is ever missing or broken, it is brought back automatically.
+const SAFE_KEY = KEY + '-safe';
+if (!S || !S.habits) { try { const sv = JSON.parse(localStorage.getItem(SAFE_KEY)); if (sv && sv.habits) { S = sv; localStorage.setItem(KEY, JSON.stringify(S)); } } catch (e) {} }
 if (!S || !S.habits) S = { habits: [], events: [], goals: [], settings: { weekStart: 0 }, v: 1 };
+else {
+  S.events = S.events || []; S.goals = S.goals || []; S.settings = S.settings || { weekStart: 0 };   // fill anything an older version didn't have — never remove
+  try { localStorage.setItem(SAFE_KEY, JSON.stringify(S)); } catch (e) {}
+}
 // older saved data: quantity habits get "tap to add 1" by default
 S.habits.forEach(h => { if (h.kind === 'quantity' && h.tapStep === undefined) h.tapStep = 1; });
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
