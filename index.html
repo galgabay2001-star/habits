@@ -1934,7 +1934,7 @@ else {
 S.habits.forEach(h => { if (h.kind === 'quantity' && h.tapStep === undefined) h.tapStep = 1; });
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
 // Auto-update: phones keep an old copy of the site. When a newer version is online, reload into it (your data stays — it lives in the phone).
-const APP_VER = '44';
+const APP_VER = '45';
 function checkUpdate() {
   if (location.protocol !== 'https:') return;
   fetch(location.pathname + '?nc=' + Date.now(), { cache: 'no-store' }).then(r => r.text()).then(t => {
@@ -3978,12 +3978,18 @@ document.addEventListener('click', e => {
     case 'editList': ui.editList = !ui.editList; ui.confirm = null; rerender(); break;
     case 'askDelete': ui.confirm = 'delete:' + id; rerender(); break;
     case 'cancelConfirm': ui.confirm = null; rerender(); break;
-    case 'backupFile': {   // download everything as a file the user keeps
+    case 'backupFile': {   // save everything to a file; the success message shows only after the file was really saved
       try {
-        const blob = new Blob([JSON.stringify({ app: 'Habitly', savedAt: new Date().toISOString(), data: S }, null, 1)], { type: 'application/json' });
-        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `habitly-backup-${TODAY()}.json`; document.body.appendChild(a); a.click();
-        setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
-        toast('הגיבוי נשמר לקובץ', null, { sub: 'שמור אותו במקום בטוח', color: '#22c55e', ok: true });
+        const name = `habitly-backup-${TODAY()}.json`, txt = JSON.stringify({ app: 'Habitly', savedAt: new Date().toISOString(), data: S }, null, 1);
+        const okMsg = () => toast('הגיבוי נשמר', null, { sub: 'הקובץ נשמר אצלך', color: '#22c55e', ok: true });
+        const file = typeof File === 'function' ? new File([txt], name, { type: 'application/json' }) : null;
+        if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+          // iPhone: opens the share sheet → "שמור בקבצים". Closing it without saving shows nothing.
+          navigator.share({ files: [file], title: 'גיבוי Habitly' }).then(okMsg).catch(() => {});
+        } else {
+          const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([txt], { type: 'application/json' })); a.download = name; document.body.appendChild(a); a.click();
+          setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+        }
       } catch (err) { toast('לא הצלחתי לשמור את הקובץ', null, { error: true }); }
       break;
     }
