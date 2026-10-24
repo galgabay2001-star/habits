@@ -356,6 +356,15 @@ details.others summary { cursor: pointer; color: var(--muted); font-size: 14px; 
 .rp-presets button { border: none; background: var(--surface-2); border-radius: 14px; padding: 8px 2px; display: flex; flex-direction: column; align-items: center; gap: 1px; color: var(--fg); }
 .rp-presets button span { font-size: 17px; } .rp-presets button b { font-size: 12px; } .rp-presets button small { font-size: 11px; color: var(--muted); }
 .rp-presets button[aria-pressed="true"] { background: var(--accent); color: #fff; } .rp-presets button[aria-pressed="true"] small { color: rgba(255,255,255,.85); }
+.bk-card { margin: 0 0 10px; padding: 14px; border-radius: 20px; background: linear-gradient(135deg, color-mix(in srgb, #22c55e 10%, var(--surface)), color-mix(in srgb, var(--accent) 8%, var(--surface))); box-shadow: inset 0 0 0 1px color-mix(in srgb, #22c55e 22%, transparent); direction: rtl; display: flex; flex-direction: column; gap: 12px; }
+.bk-top { display: flex; gap: 10px; align-items: flex-start; }
+.bk-ic { font-size: 24px; line-height: 1; }
+.bk-top b { display: block; font-size: 15.5px; margin-bottom: 2px; }
+.bk-top small { color: var(--muted); font-size: 12.5px; line-height: 1.4; }
+.bk-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.bk-btn { flex: 1; min-width: 130px; border: none; border-radius: 999px; padding: 10px 14px; font: inherit; font-weight: 800; font-size: 14px; color: #fff; background: linear-gradient(140deg, #34d399, #16a34a); box-shadow: 0 6px 14px -8px #16a34a; cursor: pointer; transition: transform .22s cubic-bezier(.2,1.6,.4,1), box-shadow .22s; }
+.bk-btn.alt { background: var(--surface); color: var(--accent); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--accent) 35%, transparent); }
+.bk-btn:hover { transform: scale(1.06); } .bk-btn:active { transform: scale(.95); }
 .form-title { font-size: 12.5px; color: var(--muted); padding: 14px 6px 6px; letter-spacing: .02em; }
 .wd { display: flex; gap: 5px; padding: 10px 14px; direction: ltr; }
 .wd button { flex: 1; aspect-ratio: 1; max-width: 42px; border-radius: 50%; border: none; background: var(--surface-2); font-weight: 700; font-size: 13px; }
@@ -3652,7 +3661,11 @@ function sheetSettings() {
       ${ui.confirm === 'restore' ? `<div class="confirm"><b>לשחזר מהגיבוי?</b><span class="small">הנתונים הנוכחיים יוחלפו בנתונים מהגיבוי האחרון.</span><div class="row"><button class="pill-btn" data-a="restore">שחזר</button><button class="pill-btn secondary" data-a="cancelConfirm">ביטול</button></div></div>` : ''}
       <div class="field small muted">באייפון: קובץ גיבוי נשמר בתיקיית iCloud Drive של האפליקציה, ואפשר לשחזר ממנו גם במכשיר חדש. כאן באב-הטיפוס הגיבוי נשמר בדפדפן.</div></div>
     <div class="form-title">נתונים</div>
-    <div class="form"><div class="field small muted">${S.habits.length} הרגלים · ${S.events.length} אירועים בהיסטוריה. כל הנתונים נשמרים מקומית.</div>
+    <div class="bk-card"><div class="bk-top"><span class="bk-ic">🛡️</span><div><b>גיבוי לקובץ</b><small>שמור את כל ההרגלים וההיסטוריה לקובץ בטלפון. ככה אפשר לשחזר אותם, או להעביר לטלפון חדש.</small></div></div>
+      <div class="bk-row"><button class="bk-btn" data-a="backupFile">⬇️ שמירת גיבוי לקובץ</button><button class="bk-btn alt" data-a="restoreFile">⬆️ שחזור מקובץ</button></div>
+      <input type="file" id="restore-file" accept=".json,application/json" hidden>
+      ${ui.pendingRestore ? `<div class="confirm"><b>לשחזר מהקובץ?</b><span class="small">בקובץ יש ${ui.pendingRestore.habits.length} הרגלים ו-${(ui.pendingRestore.events || []).length} רישומים. הנתונים שיש עכשיו באפליקציה יוחלפו בהם.</span><div class="row"><button class="pill-btn" data-a="restoreYes">כן, שחזר</button><button class="pill-btn secondary" data-a="restoreNo">ביטול</button></div></div>` : ''}</div>
+    <div class="form"><div class="field small muted">${S.habits.length} הרגלים · ${S.events.length} אירועים בהיסטוריה. כל הנתונים נשמרים מקומית בטלפון.</div>
       <div class="field"><button class="link" data-a="exportJSON">ייצוא JSON מלא</button><button class="link" data-a="exportCSV">ייצוא CSV של האירועים</button></div></div>
     ${json ? `<textarea class="export" id="export-text" readonly aria-label="נתוני ייצוא">${esc(json)}</textarea><button class="pill-btn secondary" data-a="copyExport">העתק</button>` : ''}
     ${ui.confirm === 'deleteAll' ? `<div class="confirm"><b>למחוק את כל ההרגלים, ההיסטוריה והמטרות?</b><span class="small">מומלץ לייצא קודם. הפעולה אינה הפיכה.</span><div class="row"><button class="pill-btn danger" data-a="deleteAll">מחק הכל</button><button class="pill-btn secondary" data-a="cancelConfirm">ביטול</button></div></div>` : '<button class="pill-btn danger" data-a="askDeleteAll">מחיקת כל הנתונים</button>'}
@@ -3829,6 +3842,14 @@ document.addEventListener('input', e => {
 document.addEventListener('change', e => {
   const id = e.target.id;
   if (id === 'auto-backup') { S.settings.autoBackup = e.target.checked; save(); }
+  if (id === 'restore-file' && e.target.files && e.target.files[0]) {   // read a backup file and ask before replacing
+    const rd = new FileReader();
+    rd.onload = () => {
+      try { const j = JSON.parse(rd.result); const d = j && j.data && j.data.habits ? j.data : j; if (!d || !Array.isArray(d.habits)) throw 0; ui.pendingRestore = d; rerender(); }
+      catch (err) { toast('הקובץ הזה לא גיבוי של Habitly', null, { error: true }); }
+    };
+    rd.readAsText(e.target.files[0]);
+  }
   if (id === 'calfilter') { ui.filter = e.target.value; rerender(); }
   if (id === 'e-tapon') { readDraft(); rerender(); }
   if (id === 'e-rem') { readDraft(); rerender(); }
@@ -3953,6 +3974,25 @@ document.addEventListener('click', e => {
     case 'editList': ui.editList = !ui.editList; ui.confirm = null; rerender(); break;
     case 'askDelete': ui.confirm = 'delete:' + id; rerender(); break;
     case 'cancelConfirm': ui.confirm = null; rerender(); break;
+    case 'backupFile': {   // download everything as a file the user keeps
+      try {
+        const blob = new Blob([JSON.stringify({ app: 'Habitly', savedAt: new Date().toISOString(), data: S }, null, 1)], { type: 'application/json' });
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `habitly-backup-${TODAY()}.json`; document.body.appendChild(a); a.click();
+        setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+        toast('הגיבוי נשמר לקובץ', null, { sub: 'שמור אותו במקום בטוח', color: '#22c55e', ok: true });
+      } catch (err) { toast('לא הצלחתי לשמור את הקובץ', null, { error: true }); }
+      break;
+    }
+    case 'restoreFile': { const f = document.getElementById('restore-file'); if (f) { f.value = ''; f.click(); } break; }
+    case 'restoreYes': {
+      const d = ui.pendingRestore; ui.pendingRestore = null; if (!d) break;
+      S = { ...d, events: d.events || [], goals: d.goals || [], settings: d.settings || { weekStart: 0 } };
+      save(); try { localStorage.setItem(SAFE_KEY, JSON.stringify(S)); } catch (err) {}
+      applyTheme(); ui.sheet = null; ui.detail = null; render();
+      toast('השחזור הושלם', null, { sub: `${S.habits.length} הרגלים חזרו`, color: '#22c55e', ok: true });
+      break;
+    }
+    case 'restoreNo': ui.pendingRestore = null; rerender(); break;
     case 'delete': {
       // Keep a copy for a few seconds so a wrong tap can be undone
       ui.lastDeleted = { habit: h, index: S.habits.indexOf(h), events: S.events.filter(x => x.habitID === id), goals: (S.goals || []).slice(), timer: (S.timers || {})[id] };
