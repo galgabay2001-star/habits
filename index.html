@@ -1957,7 +1957,7 @@ else {
 S.habits.forEach(h => { if (h.kind === 'quantity' && h.tapStep === undefined) h.tapStep = 1; });
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
 // Auto-update: phones keep an old copy of the site. When a newer version is online, reload into it (your data stays — it lives in the phone).
-const APP_VER = '58';
+const APP_VER = '59';
 function checkUpdate() {
   if (location.protocol !== 'https:') return;
   fetch(location.pathname + '?nc=' + Date.now(), { cache: 'no-store' }).then(r => r.text()).then(t => {
@@ -3214,6 +3214,7 @@ function prevMonth(s) { const [y, m] = s.split('-').map(Number); return m === 1 
 function screenStats() {
   const t = TODAY(), td = D(t);
   const hs = S.habits.filter(h => !h.archived).sort((a, b) => a.sortOrder - b.sortOrder);
+  if (ui.statsPeriod === 7) ui.statsPeriod = 30;   // 7 days was removed
   const n = ui.statsPeriod === 0 ? null : ui.statsPeriod;
   const names = Object.fromEntries(hs.map(h => [h.id, h.name]));
   const ins = E.insights(hs.map(spec), S.events, t, names);
@@ -3241,13 +3242,18 @@ function screenStats() {
       <div class="hx-lab"><span>${bk[0] ? bk[0].label : ''}</span><span>${bk.length > 2 ? bk[Math.floor(bk.length / 2)].label : ''}</span><span>${mode === 'day' ? 'היום' : mode === 'week' ? 'השבוע' : 'החודש'}</span></div>`;
     const wBest = wdc.indexOf(Math.max(...wdc)), diff = prev == null ? null : pDone - prev;
     const fit = pNeed ? Math.min(1, pDone / pNeed) : 0;
+    // forecast: at your pace over the chosen period, how many times you'll do it by the end of this month (30 days) or this year (90 days / year / all)
+    const fc = (() => { const pace = pDone / Math.max(1, span), tdS = S_(td), y = +tdS.slice(0, 4), m = +tdS.slice(5, 7);
+      const monthly = n === 30, from = monthly ? D(`${y}-${pad(m)}-01`) : D(`${y}-01-01`), end = monthly ? D(`${y}-${pad(m)}-${pad(new Date(y, m, 0).getDate())}`) : D(`${y}-12-31`);
+      let so = 0; for (let d = Math.max(from, D(h.startDay)); d <= td; d++) if (calCell(h, d, td).done) so++;
+      return { so, proj: Math.round(so + pace * (end - td)), txt: `${monthly ? 'עד סוף החודש' : 'עד סוף השנה'} בקצב שלך · עד עכשיו ${so}` }; })();
     // when in the day you usually do it: from marks made on the same day, inside the chosen period
     const hrs = eventsOf(h.id).filter(x => x.ts && (x.action === 'log' || x.action === 'done' || x.action === 'clean') && D(x.day) >= st0 && D(x.day) <= td).map(x => ({ t: new Date(x.ts), day: x.day })).filter(x => `${x.t.getFullYear()}-${pad(x.t.getMonth() + 1)}-${pad(x.t.getDate())}` === S_(D(x.day))).map(x => x.t.getHours() + x.t.getMinutes() / 60);
     const tod = (() => { if (hrs.length < 2) return null; const part = x => x >= 5 && x < 12 ? 'בבוקר' : x >= 12 && x < 17 ? 'בצהריים' : x >= 17 && x < 21 ? 'בערב' : 'בלילה'; const cnt = {}; hrs.forEach(x => { cnt[part(x)] = (cnt[part(x)] || 0) + 1; }); const top = Object.keys(cnt).sort((a, b) => cnt[b] - cnt[a])[0]; const sel = hrs.filter(x => part(x) === top).sort((a, b) => a - b), med = sel[Math.floor(sel.length / 2)]; return [top, `${pad(Math.floor(med))}:${pad(Math.round((med % 1) * 60 / 15) * 15 % 60)}`]; })();
     const row = `<div class="hx-row">
       <div class="hx-m"><small>🎯 עמידה ביעד</small><b class="num">${pNeed ? `${Math.min(pDone, pNeed)}<small>/${pNeed}</small>` : pDone}</b><i class="hx-bar"><u style="width:${Math.round(fit * 100)}%"></u></i></div>
       <div class="hx-m"><small>💪 היום החזק</small><b>${pDone ? 'יום ' + WD[wBest] : '—'}</b><span>${pDone ? `${wdc[wBest]} פעמים` : 'עוד אין'}</span></div>
-      <div class="hx-m rec ${r.streak.current && r.streak.current >= r.streak.best ? 'top' : ''}"><small>🏆 לשבירת השיא</small>${r.streak.current && r.streak.current >= r.streak.best ? `<b>אתה בשיא! 🔥</b><span>${r.streak.current} ימים ברצף, כל יום נוסף הוא שיא חדש</span>` : `<b class="num">עוד ${r.streak.best - r.streak.current + 1}</b><span>${r.streak.best ? `ימים ברצף ותשבור את השיא (${r.streak.best})` : 'יום אחד ויש לך שיא ראשון'}</span>`}<i class="hx-bar"><u style="width:${Math.round(Math.min(1, r.streak.current / Math.max(1, r.streak.best + 1)) * 100)}%"></u></i></div>
+      <div class="hx-m fc"><small>🔮 תחזית</small><b class="num">כ־${fc.proj}</b><span>${fc.txt}</span><i class="hx-bar"><u style="width:${Math.round(Math.min(1, fc.so / Math.max(1, fc.proj)) * 100)}%"></u></i></div>
     </div>`;
     const tier = tierOf(r.streak.current);
     const flexible = r.basis.unit !== 'day';
@@ -3270,7 +3276,7 @@ function screenStats() {
   const top = rs.filter(x => x.doneN > 0).sort((a, b) => b.doneN - a.doneN).slice(0, 3);
   const podium = top.length >= 2 ? `<section class="card sx-pod"><h3>🏅 המובילים</h3><div class="pod">${[top[1], top[0], top[2]].map((x, i) => !x ? '<div></div>' : `<div class="pod-c p${[2, 1, 3][i]}" style="--hc:${x.h.color}"><span class="pod-ic">${esc(x.h.icon)}</span><b>${esc(x.h.name)}</b><small class="num">${x.doneN} ביצועים</small><div class="pod-bar"><span>${['🥈', '🥇', '🥉'][i]}</span></div></div>`).join('')}</div></section>` : '';
   return `<div class="navbar"><h2>סטטיסטיקות</h2></div>
-  <div class="stack">${seg('statsPeriod', [[7, '7 ימים'], [30, '30 יום'], [90, '90 יום'], [365, 'שנה'], [0, 'הכל']], ui.statsPeriod)}
+  <div class="stack">${seg('statsPeriod', [[30, '30 יום'], [90, '90 יום'], [365, 'שנה'], [0, 'הכל']], ui.statsPeriod)}
     ${hero}${podium}
     <div class="sp-key"><span class="sp-k-t">📈 לפי התקופה שבחרת למעלה:</span><span>הגרף מראה את הקצב שלך לאורך הזמן · מתחתיו: כמה עמדת ביעד, היום הכי חזק שלך והמגמה</span></div>
     ${cards || '<div class="card empty">אין הרגלים עדיין</div>'}
