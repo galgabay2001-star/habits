@@ -851,7 +851,7 @@ textarea.export { width: 100%; height: 160px; font-family: var(--font-data); fon
 .hx-m small { font-size: 10.5px; font-weight: 700; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .hx-m b { font-size: 17px; font-weight: 900; color: var(--fg); line-height: 1.15; }
 .hx-m b small { font-size: 12px; color: var(--muted); }
-.hx-m span { font-size: 10px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hx-m span { font-size: 10px; line-height: 1.25; color: var(--muted); }
 .hx-m.up b { color: #16a34a; } .hx-m.down b { color: #e5484d; }
 .hx-bar { display: block; height: 5px; border-radius: 99px; background: color-mix(in srgb, var(--hc) 15%, var(--surface)); overflow: hidden; margin-top: 3px; }
 .hx-bar u { display: block; height: 100%; border-radius: 99px; background: var(--hc); }
@@ -1955,7 +1955,7 @@ else {
 S.habits.forEach(h => { if (h.kind === 'quantity' && h.tapStep === undefined) h.tapStep = 1; });
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
 // Auto-update: phones keep an old copy of the site. When a newer version is online, reload into it (your data stays — it lives in the phone).
-const APP_VER = '55';
+const APP_VER = '56';
 function checkUpdate() {
   if (location.protocol !== 'https:') return;
   fetch(location.pathname + '?nc=' + Date.now(), { cache: 'no-store' }).then(r => r.text()).then(t => {
@@ -3242,7 +3242,7 @@ function screenStats() {
     const row = `<div class="hx-row">
       <div class="hx-m"><small>🎯 עמידה ביעד</small><b class="num">${pNeed ? `${Math.min(pDone, pNeed)}<small>/${pNeed}</small>` : pDone}</b><i class="hx-bar"><u style="width:${Math.round(fit * 100)}%"></u></i></div>
       <div class="hx-m"><small>💪 היום החזק</small><b>${pDone ? 'יום ' + WD[wBest] : '—'}</b><span>${pDone ? `${wdc[wBest]} פעמים` : 'עוד אין'}</span></div>
-      <div class="hx-m ${diff > 0 ? 'up' : diff < 0 ? 'down' : ''}"><small>${diff == null ? '📅 ממוצע לשבוע' : '📈 מגמה'}</small><b class="num">${diff == null ? clean(Math.round(pDone / Math.max(1, span / 7) * 10) / 10) : diff > 0 ? `▲ ${diff}` : diff < 0 ? `▼ ${-diff}` : '='}</b><span>${diff == null ? 'פעמים בשבוע' : 'לעומת התקופה הקודמת'}</span></div>
+      <div class="hx-m ${diff > 0 ? 'up' : diff < 0 ? 'down' : ''}"><small>${diff == null ? '📅 ממוצע לשבוע' : '📈 מגמה'}</small><b class="num">${diff == null ? clean(Math.round(pDone / Math.max(1, span / 7) * 10) / 10) : diff > 0 ? `▲ ${diff}` : diff < 0 ? `▼ ${-diff}` : '='}</b><span>${diff == null ? 'פעמים בשבוע' : diff > 0 ? 'יותר מהתקופה הקודמת' : diff < 0 ? 'פחות מהתקופה הקודמת' : 'כמו התקופה הקודמת'}</span></div>
     </div>`;
     const tier = tierOf(r.streak.current);
     const flexible = r.basis.unit !== 'day';
