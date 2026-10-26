@@ -844,12 +844,12 @@ textarea.export { width: 100%; height: 160px; font-family: var(--font-data); fon
 .hx-chart .ln { fill: none; stroke: var(--hc); stroke-width: 2.5; vector-effect: non-scaling-stroke; stroke-linejoin: round; stroke-linecap: round; }
 .hx-dot { position: absolute; width: 11px; height: 11px; margin: -5.5px 0 0 -5.5px; border-radius: 50%; background: var(--hc); box-shadow: 0 0 0 3px var(--surface), 0 0 0 5px color-mix(in srgb, var(--hc) 35%, transparent); animation: hxPulse 2.4s ease-in-out infinite; }
 @keyframes hxPulse { 50% { box-shadow: 0 0 0 3px var(--surface), 0 0 0 9px color-mix(in srgb, var(--hc) 10%, transparent); } }
-.hx-lab { display: flex; justify-content: space-between; direction: rtl; font-size: 10.5px; font-weight: 700; color: var(--muted); margin-top: 2px; }
+.hx-lab { display: flex; justify-content: space-between; direction: ltr; font-size: 10.5px; font-weight: 700; color: var(--muted); margin-top: 2px; }
 .hx-lab span:last-child { color: var(--hc); }
-.hx-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 8px; direction: rtl; }
-.hx-m { display: flex; flex-direction: column; gap: 2px; padding: 8px 8px 7px; border-radius: 14px; background: color-mix(in srgb, var(--hc) 9%, var(--surface-2)); min-width: 0; }
+.hx-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; direction: rtl; }
+.hx-m { display: flex; flex-direction: column; gap: 3px; padding: 10px 12px; border-radius: 16px; background: color-mix(in srgb, var(--hc) 9%, var(--surface-2)); min-width: 0; }
 .hx-m small { font-size: 10.5px; font-weight: 700; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.hx-m b { font-size: 17px; font-weight: 900; color: var(--fg); line-height: 1.15; }
+.hx-m b { font-size: 20px; font-weight: 900; color: var(--fg); line-height: 1.15; }
 .hx-m b small { font-size: 12px; color: var(--muted); }
 .hx-m span { font-size: 10px; line-height: 1.25; color: var(--muted); }
 .hx-m.up b { color: #16a34a; } .hx-m.down b { color: #e5484d; }
@@ -1957,7 +1957,7 @@ else {
 S.habits.forEach(h => { if (h.kind === 'quantity' && h.tapStep === undefined) h.tapStep = 1; });
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
 // Auto-update: phones keep an old copy of the site. When a newer version is online, reload into it (your data stays — it lives in the phone).
-const APP_VER = '59';
+const APP_VER = '60';
 function checkUpdate() {
   if (location.protocol !== 'https:') return;
   fetch(location.pathname + '?nc=' + Date.now(), { cache: 'no-store' }).then(r => r.text()).then(t => {
@@ -3235,25 +3235,19 @@ function screenStats() {
     }
     let prev = null; if (n) { prev = 0; for (let d = Math.max(st0 - n, D(h.startDay)); d < st0; d++) if (calCell(h, d, td).done) prev++; if (st0 - n < D(h.startDay) && prev === 0) prev = null; }
     const bmax = Math.max(1, ...bk.map(x => x.done)), L = Math.max(2, bk.length);
-    const pts = (bk.length === 1 ? [bk[0], bk[0]] : bk).map((x, i) => [100 - i / (L - 1) * 100, 36 - x.done / bmax * 30]);   // right-to-left: oldest on the right
+    const pts = (bk.length === 1 ? [bk[0], bk[0]] : bk).map((x, i) => [i / (L - 1) * 100, 36 - x.done / bmax * 30]);   // oldest on the left, now on the right
     const line = pts.map((p, i) => `${i ? 'L' : 'M'}${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' '), last = pts[pts.length - 1];
     const gid = 'hg' + String(h.id).replace(/[^a-z0-9]/gi, '');
-    const chart = `<div class="hx-chart"><svg viewBox="0 0 100 40" preserveAspectRatio="none"><defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--hc);stop-opacity:.45"/><stop offset="1" style="stop-color:var(--hc);stop-opacity:0"/></linearGradient></defs><path d="${line} L${last[0].toFixed(1)} 40 L100 40 Z" fill="url(#${gid})"/><path class="ln" d="${line}"/></svg><i class="hx-dot" style="left:${last[0]}%;top:${last[1] / 40 * 100}%"></i></div>
+    const chart = `<div class="hx-chart"><svg viewBox="0 0 100 40" preserveAspectRatio="none"><defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--hc);stop-opacity:.45"/><stop offset="1" style="stop-color:var(--hc);stop-opacity:0"/></linearGradient></defs><path d="${line} L${last[0].toFixed(1)} 40 L0 40 Z" fill="url(#${gid})"/><path class="ln" d="${line}"/></svg><i class="hx-dot" style="left:${last[0]}%;top:${last[1] / 40 * 100}%"></i></div>
       <div class="hx-lab"><span>${bk[0] ? bk[0].label : ''}</span><span>${bk.length > 2 ? bk[Math.floor(bk.length / 2)].label : ''}</span><span>${mode === 'day' ? 'היום' : mode === 'week' ? 'השבוע' : 'החודש'}</span></div>`;
     const wBest = wdc.indexOf(Math.max(...wdc)), diff = prev == null ? null : pDone - prev;
     const fit = pNeed ? Math.min(1, pDone / pNeed) : 0;
-    // forecast: at your pace over the chosen period, how many times you'll do it by the end of this month (30 days) or this year (90 days / year / all)
-    const fc = (() => { const pace = pDone / Math.max(1, span), tdS = S_(td), y = +tdS.slice(0, 4), m = +tdS.slice(5, 7);
-      const monthly = n === 30, from = monthly ? D(`${y}-${pad(m)}-01`) : D(`${y}-01-01`), end = monthly ? D(`${y}-${pad(m)}-${pad(new Date(y, m, 0).getDate())}`) : D(`${y}-12-31`);
-      let so = 0; for (let d = Math.max(from, D(h.startDay)); d <= td; d++) if (calCell(h, d, td).done) so++;
-      return { so, proj: Math.round(so + pace * (end - td)), txt: `${monthly ? 'עד סוף החודש' : 'עד סוף השנה'} בקצב שלך · עד עכשיו ${so}` }; })();
     // when in the day you usually do it: from marks made on the same day, inside the chosen period
     const hrs = eventsOf(h.id).filter(x => x.ts && (x.action === 'log' || x.action === 'done' || x.action === 'clean') && D(x.day) >= st0 && D(x.day) <= td).map(x => ({ t: new Date(x.ts), day: x.day })).filter(x => `${x.t.getFullYear()}-${pad(x.t.getMonth() + 1)}-${pad(x.t.getDate())}` === S_(D(x.day))).map(x => x.t.getHours() + x.t.getMinutes() / 60);
     const tod = (() => { if (hrs.length < 2) return null; const part = x => x >= 5 && x < 12 ? 'בבוקר' : x >= 12 && x < 17 ? 'בצהריים' : x >= 17 && x < 21 ? 'בערב' : 'בלילה'; const cnt = {}; hrs.forEach(x => { cnt[part(x)] = (cnt[part(x)] || 0) + 1; }); const top = Object.keys(cnt).sort((a, b) => cnt[b] - cnt[a])[0]; const sel = hrs.filter(x => part(x) === top).sort((a, b) => a - b), med = sel[Math.floor(sel.length / 2)]; return [top, `${pad(Math.floor(med))}:${pad(Math.round((med % 1) * 60 / 15) * 15 % 60)}`]; })();
     const row = `<div class="hx-row">
       <div class="hx-m"><small>🎯 עמידה ביעד</small><b class="num">${pNeed ? `${Math.min(pDone, pNeed)}<small>/${pNeed}</small>` : pDone}</b><i class="hx-bar"><u style="width:${Math.round(fit * 100)}%"></u></i></div>
       <div class="hx-m"><small>💪 היום החזק</small><b>${pDone ? 'יום ' + WD[wBest] : '—'}</b><span>${pDone ? `${wdc[wBest]} פעמים` : 'עוד אין'}</span></div>
-      <div class="hx-m fc"><small>🔮 תחזית</small><b class="num">כ־${fc.proj}</b><span>${fc.txt}</span><i class="hx-bar"><u style="width:${Math.round(Math.min(1, fc.so / Math.max(1, fc.proj)) * 100)}%"></u></i></div>
     </div>`;
     const tier = tierOf(r.streak.current);
     const flexible = r.basis.unit !== 'day';
