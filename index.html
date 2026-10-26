@@ -853,6 +853,8 @@ textarea.export { width: 100%; height: 160px; font-family: var(--font-data); fon
 .hx-m b small { font-size: 12px; color: var(--muted); }
 .hx-m span { font-size: 10px; line-height: 1.25; color: var(--muted); }
 .hx-m.up b { color: #16a34a; } .hx-m.down b { color: #e5484d; }
+.hx-m.rec.top { background: linear-gradient(135deg, color-mix(in srgb, #f5a524 18%, var(--surface-2)), color-mix(in srgb, var(--hc) 12%, var(--surface-2))); }
+.hx-m.rec.top b { color: #d97706; font-size: 15px; }
 .hx-bar { display: block; height: 5px; border-radius: 99px; background: color-mix(in srgb, var(--hc) 15%, var(--surface)); overflow: hidden; margin-top: 3px; }
 .hx-bar u { display: block; height: 100%; border-radius: 99px; background: var(--hc); }
 .sp-key { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; font-size: 12.5px; color: var(--muted); direction: rtl; padding: 0 4px; }
@@ -1955,7 +1957,7 @@ else {
 S.habits.forEach(h => { if (h.kind === 'quantity' && h.tapStep === undefined) h.tapStep = 1; });
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
 // Auto-update: phones keep an old copy of the site. When a newer version is online, reload into it (your data stays — it lives in the phone).
-const APP_VER = '57';
+const APP_VER = '58';
 function checkUpdate() {
   if (location.protocol !== 'https:') return;
   fetch(location.pathname + '?nc=' + Date.now(), { cache: 'no-store' }).then(r => r.text()).then(t => {
@@ -3245,7 +3247,7 @@ function screenStats() {
     const row = `<div class="hx-row">
       <div class="hx-m"><small>🎯 עמידה ביעד</small><b class="num">${pNeed ? `${Math.min(pDone, pNeed)}<small>/${pNeed}</small>` : pDone}</b><i class="hx-bar"><u style="width:${Math.round(fit * 100)}%"></u></i></div>
       <div class="hx-m"><small>💪 היום החזק</small><b>${pDone ? 'יום ' + WD[wBest] : '—'}</b><span>${pDone ? `${wdc[wBest]} פעמים` : 'עוד אין'}</span></div>
-      <div class="hx-m"><small>⏰ השעה שלך</small><b>${tod ? tod[0] : '—'}</b><span>${tod ? `בדרך כלל בסביבות ${tod[1]}` : 'עוד אין מספיק סימונים'}</span></div>
+      <div class="hx-m rec ${r.streak.current && r.streak.current >= r.streak.best ? 'top' : ''}"><small>🏆 לשבירת השיא</small>${r.streak.current && r.streak.current >= r.streak.best ? `<b>אתה בשיא! 🔥</b><span>${r.streak.current} ימים ברצף, כל יום נוסף הוא שיא חדש</span>` : `<b class="num">עוד ${r.streak.best - r.streak.current + 1}</b><span>${r.streak.best ? `ימים ברצף ותשבור את השיא (${r.streak.best})` : 'יום אחד ויש לך שיא ראשון'}</span>`}<i class="hx-bar"><u style="width:${Math.round(Math.min(1, r.streak.current / Math.max(1, r.streak.best + 1)) * 100)}%"></u></i></div>
     </div>`;
     const tier = tierOf(r.streak.current);
     const flexible = r.basis.unit !== 'day';
