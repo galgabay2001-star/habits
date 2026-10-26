@@ -839,16 +839,17 @@ textarea.export { width: 100%; height: 160px; font-family: var(--font-data); fon
 .st2-n.gold { background: color-mix(in srgb, #f5a623 16%, transparent); }
 .st2-n.gold b { color: #d98a00; }
 .st2-txt .sbadge { font-size: 10.5px; vertical-align: 2px; }
-.st2-spark { display: grid; grid-template-columns: repeat(8, 1fr); gap: 5px; direction: rtl; align-items: end; padding-top: 4px; }
-.st2-spark i { display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 0; }
-.st2-spark i b { font-size: 11px; font-weight: 900; color: var(--hc); min-height: 13px; line-height: 13px; }
-.st2-spark i span { position: relative; width: 100%; max-width: 26px; height: 46px; border-radius: 8px; background: color-mix(in srgb, var(--hc) 10%, var(--surface-2)); overflow: hidden; display: flex; align-items: flex-end; }
-.st2-spark i u { display: block; width: 100%; border-radius: 8px; background: linear-gradient(to top, color-mix(in srgb, var(--hc) 75%, #000 0%), color-mix(in srgb, var(--hc) 60%, #fff)); opacity: .55; transition: height .6s cubic-bezier(.2,.8,.2,1); }
-.st2-spark i.cur u, .st2-spark i.best u { opacity: 1; }
-.st2-spark i.best b::after { content: " ★"; color: #f5a524; }
-.st2-spark i em { font-style: normal; font-size: 9.5px; font-weight: 700; color: var(--muted); white-space: nowrap; }
+.st2-spark { display: grid; grid-template-columns: repeat(6, 1fr); gap: 7px; direction: rtl; padding-top: 2px; }
+.st2-spark i { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; }
+.st2-spark i span { position: relative; width: 100%; max-width: 46px; aspect-ratio: 1; border-radius: 14px; display: grid; place-items: center; background: color-mix(in srgb, var(--hc) var(--lv), var(--surface-2)); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--hc) 30%, transparent); }
+.st2-spark i span b { font-size: 15px; font-weight: 900; color: var(--fg); }
+.st2-spark i span s { position: absolute; top: -7px; left: -5px; text-decoration: none; font-size: 14px; color: #f5a524; filter: drop-shadow(0 1px 1px rgba(0,0,0,.25)); }
+.st2-spark i.pre span { background: none; box-shadow: inset 0 0 0 1.5px dashed; border: 1.5px dashed color-mix(in srgb, var(--muted) 35%, transparent); box-shadow: none; }
+.st2-spark i em { font-style: normal; font-size: 11px; font-weight: 700; color: var(--muted); white-space: nowrap; }
 .st2-spark i.cur em { color: var(--hc); font-weight: 900; }
-.st2-spark i.cur span { box-shadow: 0 0 0 2px color-mix(in srgb, var(--hc) 45%, transparent); }
+.st2-spark i.cur span { box-shadow: 0 0 0 2.5px var(--hc), 0 6px 14px -8px var(--hc); }
+.mo-trend { align-self: flex-start; font-size: 12px; font-weight: 800; color: var(--muted); padding: 2px 0; }
+.mo-trend.up { color: #16a34a; } .mo-trend.down { color: #e5484d; }
 .sp-key { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; font-size: 12.5px; color: var(--muted); direction: rtl; padding: 0 4px; }
 .sp-key span { display: inline-flex; align-items: center; gap: 5px; }
 .sp-key .sp-k-t { font-weight: 700; }
@@ -1949,7 +1950,7 @@ else {
 S.habits.forEach(h => { if (h.kind === 'quantity' && h.tapStep === undefined) h.tapStep = 1; });
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
 // Auto-update: phones keep an old copy of the site. When a newer version is online, reload into it (your data stays — it lives in the phone).
-const APP_VER = '53';
+const APP_VER = '54';
 function checkUpdate() {
   if (location.protocol !== 'https:') return;
   fetch(location.pathname + '?nc=' + Date.now(), { cache: 'no-store' }).then(r => r.text()).then(t => {
@@ -3215,10 +3216,16 @@ function screenStats() {
     const r = E.analyze(spec(h), eventsOf(h.id), { from, to: t, today: t });
     if (h.kind === 'event') r.events = E.analyze(spec(h), eventsOf(h.id), { from, to: t, today: t }).events;
     const doneN = r.basis.unit !== 'day' ? r.totalCompletions : r.fullDays; rs.push({ h, r, doneN });
-    const wk0 = E.weekStartOf(td, S.settings.weekStart), wks = [];   // last 8 weeks: how many times the habit was done each week
-    for (let w = 7; w >= 0; w--) { const st = wk0 - 7 * w; let done = 0; for (let d = st; d < st + 7 && d <= td; d++) { if (D(h.startDay) > d) continue; if (calCell(h, d, td).done) done++; } wks.push({ done, cur: w === 0, st }); }
-    const wmax = Math.max(1, ...wks.map(x => x.done)), best = Math.max(...wks.map(x => x.done));
-    const spark = wks.map(x => `<i class="${x.cur ? 'cur' : ''} ${x.done && x.done === best ? 'best' : ''}" title="שבוע ${+S_(x.st).slice(8)}.${+S_(x.st).slice(5, 7)} · ${x.done} פעמים"><b>${x.done || ''}</b><span><u style="height:${Math.round(x.done / wmax * 100)}%"></u></span><em>${x.cur ? 'השבוע' : `${+S_(x.st).slice(8)}.${+S_(x.st).slice(5, 7)}`}</em></i>`);
+    const tdS = S_(td), mons = [];   // last 6 months: how many times the habit was done each month, and how well (done out of the days it was needed)
+    for (let m = 5; m >= 0; m--) {
+      const dt = new Date(+tdS.slice(0, 4), +tdS.slice(5, 7) - 1 - m, 1), y = dt.getFullYear(), mo = dt.getMonth();
+      const from = D(`${y}-${pad(mo + 1)}-01`), to = Math.min(td, D(`${y}-${pad(mo + 1)}-${pad(new Date(y, mo + 1, 0).getDate())}`));
+      let done = 0, need = 0; for (let d = Math.max(from, D(h.startDay)); d <= to; d++) { const c = calCell(h, d, td); if (c.done) done++; if (c.planned) need++; }
+      mons.push({ done, need, mo, cur: m === 0, started: to >= D(h.startDay) });
+    }
+    const mBest = Math.max(...mons.map(x => x.done)), mMax = Math.max(1, mBest);
+    const spark = mons.map(x => { const lvl = x.need ? x.done / x.need : x.done / mMax; return `<i class="${x.cur ? 'cur' : ''} ${x.done && x.done === mBest ? 'best' : ''} ${x.started ? '' : 'pre'}" title="${MONTHS_LONG[x.mo]} · ${x.done} פעמים${x.need ? ` מתוך ${x.need}` : ''}"><span style="--lv:${Math.round(12 + Math.min(1, lvl) * 88)}%">${x.started ? `<b>${x.done}</b>` : ''}${x.done && x.done === mBest ? '<s>★</s>' : ''}</span><em>${x.cur ? 'החודש' : MONTHS[x.mo]}</em></i>`; });
+    const tr = mons[5].done - mons[4].done, trend = !mons[4].started ? '' : `<div class="mo-trend ${tr > 0 ? 'up' : tr < 0 ? 'down' : ''}">${tr > 0 ? `▲ ${tr} יותר מחודש שעבר` : tr < 0 ? `▼ ${-tr} פחות מחודש שעבר` : 'כמו חודש שעבר'}</div>`;
     const tier = tierOf(r.streak.current);
     const flexible = r.basis.unit !== 'day';
     const main = flexible ? `${r.totalCompletions} פעמים` : `${r.fullDays} ימים`;
@@ -3226,7 +3233,7 @@ function screenStats() {
     return `<div class="card hstat st2" style="--hc:${h.color};animation-delay:${rs.length * 60}ms">
       <div class="st2-top">${hicon(h)}<div class="grow st2-txt"><b>${esc(h.name)}${tier ? ` <span class="sbadge">${tier[1]} ${esc(tier[2].replace('!', ''))}</span>` : ''}</b><span>בוצע ${main}${extra}</span></div>
         <div class="st2-n fire"><b class="num">${r.streak.current}</b><span>🔥 רצף</span></div><div class="st2-n gold"><b class="num">${r.streak.best}</b><span>🏆 שיא</span></div></div>
-      <div class="st2-spark" title="8 השבועות האחרונים">${spark.join('')}</div>
+      <div class="st2-spark" title="6 החודשים האחרונים">${spark.join('')}</div>${trend}
     </div>`;
   }).join('');
   const tot = rs.reduce((a, x) => a + x.doneN, 0);
@@ -3242,7 +3249,7 @@ function screenStats() {
   return `<div class="navbar"><h2>סטטיסטיקות</h2></div>
   <div class="stack">${seg('statsPeriod', [[7, '7 ימים'], [30, '30 יום'], [90, '90 יום'], [365, 'שנה'], [0, 'הכל']], ui.statsPeriod)}
     ${hero}${podium}
-    <div class="sp-key"><span class="sp-k-t">📊 8 השבועות האחרונים:</span><span>כל עמודה = כמה פעמים ביצעת באותו שבוע · ★ השבוע הכי טוב</span></div>
+    <div class="sp-key"><span class="sp-k-t">🗓️ 6 החודשים האחרונים:</span><span>המספר = כמה פעמים ביצעת בחודש · ככל שהריבוע כהה יותר, עמדת ביעד טוב יותר · ★ החודש הכי טוב</span></div>
     ${cards || '<div class="card empty">אין הרגלים עדיין</div>'}
     <section class="card sx-ins"><h3>💡 תובנות</h3>${ins.length ? ins.map(i => `<div class="insight" style="--c:${i.certainty === 'measured' ? 'var(--accent)' : 'var(--partial)'}"><span class="chip" style="--c:${i.certainty === 'measured' ? 'var(--accent)' : 'var(--partial)'};align-self:flex-start">${i.certainty === 'measured' ? 'נמדד' : 'השערה'}</span><span class="small">${esc(i.text)}</span><span class="tiny faint">מבוסס על: ${esc(i.basis)}</span></div>`).join('') : '<p class="muted small">תובנות יופיעו כשיצטברו מספיק נתונים.</p>'}
       <span class="tiny faint">״נמדד״ = עובדה מהנתונים. ״השערה״ = הצעה לבדיקה, לא קשר סיבתי.</span></section>
